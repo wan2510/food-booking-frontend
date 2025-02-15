@@ -1,5 +1,5 @@
 const Login = () => {
-    return <>Day la trang login</>;
+    return <>Chỉnh sửa</>;
 };
 
 export default Login;
