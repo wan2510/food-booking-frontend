@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import Home from './feature/dashboard/Home';
-import { DashboardLayout } from './layout/DashboardLayout';
+import DashboardLayout from './layout/DashboardLayout';
 import Food from './feature/admin/Food';
 import AdminLayout from './layout/AdminLayout';
 import PageNotFound from './feature/pagenotfound';
