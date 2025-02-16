@@ -1,0 +1,30 @@
+.admin-header-notification-button {
+    width: 50px;
+    height: 50px;
+    transition: 0.3s;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.admin-header-notification-button:hover  {
+    background-color: rgb(238, 219, 255);
+}
+
+.admin-header-notification-button svg {
+    width: 25px;
+    height: 25px;
+    color: blueviolet;
+}
+
+.admin-header-notification-menu {
+    width: 350px;
+}
+
+.admin-header-notification-menu .ant-dropdown-menu-item {
+    gap: 15px
+}
+
+.admin-header-notification-menu .anticon svg{
+    width: 20px;
+    height: 20px;
+}

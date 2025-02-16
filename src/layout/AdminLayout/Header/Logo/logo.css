@@ -1,0 +1,13 @@
+.admin-header-logo {
+    font-size: 2rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #5d44ff, #4e0063);
+    color: transparent;
+    background-clip: text;
+    transition: 0.3s;
+}
+
+.admin-header-logo:hover {
+    opacity: 0.8;
+    color: transparent;
+}

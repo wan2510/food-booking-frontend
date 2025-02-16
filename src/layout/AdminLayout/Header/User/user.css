@@ -1,0 +1,20 @@
+.admin-header-user-menu {
+    padding: 10px 10px;
+    border-radius: 20px;
+    user-select: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.admin-header-user-menu:hover {
+    background: #e4e0ff;
+}
+
+.admin-header-user-menu-submenu .ant-dropdown-menu-item {
+    padding: 15px 20px !important;
+}
+
+.admin-header-user-menu-submenu .ant-dropdown-menu-item svg {
+    width: 20px;
+    height: 20px;
+}
