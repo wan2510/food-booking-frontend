@@ -1,7 +1,15 @@
-import { Button, Form, Table } from 'antd';
-import React, { useMemo } from 'react';
-import { AddEditModal } from './AddEditModal';
-import { createColumn } from './createColumn';
+import React, { useState } from 'react';
+import {
+    Button,
+    Table,
+    Modal,
+    Form,
+    Input,
+    InputNumber,
+    Space,
+    Popconfirm,
+} from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
 const Food = () => {
     const [foods, setFoods] = React.useState([
@@ -25,53 +33,133 @@ const Food = () => {
     const [form] = Form.useForm();
     const [currentFood, setCurrentFood] = React.useState(null);
 
-    const showModal = (record) => {
+    const showModal = (food = null) => {
         setIsModalVisible(true);
-        setCurrentFood(record);
-        form.setFieldsValue(record);
+        setCurrentFood(food);
+        form.setFieldsValue(food || { name: '', price: '', description: '' });
     };
+
     const handleCancel = () => {
         setIsModalVisible(false);
-        setCurrentFood(null);
         form.resetFields();
     };
+
     const handleSave = () => {
         form.validateFields().then((values) => {
             if (currentFood) {
                 setFoods((prev) =>
                     prev.map((item) =>
-                        item.key === currentFood.key
+                        item.id === currentFood.id
                             ? { ...item, ...values }
                             : item,
                     ),
                 );
             } else {
-                const newFood = { key: String(Date.now()), ...values };
+                const newFood = { id: Date.now(), ...values };
                 setFoods((prev) => [...prev, newFood]);
             }
             handleCancel();
         });
     };
-    const handleDelete = (record) => {
-        setFoods((prev) => prev.filter((item) => item.id !== record.id));
+
+    const handleDelete = (id) => {
+        setFoods((prev) => prev.filter((item) => item.id !== id));
     };
 
-    const columns = createColumn(showModal, handleDelete);
+    const columns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
+        },
+        {
+            title: 'Price ($)',
+            dataIndex: 'price',
+            key: 'price',
+            render: (price) => `$${price}`,
+        },
+        {
+            title: 'Actions',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        onClick={() => showModal(record)}
+                    />
+                    <Popconfirm
+                        title="Are you sure to delete this food?"
+                        onConfirm={() => handleDelete(record.id)}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button type="danger" icon={<DeleteOutlined />} />
+                    </Popconfirm>
+                </Space>
+            ),
+        },
+    ];
 
     return (
-        <div>
+        <div style={{ padding: 20 }}>
             <Button
-                onClick={() => setIsModalVisible(true)}
-                style={{ marginBottom: 16 }}
                 type="primary"
+                icon={<PlusOutlined />}
+                style={{ marginBottom: 16 }}
+                onClick={() => showModal()}
             >
                 Add Food
             </Button>
-            <Table dataSource={foods} columns={columns} />
-            {isModalVisible && <AddEditModal mode={'add'} />}
-            {isModalVisible && (
-                <AddEditModal mode={'edit'} currentFood={currentFood} />
-            )}
+            <Table dataSource={foods} columns={columns} rowKey="id" bordered />
+
+            <Modal
+                title={currentFood ? 'Edit Food' : 'Add Food'}
+                visible={isModalVisible}
+                onOk={handleSave}
+                onCancel={handleCancel}
+                okText="Save"
+                cancelText="Cancel"
+            >
+                <Form form={form} layout="vertical">
+                    <Form.Item
+                        name="name"
+                        label="Name"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter the name!',
+                            },
+                        ]}
+                    >
+                        <Input placeholder="Enter food name" />
+                    </Form.Item>
+                    <Form.Item
+                        name="price"
+                        label="Price"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter the price!',
+                            },
+                        ]}
+                    >
+                        <InputNumber
+                            min={1}
+                            style={{ width: '100%' }}
+                            placeholder="Enter price"
+                        />
+                    </Form.Item>
+                    <Form.Item name="description" label="Description">
+                        <Input.TextArea placeholder="Enter description" />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     );
 };
