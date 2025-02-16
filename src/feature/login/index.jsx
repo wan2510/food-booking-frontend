@@ -8,14 +8,14 @@ import react from '../../assets/icon/react.svg';
 const Login = () => {
     return (
         <div className="login-container">
-            <Row className="login-box">
+            <Row className="login-box" align="middle" justify="center">
                 <Col span={15}>
                     <img src={react} alt="Login Image" className="login-img" />
                 </Col>
                 <Col span={9}>
-                    <h2 className='login-form-title'>Đăng nhập</h2>
+                    <h2 className="login-form-title">Đăng nhập</h2>
                     <LoginForm />
-                    <Flex className='extra-links' justify='center' gap={20}>
+                    <Flex className="extra-links" justify="center" gap={20}>
                         <Link to={'#'}>Quên mật khẩu</Link>
                         {'/'}
                         <Link to={'#'}>Đăng ký</Link>

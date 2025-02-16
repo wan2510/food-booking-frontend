@@ -12,7 +12,7 @@ export const LoginForm = () => {
                 <Input placeholder={'Địa chỉ email'} prefix={<FaEnvelope />} />
             </Form.Item>
             <Form.Item name={'password'}>
-                <Input placeholder={'Mật khẩu'} prefix={<FaLock />} />
+                <Input.Password placeholder={'Mật khẩu'} prefix={<FaLock />} />
             </Form.Item>
             <Button className="submit-button" htmlType="submit">
                 Đăng nhập
