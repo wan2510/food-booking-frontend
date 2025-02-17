@@ -18,7 +18,7 @@ const Login = () => {
                     <Flex className="extra-links" justify="center" gap={20}>
                         <Link to={'#'}>Quên mật khẩu</Link>
                         {'/'}
-                        <Link to={'#'}>Đăng ký</Link>
+                        <Link to={'/register'}>Đăng ký</Link>
                     </Flex>
                 </Col>
             </Row>
