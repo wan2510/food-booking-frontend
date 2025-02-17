@@ -1,7 +1,9 @@
 import { Button, Col, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { EmailForm, OTPForm, RegisterForm } from '../../component/ExampleForm';
+import { EmailForm} from '../../component/ExampleForm/EmailForm';
+import { OTPForm} from '../../component/ExampleForm/OTPForm';
+import { RegisterForm} from '../../component/ExampleForm/RegisterForm';
 import './register.css';
 
 const Register = () => {

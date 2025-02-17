@@ -1,7 +1,9 @@
 import { Button, Col, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { EmailForm, OTPForm, RegisterForm } from '../../component/ExampleForm';
+import { EmailForm} from '../../component/ExampleForm/EmailForm';
+import { OTPForm} from '../../component/ExampleForm/OTPForm';
+import { ForgotPassForm} from '../../component/ExampleForm/ResetPasswordForm';
 import './forgotPassword.css';
 
 const ForgotPassword = () => {
