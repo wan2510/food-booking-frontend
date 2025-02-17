@@ -29,7 +29,6 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
             dataIndex: "create_at",
             key: "create_at",
             render: (text) => {
-                // Kiểm tra nếu ngày hợp lệ
                 const formattedDate = dayjs(text);
                 return formattedDate.isValid() ? formattedDate.format("DD/MM/YYYY") : "Invalid Date";
             },
@@ -39,7 +38,6 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
             dataIndex: "expired_at",
             key: "expired_at",
             render: (text) => {
-                // Kiểm tra nếu ngày hợp lệ
                 const formattedDate = dayjs(text);
                 return formattedDate.isValid() ? formattedDate.format("DD/MM/YYYY") : "Invalid Date";
             },
@@ -59,7 +57,6 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
             dataIndex: "status",
             key: "status",
             render: (status) => {
-                // Đổi màu Tag tùy theo trạng thái
                 const color = status === "Còn hiệu lực" ? "green" : "red";
                 return <Tag color={color}>{status}</Tag>;
             },
@@ -94,7 +91,6 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
             dataSource={vouchers}
             columns={columns}
             rowKey="id"
-        // Nếu muốn tự style bảng, có thể thêm className, style...
         />
     );
 };

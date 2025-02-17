@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Form, Input, Select, DatePicker, Space } from "antd";
-import dayjs from "dayjs"; 
+import dayjs from "dayjs";
 
 const { Option } = Select;
 
@@ -11,9 +11,19 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 ...editingVoucher,
                 create_at: editingVoucher.create_at ? dayjs(editingVoucher.create_at) : null,
                 expired_at: editingVoucher.expired_at ? dayjs(editingVoucher.expired_at) : null,
+                remain_quantity: editingVoucher.remain_quantity || editingVoucher.quantity, // gán lại giá trị cho remain_quantity
             });
+        } else {
+            form.resetFields();
         }
     }, [editingVoucher]);
+
+    const handleNumberInput = (value) => {
+        if (value) {
+            return parseInt(value, 10);
+        }
+        return value;
+    };
 
     return (
         <Form layout="vertical" form={form}>
@@ -22,11 +32,13 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 label="Giảm giá (%)"
                 rules={[
                     { required: true, message: "Vui lòng nhập phần trăm giảm giá" },
-                    { pattern: /^[1-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
-                    {}
+                    { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
                 ]}
             >
-                <Input placeholder="Nhập phần trăm giảm giá" />
+                <Input
+                    placeholder="Nhập phần trăm giảm giá"
+                    onBlur={(e) => form.setFieldsValue({ discount: handleNumberInput(e.target.value) })}
+                />
             </Form.Item>
 
             <Form.Item
@@ -34,10 +46,13 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 label="Giảm tối đa (kVNĐ)"
                 rules={[
                     { required: true, message: "Vui lòng nhập giá giảm tối đa" },
-                    { pattern: /^[1-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
+                    { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
                 ]}
             >
-                <Input placeholder="Nhập giá giảm tối đa" />
+                <Input
+                    placeholder="Nhập giá giảm tối đa"
+                    onBlur={(e) => form.setFieldsValue({ max_discount_value: handleNumberInput(e.target.value) })}
+                />
             </Form.Item>
 
             <Form.Item
@@ -48,7 +63,10 @@ const VoucherForm = ({ form, editingVoucher }) => {
                     { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số lớn hơn hoặc bằng 0!" },
                 ]}
             >
-                <Input placeholder="Nhập giá tối thiểu" />
+                <Input
+                    placeholder="Nhập giá tối thiểu"
+                    onBlur={(e) => form.setFieldsValue({ min_order_value: handleNumberInput(e.target.value) })}
+                />
             </Form.Item>
 
             <Space style={{ display: "flex", width: "100%" }}>
@@ -69,10 +87,10 @@ const VoucherForm = ({ form, editingVoucher }) => {
                         { required: true, message: "Vui lòng chọn ngày hết hạn" },
                         ({ getFieldValue }) => ({
                             validator(_, value) {
-                                if (value | value.isAfter(getFieldValue("create_at"))) {
-                                    return Promise.resolve();
+                                if (value.isBefore(getFieldValue("create_at"))) {
+                                    return Promise.reject(new Error("Ngày hết hạn phải sau ngày tạo!"));
                                 }
-                                return Promise.reject(new Error("Ngày hết hạn phải sau ngày tạo!"));
+                                return Promise.resolve();
                             },
                         }),
                     ]}
@@ -86,11 +104,46 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 label="Số lượng (lượt)"
                 rules={[
                     { required: true, message: "Vui lòng nhập số lượng" },
-                    { pattern: /^[1-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
+                    { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
                 ]}
             >
-                <Input placeholder="Nhập số lượng" />
+                <Input
+                    placeholder="Nhập số lượng"
+                    onBlur={(e) => form.setFieldsValue({ quantity: handleNumberInput(e.target.value) })}
+                />
             </Form.Item>
+            {editingVoucher && (
+                <Form.Item
+                    name="quantity"
+                    label="Số lượng (lượt)"
+                    rules={[
+                        { required: true, message: "Vui lòng nhập số lượng" },
+                        { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
+                    ]}
+                >
+                    <Input
+                        placeholder="Nhập số lượng"
+                        disabled
+                        onBlur={(e) => form.setFieldsValue({ quantity: handleNumberInput(e.target.value) })}
+                    />
+                </Form.Item>
+            )}
+
+            {editingVoucher && (
+                <Form.Item
+                    name="remain_quantity"
+                    label="Số lượng còn lại"
+                    rules={[
+                        { required: true, message: "Vui lòng nhập số lượng còn lại" },
+                        { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
+                    ]}
+                >
+                    <Input
+                        placeholder="Số lượng còn lại"
+                        value={form.getFieldValue("remain_quantity") || form.getFieldValue("quantity")}
+                    />
+                </Form.Item>
+            )}
 
             {editingVoucher && (
                 <Form.Item name="status" label="Trạng thái">
