@@ -1,31 +1,46 @@
+import { Button, Popconfirm } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
 
-export const createColumn = (showModal, onDelete) => [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Price ($)', dataIndex: 'price', key: 'price' },
-    { title: 'Description', dataIndex: 'description', key: 'description' },
+export const createColumns = (handleEdit, handleDelete) => [
+    { title: 'Tên món', dataIndex: 'name', key: 'name' },
+    { title: 'Giá ($)', dataIndex: 'price', key: 'price' },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description' },
     {
-        title: 'Action',
+        title: 'Đánh giá',
+        dataIndex: 'rating',
+        key: 'rating',
+        render: (rating = 0) => (
+            <span style={{ color: 'gold' }}>{'★'.repeat(rating)}</span>
+        ), // Hiển thị sao, mặc định 0 sao nếu không có rating
+    },
+    {
+        title: 'Hành động',
         key: 'action',
         render: (_, record) => (
             <>
                 <Button
-                    onClick={() => showModal(record)}
+                    onClick={() => handleEdit(record)}
                     style={{ marginRight: 8 }}
                     icon={<EditOutlined />}
                     type="primary"
                 >
-                    Edit
+                    Sửa
                 </Button>
-                <Button
-                    onClick={() => onDelete(record)}
-                    style={{ color: 'white', backgroundColor: 'red' }}
-                    icon={<DeleteOutlined />}
-                    danger
+
+                <Popconfirm
+                    title="Bạn có chắc chắn muốn xóa không?"
+                    onConfirm={() => handleDelete(record)}
+                    okText="Có"
+                    cancelText="Không"
                 >
-                    Delete
-                </Button>
+                    <Button
+                        style={{ color: 'white', backgroundColor: 'red' }}
+                        icon={<DeleteOutlined />}
+                        danger
+                    >
+                        Xóa
+                    </Button>
+                </Popconfirm>
             </>
         ),
     },

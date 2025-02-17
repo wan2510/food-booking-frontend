@@ -1,165 +1,102 @@
 import React, { useState } from 'react';
-import {
-    Button,
-    Table,
-    Modal,
-    Form,
-    Input,
-    InputNumber,
-    Space,
-    Popconfirm,
-} from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Table, Input, Row, Col } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import AddEditModal from './AddEditModal'; // Import đúng
+import { createColumns } from './createColumn';
 
 const Food = () => {
-    const [foods, setFoods] = React.useState([
-        { id: 1, name: 'Pizza', description: 'Delicious', price: 10 },
-        { id: 2, name: 'Hamburger', description: 'Tasty', price: 5 },
-        { id: 3, name: 'Hotdog', description: 'Yummy', price: 3 },
-        { id: 4, name: 'Ice cream', description: 'Cool', price: 2 },
-        { id: 5, name: 'Candy', description: 'Sweet', price: 1 },
-        { id: 6, name: 'Donut', description: 'Soft', price: 1 },
-        { id: 7, name: 'Cake', description: 'Moist', price: 5 },
-        { id: 8, name: 'Cookie', description: 'Crunchy', price: 1 },
-        { id: 9, name: 'Pie', description: 'Flaky', price: 3 },
-        { id: 10, name: 'Pasta', description: 'Savory', price: 7 },
-        { id: 11, name: 'Salad', description: 'Fresh', price: 6 },
-        { id: 12, name: 'Soup', description: 'Hot', price: 4 },
-        { id: 13, name: 'Sandwich', description: 'Filling', price: 5 },
-        { id: 14, name: 'Taco', description: 'Spicy', price: 3 },
+    const [foods, setFoods] = useState([
+        {
+            id: 1,
+            name: 'Pizza',
+            description: 'Delicious',
+            price: 10,
+            rating: 4,
+        },
+        { id: 2, name: 'Hamburger', description: 'Tasty', price: 5, rating: 3 },
+        { id: 3, name: 'Hotdog', description: 'Yummy', price: 3, rating: 2 },
+        { id: 4, name: 'Ice cream', description: 'Cool', price: 2, rating: 5 },
+        { id: 5, name: 'Candy', description: 'Sweet', price: 1, rating: 3 },
     ]);
 
-    const [isModalVisible, setIsModalVisible] = React.useState(false);
-    const [form] = Form.useForm();
-    const [currentFood, setCurrentFood] = React.useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [editItem, setEditItem] = useState(null);
+    const [searchText, setSearchText] = useState('');
 
-    const showModal = (food = null) => {
+    const handleEdit = (item) => {
+        setEditItem(item);
         setIsModalVisible(true);
-        setCurrentFood(food);
-        form.setFieldsValue(food || { name: '', price: '', description: '' });
+    };
+
+    const handleAddClick = () => {
+        setEditItem(null);
+        setIsModalVisible(true);
     };
 
     const handleCancel = () => {
         setIsModalVisible(false);
-        form.resetFields();
     };
 
-    const handleSave = () => {
-        form.validateFields().then((values) => {
-            if (currentFood) {
-                setFoods((prev) =>
-                    prev.map((item) =>
-                        item.id === currentFood.id
-                            ? { ...item, ...values }
-                            : item,
-                    ),
-                );
-            } else {
-                const newFood = { id: Date.now(), ...values };
-                setFoods((prev) => [...prev, newFood]);
-            }
-            handleCancel();
-        });
+    const handleSave = (newData) => {
+        if (editItem) {
+            setFoods(
+                foods.map((item) => (item.id === editItem.id ? newData : item)),
+            );
+        } else {
+            setFoods([...foods, { ...newData, id: Date.now() }]);
+        }
+        setIsModalVisible(false);
     };
 
-    const handleDelete = (id) => {
-        setFoods((prev) => prev.filter((item) => item.id !== id));
+    const handleSearch = (value) => {
+        setSearchText(value);
     };
 
-    const columns = [
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
-        },
-        {
-            title: 'Price ($)',
-            dataIndex: 'price',
-            key: 'price',
-            render: (price) => `$${price}`,
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            render: (_, record) => (
-                <Space size="middle">
-                    <Button
-                        type="primary"
-                        icon={<EditOutlined />}
-                        onClick={() => showModal(record)}
-                    />
-                    <Popconfirm
-                        title="Are you sure to delete this food?"
-                        onConfirm={() => handleDelete(record.id)}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button type="danger" icon={<DeleteOutlined />} />
-                    </Popconfirm>
-                </Space>
-            ),
-        },
-    ];
+    const handleDelete = (record) => {
+        setFoods(foods.filter((food) => food.id !== record.id));
+    };
+
+    const filteredFoods = foods.filter(
+        (food) =>
+            food.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            food.description.toLowerCase().includes(searchText.toLowerCase()),
+    );
 
     return (
-        <div style={{ padding: 20 }}>
-            <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                style={{ marginBottom: 16 }}
-                onClick={() => showModal()}
-            >
-                Add Food
-            </Button>
-            <Table dataSource={foods} columns={columns} rowKey="id" bordered />
+        <div>
+            <Row justify="space-between" style={{ marginBottom: 16 }}>
+                <Col>
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={handleAddClick}
+                    >
+                        Thêm Món
+                    </Button>
+                </Col>
 
-            <Modal
-                title={currentFood ? 'Edit Food' : 'Add Food'}
+                <Col>
+                    <Input.Search
+                        placeholder="Tìm món ăn..."
+                        value={searchText}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        style={{ width: 300 }}
+                    />
+                </Col>
+            </Row>
+
+            <Table
+                columns={createColumns(handleEdit, handleDelete)} // Sử dụng hàm createColumns với handleDelete
+                dataSource={filteredFoods}
+                rowKey="id"
+            />
+
+            <AddEditModal
                 visible={isModalVisible}
-                onOk={handleSave}
                 onCancel={handleCancel}
-                okText="Save"
-                cancelText="Cancel"
-            >
-                <Form form={form} layout="vertical">
-                    <Form.Item
-                        name="name"
-                        label="Name"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please enter the name!',
-                            },
-                        ]}
-                    >
-                        <Input placeholder="Enter food name" />
-                    </Form.Item>
-                    <Form.Item
-                        name="price"
-                        label="Price"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please enter the price!',
-                            },
-                        ]}
-                    >
-                        <InputNumber
-                            min={1}
-                            style={{ width: '100%' }}
-                            placeholder="Enter price"
-                        />
-                    </Form.Item>
-                    <Form.Item name="description" label="Description">
-                        <Input.TextArea placeholder="Enter description" />
-                    </Form.Item>
-                </Form>
-            </Modal>
+                onSave={handleSave}
+                editItem={editItem}
+            />
         </div>
     );
 };
