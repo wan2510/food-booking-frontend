@@ -11,7 +11,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 ...editingVoucher,
                 create_at: editingVoucher.create_at ? dayjs(editingVoucher.create_at) : null,
                 expired_at: editingVoucher.expired_at ? dayjs(editingVoucher.expired_at) : null,
-                remain_quantity: editingVoucher.remain_quantity || editingVoucher.quantity, // gán lại giá trị cho remain_quantity
+                remain_quantity: editingVoucher.remain_quantity || editingVoucher.quantity,
             });
         } else {
             form.resetFields();

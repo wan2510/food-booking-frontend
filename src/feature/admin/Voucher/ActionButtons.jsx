@@ -50,12 +50,10 @@ const ActionButtons = ({ onAdd }) => {
 
     return (
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {/* Nút thêm Voucher */}
             <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
                 Thêm Voucher
             </Button>
 
-            {/* Thanh tìm kiếm và bộ lọc nằm cạnh nhau, căn phải */}
             <div style={{ display: "flex", marginLeft: "auto", gap: "8px" }}>
                 <Search
                     placeholder="Nhập từ khóa tìm kiếm"
