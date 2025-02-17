@@ -3,7 +3,7 @@ import './login.css';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { LoginForm } from './LoginForm/LoginForm';
 import { Link } from 'react-router-dom';
-import react from '../../assets/icon/react.svg';
+import react from '../../assets/icon/icon.jpg';
 
 const Login = () => {
     return (
@@ -16,7 +16,7 @@ const Login = () => {
                     <h2 className="login-form-title">Đăng nhập</h2>
                     <LoginForm />
                     <Flex className="extra-links" justify="center" gap={20}>
-                        <Link to={'#'}>Quên mật khẩu</Link>
+                        <Link to={'/forgotpassword'}>Quên mật khẩu</Link>
                         {'/'}
                         <Link to={'/register'}>Đăng ký</Link>
                     </Flex>
