@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { EmailForm} from '../../component/ExampleForm/EmailForm';
 import { OTPForm} from '../../component/ExampleForm/OTPForm';
-import { RegisterForm} from '../../component/ExampleForm/RegisterForm';
-import './register.css';
+import { ForgotPassForm} from '../../component/ExampleForm/ResetPasswordForm';
+import './forgotPassword.css';
 
-const Register = () => {
+const ForgotPassword = () => {
     const [step, setStep] = useState(1);
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
@@ -23,23 +23,23 @@ const Register = () => {
         setStep(3);
     };
 
-    const handleRegister = (values) => {
-        console.log('Registering with:', values);
+    const handleResetPassword = (values) => {
+        console.log('Password reset for:', email);
     };
 
     return (
-        <div className="register-container">
-            <Row className="register-box" align="middle" justify="center">
-                <Col span={12} className="register-form-container">
-                    <h2 className='register-form-title'>Đăng ký</h2>
+        <div className="forgot-password-container">
+            <Row className="forgot-password-box" align="middle" justify="center">
+                <Col span={12} className="forgot-password-form-container">
+                    <h2 className='forgot-password-title'>Quên mật khẩu</h2>
                     {step === 1 && <EmailForm handleEmailSubmit={handleEmailSubmit} />}
                     {step === 2 && <OTPForm handleOtpSubmit={handleOtpSubmit} />}
-                    {step === 3 && <RegisterForm handleRegister={handleRegister} />}
-                    <p className="extra-links">Đã có tài khoản? <Link to={'/login'}>Đăng nhập</Link></p>
+                    {step === 3 && <ResetPasswordForm handleResetPassword={handleResetPassword} />}
+                    <p className="extra-links">Quay lại <Link to={'/login'}>Đăng nhập</Link></p>
                 </Col>
             </Row>
         </div>
     );
 };
 
-export default Register;
+export default ForgotPassword;

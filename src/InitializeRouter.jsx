@@ -8,12 +8,18 @@ import Login from './feature/login';
 import FoodCategory from './feature/admin/FoodCategory';
 import Table from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
+import Register from './feature/register';
+import ForgotPassword from './feature/forgotpassword';
 
 export const InitialRouter = () => {
     return (
         <Routes>
             {/* Login */}
             <Route path="/login" element={<Login />} />
+            {/*Register*/}
+            <Route path="/register" element={<Register/>}/>
+            {/*ForgotPassword*/}
+            <Route path="/forgotpassword" element={<ForgotPassword/>}/>
 
             {/* Dashboard */}
             <Route path="/" element={<DashboardLayout />}>
