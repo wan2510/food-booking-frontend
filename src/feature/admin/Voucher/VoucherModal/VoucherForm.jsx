@@ -32,7 +32,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 label="Giảm giá (%)"
                 rules={[
                     { required: true, message: "Vui lòng nhập phần trăm giảm giá" },
-                    { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
+                    { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số dương lớn hơn 0!'))},
                 ]}
             >
                 <Input
@@ -45,8 +45,8 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 name="max_discount_value"
                 label="Giảm tối đa (kVNĐ)"
                 rules={[
-                    { required: true, message: "Vui lòng nhập giá giảm tối đa" },
-                    { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
+                    { required: true, message: "Vui lòng nhập giá giảm tối đa" }, 
+                    { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!'))},
                 ]}
             >
                 <Input
@@ -60,7 +60,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 label="Mức tối thiểu (kVNĐ)"
                 rules={[
                     { required: true, message: "Vui lòng nhập giá tối thiểu" },
-                    { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số lớn hơn hoặc bằng 0!" },
+                    { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập 1 số nguyên lớn hơn hoặc bằng 0!" },
                 ]}
             >
                 <Input
@@ -104,7 +104,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 label="Số lượng (lượt)"
                 rules={[
                     { required: true, message: "Vui lòng nhập số lượng" },
-                    { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
+                    { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!'))},
                 ]}
             >
                 <Input
@@ -118,7 +118,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                     label="Số lượng (lượt)"
                     rules={[
                         { required: true, message: "Vui lòng nhập số lượng" },
-                        { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
+                        { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!'))},
                     ]}
                 >
                     <Input
@@ -135,7 +135,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                     label="Số lượng còn lại"
                     rules={[
                         { required: true, message: "Vui lòng nhập số lượng còn lại" },
-                        { pattern: /^[0-9]\d*$/, message: "Vui lòng nhập số nguyên dương khác 0!" },
+                        { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!'))},
                     ]}
                 >
                     <Input
