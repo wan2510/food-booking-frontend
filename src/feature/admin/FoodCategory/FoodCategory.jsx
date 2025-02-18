@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Table, Space, Button, Modal, Form, Input, DatePicker } from "antd";
 import dayjs from "dayjs";
 
-const App = () => {
+const FoodCategory = () => {
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false);
     const [editingData, setEditingData] = useState(null);
     const [data, setData] = useState([
         { key: "1", ID: "1", name: "Đồ uống", description: "Các loại nước uống", created_at: "2025-02-15", updated_at: "2025-02-17" },
         { key: "2", ID: "2", name: "Món chính", description: "Các món ăn chính", created_at: "2025-02-15", updated_at: "2025-02-17" },
+        { key: "3", ID: "3", name: "Món ăn vặt", description: "Đồ ăn nhẹ", created_at: "2025-02-15", updated_at: "2025-02-17" },
         { key: "4", ID: "4", name: "Tráng miệng", description: "Các món tráng miệng", created_at: "2025-02-15", updated_at: "2025-02-17" },
     ]);
 
@@ -74,7 +75,7 @@ const App = () => {
         }
 
         setOpen(false);
-};
+    };
 
     
     const handleDelete = (id) => {
@@ -116,4 +117,4 @@ const App = () => {
     );
 };
 
-export default App; 
+export default FoodCategory;
