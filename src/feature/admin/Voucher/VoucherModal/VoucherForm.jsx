@@ -11,10 +11,12 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 ...editingVoucher,
                 create_at: editingVoucher.create_at ? dayjs(editingVoucher.create_at) : null,
                 expired_at: editingVoucher.expired_at ? dayjs(editingVoucher.expired_at) : null,
-                remain_quantity: editingVoucher.remain_quantity || editingVoucher.quantity,
             });
         } else {
             form.resetFields();
+            form.setFieldsValue({
+                remain_quantity: form.getFieldValue("quantity") || 0, // Đặt theo quantity khi tạo mới
+            });
         }
     }, [editingVoucher]);
 
@@ -32,7 +34,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 label="Giảm giá (%)"
                 rules={[
                     { required: true, message: "Vui lòng nhập phần trăm giảm giá" },
-                    { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số dương lớn hơn 0!'))},
+                    { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số dương lớn hơn 0!')) },
                 ]}
             >
                 <Input
@@ -45,8 +47,8 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 name="max_discount_value"
                 label="Giảm tối đa (kVNĐ)"
                 rules={[
-                    { required: true, message: "Vui lòng nhập giá giảm tối đa" }, 
-                    { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!'))},
+                    { required: true, message: "Vui lòng nhập giá giảm tối đa" },
+                    { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!')) },
                 ]}
             >
                 <Input
@@ -104,7 +106,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                 label="Số lượng (lượt)"
                 rules={[
                     { required: true, message: "Vui lòng nhập số lượng" },
-                    { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!'))},
+                    { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!')) },
                 ]}
             >
                 <Input
@@ -118,7 +120,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                     label="Số lượng (lượt)"
                     rules={[
                         { required: true, message: "Vui lòng nhập số lượng" },
-                        { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!'))},
+                        { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!')) },
                     ]}
                 >
                     <Input
@@ -135,7 +137,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
                     label="Số lượng còn lại"
                     rules={[
                         { required: true, message: "Vui lòng nhập số lượng còn lại" },
-                        { pattern: /^[0-9.]\d*$/, validator: (_, value) => (value > 0 ? Promise.resolve() : Promise.reject('Vui lòng nhập 1 số nguyên dương lớn hơn 0!'))},
+                        { pattern: /^[0-9.]\d*$/, message: "Vui lòng nhập 1 số nguyên dương!" },
                     ]}
                 >
                     <Input
@@ -148,8 +150,8 @@ const VoucherForm = ({ form, editingVoucher }) => {
             {editingVoucher && (
                 <Form.Item name="status" label="Trạng thái">
                     <Select>
-                        <Option value="Còn hiệu lực">Còn hiệu lực</Option>
-                        <Option value="Hết hiệu lực">Hết hiệu lực</Option>
+                        <Option value="Khả dụng">Khả dụng</Option>
+                        <Option value="Không khả dụng">Không khả dụng</Option>
                     </Select>
                 </Form.Item>
             )}

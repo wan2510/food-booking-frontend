@@ -57,7 +57,7 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
             dataIndex: "status",
             key: "status",
             render: (status) => {
-                const color = status === "Còn hiệu lực" ? "green" : "red";
+                const color = status === "Khả dụng" ? "green" : "red";
                 return <Tag color={color}>{status}</Tag>;
             },
         },

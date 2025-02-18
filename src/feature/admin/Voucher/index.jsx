@@ -17,7 +17,7 @@ const Voucher = () => {
       remain_quantity: "13",
       quantity: "30",
       create_at: dayjs("01/02/2025", "DD/MM/YYYY").toISOString(),
-      status: "Còn hiệu lực",
+      status: "Khả dụng",
     },
   ]);
 
@@ -54,18 +54,46 @@ const Voucher = () => {
     form.validateFields().then((values) => {
       values.create_at = values.create_at.toISOString();
       values.expired_at = values.expired_at.toISOString();
-      values.status = dayjs(values.expired_at).endOf("day").isBefore(dayjs()) ? "Hết hiệu lực" : "Còn hiệu lực";
-      values.remain_quantity = values.quantity;
 
-      if (editingVoucher) {
-        setVouchers((prev) =>
-          prev.map((v) => (v.id === editingVoucher.id ? { ...v, ...values } : v))
-        );
-      } else {
-        setVouchers((prev) => [...prev, { id: Date.now(), ...values }]);
+      if (!editingVoucher) {
+        values.remain_quantity = values.quantity;
+      } else if (values.remain_quantity > values.quantity) {
+        values.remain_quantity = values.quantity;
       }
+
+      const isExpired = dayjs(values.expired_at).endOf("day").isBefore(dayjs());
+      const isOutOfStock = parseInt(values.remain_quantity, 10) === 0;
+
+      values.status = isExpired || isOutOfStock ? "Không khả dụng" : "Khả dụng";
+
+      setVouchers((prev) =>
+        editingVoucher
+          ? prev.map((v) => (v.id === editingVoucher.id ? { ...v, ...values } : v))
+          : [...prev, { id: Date.now(), ...values }]
+      );
+
       handleCancel();
     });
+  };
+
+
+  const handleUseVoucher = (id) => {
+    setVouchers((prev) =>
+      prev.map((v) => {
+        if (v.id === id) {
+          const newRemainQuantity = Math.max(0, v.remain_quantity - 1);
+          const isOutOfStock = newRemainQuantity === 0;
+          const isExpired = dayjs(v.expired_at).endOf("day").isBefore(dayjs());
+
+          return {
+            ...v,
+            remain_quantity: newRemainQuantity,
+            status: isExpired || isOutOfStock ? "Không khả dụng" : "Khả dụng",
+          };
+        }
+        return v;
+      })
+    );
   };
 
   const handleDelete = (id) => {
