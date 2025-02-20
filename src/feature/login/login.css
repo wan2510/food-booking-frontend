@@ -5,8 +5,11 @@
     justify-content: center;
     height: 100vh;
     margin: 0;
-    background: linear-gradient(to right, #FF8C42, #D72638);
+    background-image: url(../../assets/icon/bg2.jpg);
     width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
 .login-box {

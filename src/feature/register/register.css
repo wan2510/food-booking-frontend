@@ -5,8 +5,11 @@
     justify-content: center;
     height: 100vh;
     margin: 0;
-    background: linear-gradient(to right, #ff9800, #ff5722);
+    background-image: url(../../assets/icon/bgblur.jpg);
     width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
 .register-box {
