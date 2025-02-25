@@ -17,7 +17,7 @@ const Voucher = () => {
       remain_quantity: "13",
       quantity: "30",
       create_at: dayjs("01/02/2025", "DD/MM/YYYY").toISOString(),
-      status: "Khả dụng",
+      status: "Không khả dụng",
     },
   ]);
 
@@ -52,29 +52,36 @@ const Voucher = () => {
 
   const handleSave = () => {
     form.validateFields().then((values) => {
-      values.create_at = values.create_at.toISOString();
-      values.expired_at = values.expired_at.toISOString();
+        values.create_at = values.create_at.toISOString();
+        values.expired_at = values.expired_at.toISOString();
 
-      if (!editingVoucher) {
-        values.remain_quantity = values.quantity;
-      } else if (values.remain_quantity > values.quantity) {
-        values.remain_quantity = values.quantity;
-      }
+        values.quantity = parseInt(values.quantity, 10);
 
-      const isExpired = dayjs(values.expired_at).endOf("day").isBefore(dayjs());
-      const isOutOfStock = parseInt(values.remain_quantity, 10) === 0;
+        if (editingVoucher) {
+            values.remain_quantity = 
+                values.remain_quantity !== undefined 
+                    ? parseInt(values.remain_quantity, 10) 
+                    : editingVoucher.remain_quantity;
+        } else {
+            values.remain_quantity = values.quantity;
+        }
 
-      values.status = isExpired || isOutOfStock ? "Không khả dụng" : "Khả dụng";
+        const isExpired = dayjs(values.expired_at).endOf("day").isBefore(dayjs());
+        const isOutOfStock = values.remain_quantity === 0;
 
-      setVouchers((prev) =>
-        editingVoucher
-          ? prev.map((v) => (v.id === editingVoucher.id ? { ...v, ...values } : v))
-          : [...prev, { id: Date.now(), ...values }]
-      );
+        values.status = isExpired || isOutOfStock ? "Không khả dụng" : "Khả dụng";
 
-      handleCancel();
+        setVouchers((prev) =>
+            editingVoucher
+                ? prev.map((v) => (v.id === editingVoucher.id ? { ...v, ...values } : v))
+                : [...prev, { id: Date.now(), ...values }]
+        );
+
+        handleCancel();
     });
-  };
+};
+
+  
 
 
   const handleUseVoucher = (id) => {

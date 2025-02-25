@@ -30,7 +30,7 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
             key: "create_at",
             render: (text) => {
                 const formattedDate = dayjs(text);
-                return formattedDate.isValid() ? formattedDate.format("DD/MM/YYYY") : "Invalid Date";
+                return formattedDate.isValid() ? formattedDate.format("DD/MM/YYYY") : "Không xác định";
             },
         },
         {
@@ -39,7 +39,7 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
             key: "expired_at",
             render: (text) => {
                 const formattedDate = dayjs(text);
-                return formattedDate.isValid() ? formattedDate.format("DD/MM/YYYY") : "Invalid Date";
+                return formattedDate.isValid() ? formattedDate.format("DD/MM/YYYY") : "Không xác định";
             },
         },        
         {
@@ -51,6 +51,9 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
             title: "Còn lại",
             dataIndex: "remain_quantity",
             key: "remain_quantity",
+            render: (text) => {
+                return text !== null && text !== undefined ? parseInt(text, 10) : "Không có dữ liệu";
+            },
         },
         {
             title: "Trạng thái",
@@ -80,7 +83,6 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
                             Xóa
                         </Button>
                     </Popconfirm>
-
                 </Space>
             ),
         },
