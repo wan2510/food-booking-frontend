@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Form } from "antd";
 import dayjs from "dayjs";
 
-import VoucherModal from "./VoucherModal/VoucherModal";
-import VoucherTable from "./VoucherTable";
+import VoucherModal from "./voucherModal/voucherModal";
+import VoucherTable from "./voucherTable";
 import ActionButtons from "./ActionButtons";
 
 const Voucher = () => {

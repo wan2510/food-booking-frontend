@@ -10,6 +10,7 @@ import Table from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
 import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
+import Order from './feature/order';
 
 export const InitialRouter = () => {
     return (
@@ -33,6 +34,9 @@ export const InitialRouter = () => {
                 <Route path="table" element={<Table />} />
                 <Route path="voucher" element={<Voucher />} />
             </Route>
+
+            {/* Order */}
+            <Route path="/order" element={<Order />} />
 
             {/* 404 */}
             <Route path="*" element={<PageNotFound />} />
