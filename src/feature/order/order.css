@@ -1,0 +1,105 @@
+/* Điều chỉnh khoảng cách tổng thể */
+.page-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px; /* Chừa lề hai bên cho toàn bộ trang */
+}
+
+.menu-container {
+    flex-grow: 1;
+    margin-left: 40px; /* Dịch menu vào giữa một chút */
+    margin-right: 20px; /* Giữ khoảng cách với hóa đơn */
+}
+
+.bill-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex-grow: 1; /* Mở rộng hóa đơn để căn đều với menu */
+    max-width: none; /* Loại bỏ giới hạn chiều rộng */
+    margin-right: 40px; /* Dịch hóa đơn vào trong một chút */
+}
+
+/* Khoảng cách giữa các phần tử trong hóa đơn */
+.bill-container .ant-typography {
+    margin-bottom: 12px;
+}
+
+/* Giỏ hàng */
+.bill-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* Thông tin món ăn */
+.bill-item .item-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* Tên món ăn */
+.bill-item .item-name {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Giá món ăn */
+.bill-item .item-price {
+    font-size: 14px;
+    color: #999;
+    text-decoration: line-through;
+}
+
+/* Giá sau khi giảm (nếu có) */
+.bill-item .final-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ff5722;
+}
+
+/* Số lượng */
+.bill-item .item-quantity {
+    width: 60px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
+    margin: 0 10px;
+}
+
+/* Nút xóa */
+.bill-item .delete-btn {
+    background: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.bill-item .delete-btn:hover {
+    background: #d9363e;
+}
+
+/* Tổng tiền */
+.total-price {
+    font-weight: bold;
+    font-size: 18px;
+    color: #ff5722;
+    text-align: right;
+    margin-top: 10px;
+}
+
+/* Danh mục filter mỗi dòng một mục */
+.filter-container .ant-checkbox-wrapper {
+    display: block; /* Mỗi checkbox sẽ chiếm một dòng */
+    margin-bottom: 8px; /* Thêm khoảng cách giữa các mục */
+}
