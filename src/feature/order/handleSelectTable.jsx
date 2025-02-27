@@ -1,21 +1,26 @@
-import { Select } from 'antd';
+import { Select } from "antd";
+import { useMemo } from "react";
 
-const handleSelectTable = ({ tables, selectedTable, onSelect }) => {
-    return (
-      <Select
-        placeholder="Chọn bàn"
-        style={{ width: "100%" }}
-        onChange={onSelect}
-        value={selectedTable || undefined}
-        disabled={!!selectedTable}
-      >
-        {tables.map((table) => (
-          <Select.Option key={table.id} value={table.id}>
-            Bàn {table.number} ({table.seats} chỗ)
-          </Select.Option>
-        ))}
-      </Select>
-    );
-  };
-  
-export default handleSelectTable;
+const HandleSelectTable = ({ tables = [], selectedTable, onSelect }) => {
+  const options = useMemo(
+    () =>
+      tables.map((table) => ({
+        label: `Bàn ${table.number} (${table.seats} chỗ)`,
+        value: table.id,
+      })),
+    [tables]
+  );
+
+  return (
+    <Select
+      placeholder="Chọn bàn"
+      style={{ width: "100%" }}
+      onChange={onSelect}
+      value={selectedTable || undefined}
+      disabled={!!selectedTable}
+      options={options}
+    />
+  );
+};
+
+export default HandleSelectTable;

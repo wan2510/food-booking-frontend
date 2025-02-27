@@ -1,15 +1,22 @@
-import { Select } from 'antd';
+import { Select } from "antd";
 
-const handleSelectVoucher = ({ vouchers, onSelect }) => {
-    return (
-        <Select placeholder="Chọn voucher" style={{ width: '100%' }} onChange={onSelect}>
-          {vouchers.map(voucher => (
-            <Select.Option key={voucher.id} value={voucher.discount}>
-              {voucher.name} - Giảm {voucher.discount}%
-            </Select.Option>
-          ))}
-        </Select>
-      );
-    };
+const HandleSelectVoucher = ({ vouchers = [], onSelect }) => {
+  const options = vouchers.map((voucher) => ({
+    label: `${voucher.name} - Giảm ${voucher.discount}%`,
+    value: voucher.id, // Dùng ID thay vì discount để linh hoạt hơn
+  }));
 
-export default handleSelectVoucher;
+  return (
+    <Select
+      placeholder="Chọn voucher"
+      style={{ width: "100%" }}
+      onChange={(value) => {
+        const selectedVoucher = vouchers.find((voucher) => voucher.id === value);
+        onSelect(selectedVoucher); // Trả về toàn bộ object voucher
+      }}
+      options={options}
+    />
+  );
+};
+
+export default HandleSelectVoucher;

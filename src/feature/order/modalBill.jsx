@@ -10,7 +10,7 @@ const ModalBill = ({ visible, onClose, bill, updateItem, vouchers, tables }) => 
   const totalPrice = bill.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <Modal title="Chi tiết đơn hàng" open={visible} onCancel={onClose} footer={null}>
+    <Modal title="Chi tiết đơn hàng" open={visible} onCancel={onClose} footer={null} width={600}>
       <List
         bordered
         dataSource={bill}
@@ -24,9 +24,6 @@ const ModalBill = ({ visible, onClose, bill, updateItem, vouchers, tables }) => 
         )}
       />
       <Title level={4} style={{ marginTop: 16 }}>Tổng tiền: {totalPrice.toLocaleString()} VND</Title>
-
-      <ChoosingVoucher vouchers={vouchers} onSelect={() => {}} />
-      <CheckingTable tables={tables} selectedTable={selectedTable} onSelect={setSelectedTable} />
     </Modal>
   );
 };
