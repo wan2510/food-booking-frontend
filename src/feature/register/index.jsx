@@ -5,6 +5,7 @@ import { EmailForm} from '../../component/ExampleForm/EmailForm';
 import { OTPForm} from '../../component/ExampleForm/OTPForm';
 import { RegisterForm} from '../../component/ExampleForm/RegisterForm';
 import './register.css';
+import React from "react";
 
 const Register = () => {
     const [step, setStep] = useState(1);

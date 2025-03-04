@@ -31,8 +31,8 @@ const FooterComponent = () => {
           <h3>Liên kết nhanh</h3>
           <ul>
             <li><a href="#">Thông tin mới nhất</a></li>
-            <li><a href="#">Món ăn phổ biến</a></li>
-            <li><a href="#">Đặt bàn</a></li>
+            <li><a href="/food">Món ăn</a></li>
+            <li><a href="/book">Đặt bàn ngay</a></li>
             <li><a href="#">Dịch vụ và cài đặt</a></li>
             <li><a href="#">Món ăn sắp ra mắt</a></li>
           </ul>
@@ -48,7 +48,7 @@ const FooterComponent = () => {
       </div>
 
       <div className="footer-bottom">
-        <p>©copy 2025. Nomster All Right Reserved</p>
+        <p>Copyright © Nomster. All Right Reserved</p>
       </div>
     </Footer>
   );

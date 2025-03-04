@@ -3,7 +3,7 @@ import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
 import HeaderComponent from "./Header/HeaderComponent";
 import FooterComponent from "./Footer/footercomponent";
-
+import './header.css'
 const { Content } = Layout;
 
 const DashboardLayout = () => {
@@ -13,7 +13,7 @@ const DashboardLayout = () => {
       <Content style={{ padding: "1px", minHeight: "calc(100vh - 120px)" }}>
         <Outlet />
       </Content>
-      <FooterComponent /> {}
+      <FooterComponent />
     </Layout>
   );
 };
