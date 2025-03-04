@@ -1,15 +1,23 @@
-import { Button, Flex, Form, Input } from 'antd';
-import { FaEnvelope, FaLock } from 'react-icons/fa';
 import React from "react";
+import { Button, Form, Input, message } from 'antd';
+import { FaEnvelope, FaLock } from 'react-icons/fa';
+import { useLogin } from '../hook/useLogin';
+import { useForm } from 'antd/es/form/Form';
 
 export const LoginForm = () => {
+    const { loginMutate } = useLogin();
+    const [form] = useForm();
+
     const handleSubmitForm = () => {
-        console.log('TEST');
+        loginMutate({
+            email: form.getFieldValue('email'),
+            password: form.getFieldValue('password'),
+        });
     };
 
     return (
-        <Form onFinish={handleSubmitForm}>
-            <Form.Item name={'mail'}>
+        <Form form={form} onFinish={handleSubmitForm}>
+            <Form.Item name={'email'}>
                 <Input placeholder={'Địa chỉ email'} prefix={<FaEnvelope />} />
             </Form.Item>
             <Form.Item name={'password'}>
