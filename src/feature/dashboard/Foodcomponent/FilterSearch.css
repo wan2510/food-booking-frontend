@@ -1,0 +1,15 @@
+.filter-search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  
+  .search-input {
+    width: 250px;
+  }
+  
+  .filter-select, .sort-select {
+    width: 180px;
+  }

@@ -1,5 +1,21 @@
-const Home = () => {
-    return <>Day la trang home</>;
-};
+import React from 'react';
+import Banner from '../Homecomponent/banner.jsx';
+import WhyChooseUs from '../Homecomponent/whyChooseUs.jsx';
+import FeaturedMenu from '../Homecomponent/featuredMenu.jsx';
+import FoodExamples from '../Homecomponent/foodExamples.jsx';
+import SpecialOffers from '../Homecomponent/specialOffer.jsx';
+import CustomerReviews from '../Homecomponent/customerReview.jsx';
 
-export default Home;
+const HomePage = () => {
+    return (
+        <div>
+            <Banner />
+            <WhyChooseUs/>
+            <FeaturedMenu/>
+            <FoodExamples/>
+            <SpecialOffers/>
+            <CustomerReviews/>
+        </div>
+    );
+};
+export default HomePage;

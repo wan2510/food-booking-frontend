@@ -1,5 +1,8 @@
 import { Route, Routes } from 'react-router-dom';
 import Home from './feature/dashboard/Home';
+import FoodList from './feature/dashboard/FoodList';
+import Booking from './feature/dashboard/Booking';
+import Contacting from './feature/dashboard/Contacting';
 import DashboardLayout from './layout/DashboardLayout';
 import Food from './feature/admin/Food';
 import AdminLayout from './layout/AdminLayout';
@@ -10,6 +13,7 @@ import Table from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
 import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
+import React from "react";
 
 export const InitialRouter = () => {
     return (
@@ -23,8 +27,12 @@ export const InitialRouter = () => {
 
             {/* Dashboard */}
             <Route path="/" element={<DashboardLayout />}>
-                <Route path="home" element={<Home />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/foodlist" element={<FoodList/>} />
+                <Route path="/booking" element={<Booking/>} />
+                <Route path="/contacting" element={<Contacting/>} />
             </Route>
+            
 
             {/* Admin */}
             <Route path="/admin" element={<AdminLayout />}>

@@ -1,12 +1,21 @@
-import { Outlet } from 'react-router-dom';
+import React from "react";
+import { Layout } from "antd";
+import { Outlet } from "react-router-dom";
+import HeaderComponent from "./Header/HeaderComponent";
+import FooterComponent from "./Footer/footercomponent";
+import './header.css'
+const { Content } = Layout;
 
 const DashboardLayout = () => {
-    return (
-        <div>
-            Day la Dashboard layout
-            <Outlet />
-        </div>
-    );
+  return (
+    <Layout>
+      <HeaderComponent />
+      <Content style={{ padding: "1px", minHeight: "calc(100vh - 120px)" }}>
+        <Outlet />
+      </Content>
+      <FooterComponent />
+    </Layout>
+  );
 };
 
 export default DashboardLayout;
