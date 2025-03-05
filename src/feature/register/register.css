@@ -5,8 +5,12 @@
     justify-content: center;
     height: 100vh;
     margin: 0;
-    background: linear-gradient(to right, #ff9800, #ff5722);
+    background: url(../../assets/image/backgroundauth.jpg);
     width: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .register-box {

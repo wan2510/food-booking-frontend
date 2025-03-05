@@ -1,0 +1,78 @@
+.featured-menu {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: white;
+  }
+  
+  .section-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #333;
+  }
+  
+  .menu-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .menu-item {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 250px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .menu-item:hover {
+    transform: translateY(-5px);
+  }
+  
+  .menu-image {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .menu-tag {
+    position: absolute;
+    top: 10px;
+    left: 1px;
+    background-color: #ff5722;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 1px;
+    border-radius: 5px;
+    text-transform: uppercase;
+  }
+  .menu-image-container {
+    position: relative;
+  }
+  
+  .menu-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #333;
+  }
+  
+  .menu-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  
+  .menu-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+    text-align: center;
+    display: block;
+    margin-top: 5px;
+  }

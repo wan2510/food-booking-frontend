@@ -24,7 +24,7 @@ export const useLogin = () => {
     const navigateToPage = (role) => {
         switch (role) {
             case 'ROLE_USER':
-                navigate('/home');
+                navigate('/');
                 break;
             case 'ROLE_ADMIN':
                 navigate('/admin');
