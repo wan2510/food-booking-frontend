@@ -4,10 +4,10 @@ import { FaUser, FaLock, FaPhone } from 'react-icons/fa';
 export const RegisterForm = ({ handleRegister }) => {
     return (
         <Form onFinish={handleRegister}>
-            <Form.Item name={'fullname'}>
+            <Form.Item name={'fullName'}>
                 <Input placeholder={'Họ và tên'} prefix={<FaUser />} />
             </Form.Item>
-            <Form.Item name={'phonenumber'}>
+            <Form.Item name={'phone'}>
                 <Input placeholder={'Số điện thoại'} prefix={<FaPhone />} />
             </Form.Item>
             <Form.Item name={'password'}>

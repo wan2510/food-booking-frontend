@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import Home from './feature/dashboard/Home';
+import FoodList from './feature/dashboard/FoodList';
 import DashboardLayout from './layout/DashboardLayout';
 import Food from './feature/admin/Food';
 import AdminLayout from './layout/AdminLayout';
@@ -10,6 +11,8 @@ import Table from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
 import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
+import Book from './feature/dashboard/Book';
+import Contact from './feature/dashboard/Contact';
 
 export const InitialRouter = () => {
     return (
@@ -24,6 +27,9 @@ export const InitialRouter = () => {
             {/* Dashboard */}
             <Route path="/" element={<DashboardLayout />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/foodlist" element={<FoodList />} />
+                <Route path="/book" element={<Book/>} />
+                <Route path="/contact" element={<Contact/>} />
             </Route>
 
             {/* Admin */}

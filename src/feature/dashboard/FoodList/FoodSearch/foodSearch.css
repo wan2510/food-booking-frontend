@@ -1,0 +1,43 @@
+.food-search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  
+  .food-search-input,
+  .food-filter {
+    padding: 10px;
+    border: 2px solid #ff5733;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+  }
+  
+  .food-search-input {
+    width: 250px;
+  }
+  
+  .food-filter {
+    width: 150px;
+    cursor: pointer;
+  }
+  
+  .food-search-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .food-search-btn:hover {
+    background-color: #c0392b;
+  }
+  
