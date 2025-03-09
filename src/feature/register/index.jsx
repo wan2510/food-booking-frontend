@@ -54,31 +54,38 @@ const Register = () => {
 
     const handleRegister = async (values) => {
         console.log("Registering with:", values);
-
+    
         try {
             const response = await fetch("http://localhost:8080/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email,
-                    otp,
-                    name: values.name,
+                    phone: values.phone,
+                    fullName: values.fullName,
                     password: values.password
                 })
             });
-
+    
             if (response.ok) {
-                console.log("Đăng ký thành công!");
+                const userData = await response.json();
+                console.log("Đăng ký thành công!", userData);
+    
+                localStorage.setItem("user", JSON.stringify(userData));
+    
                 navigate("/");
             } else {
-                console.error("Đăng ký thất bại");
-                alert("Có lỗi xảy ra khi đăng ký. Vui lòng thử lại!");
+                const errorData = await response.json();
+                console.error("Đăng ký thất bại:", errorData);
+                alert(errorData.message || "Có lỗi xảy ra khi đăng ký. Vui lòng thử lại!");
             }
         } catch (error) {
             console.error("Lỗi khi đăng ký:", error);
             alert("Có lỗi xảy ra khi gửi yêu cầu đăng ký.");
         }
     };
+    
+    
 
     return (
         <div className="register-container">

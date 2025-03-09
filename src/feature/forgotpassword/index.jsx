@@ -5,6 +5,7 @@ import { EmailForm} from '../../component/ExampleForm/EmailForm';
 import { OTPForm} from '../../component/ExampleForm/OTPForm';
 import { ForgotPassForm} from '../../component/ExampleForm/ResetPasswordForm';
 import './forgotPassword.css';
+import React from "react";
 
 const ForgotPassword = () => {
     const [step, setStep] = useState(1);
