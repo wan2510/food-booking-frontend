@@ -1,0 +1,77 @@
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 5px 20px;
+    font-size: 14px;
+  }
+  
+  .top-left span {
+    margin-right: 15px;
+    cursor: pointer;
+  }
+  
+  .top-left span:hover {
+    text-decoration: underline;
+  }
+  
+  .top-right .social-icon {
+    margin-left: 10px;
+    color: white;
+    font-size: 18px;
+  }
+  
+  .top-right .social-icon:hover {
+    color: #ff4500;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+
+  .logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff4500;
+    text-decoration: none;
+  }
+  
+  .logo:hover {
+    color: #d93e00;
+  }
+
+  .menu {
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .menu .ant-menu-item {
+    font-size: 16px;
+    font-weight: 500;
+    transition: 0.3s;
+  }
+  
+  .menu .ant-menu-item:hover {
+    color: #ff4500 !important;
+  }
+  
+  .user-avatar {
+    cursor: pointer;
+    background-color: #ddd;
+  }
+  
+  .user-avatar:hover {
+    filter: brightness(90%);
+  }
+  

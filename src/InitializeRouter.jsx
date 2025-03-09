@@ -24,15 +24,14 @@ export const InitialRouter = () => {
             <Route path="/register" element={<Register/>}/>
             {/*ForgotPassword*/}
             <Route path="/forgotpassword" element={<ForgotPassword/>}/>
-
-            {/* Dashboard */}
+{/* Dashboard */}
             <Route path="/" element={<DashboardLayout />}>
                 <Route path="/" element={<Home />} />
-                <Route path="/foodlist" element={<FoodList/>} />
-                <Route path="/booking" element={<Booking/>} />
-                <Route path="/contacting" element={<Contacting/>} />
+                <Route path="/foodlist" element={<FoodList />} />
+                <Route path="/book" element={<Book/>} />
+                <Route path="/contact" element={<Contact/>} />
             </Route>
-            
+
 
             {/* Admin */}
             <Route path="/admin" element={<AdminLayout />}>

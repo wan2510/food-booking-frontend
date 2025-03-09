@@ -1,21 +1,19 @@
-import React from 'react';
-import Banner from '../Homecomponent/banner.jsx';
-import WhyChooseUs from '../Homecomponent/whyChooseUs.jsx';
-import FeaturedMenu from '../Homecomponent/featuredMenu.jsx';
-import FoodExamples from '../Homecomponent/foodExamples.jsx';
-import SpecialOffers from '../Homecomponent/specialOffer.jsx';
-import CustomerReviews from '../Homecomponent/customerReview.jsx';
+import AboutUs from "./AboutUs";
+import Banner from "./Banner/banner";
+import CustomerReviews from "./CustomerReview";
+import FeaturedMenu from "./FeaturedMenu";
+import FoodExamples from "./FoodExample";
 
-const HomePage = () => {
-    return (
+const Home = () => {
+    return(
         <div>
-            <Banner />
-            <WhyChooseUs/>
+            <Banner/>
+            <AboutUs/>
             <FeaturedMenu/>
             <FoodExamples/>
-            <SpecialOffers/>
             <CustomerReviews/>
         </div>
-    );
+    )
 };
-export default HomePage;
+
+export default Home;

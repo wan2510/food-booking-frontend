@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'Jeck Lady';
+    src: url('JeckLady.eot');
+    src: local('Jeck Lady'), local('JeckLady'),
+        url('JeckLady.eot?#iefix') format('embedded-opentype'),
+        url('JeckLady.woff2') format('woff2'),
+        url('JeckLady.woff') format('woff'),
+        url('JeckLady.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Jeck Lady Underlines';
+    src: url('JeckLadyUnderlines.eot');
+    src: local('Jeck Lady Underlines'), local('JeckLadyUnderlines'),
+        url('JeckLadyUnderlines.eot?#iefix') format('embedded-opentype'),
+        url('JeckLadyUnderlines.woff2') format('woff2'),
+        url('JeckLadyUnderlines.woff') format('woff'),
+        url('JeckLadyUnderlines.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
