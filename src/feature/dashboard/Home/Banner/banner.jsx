@@ -14,7 +14,7 @@ const Banner = () => {
       <div className="banner-content">
         Welcome
         <Button type="primary" className="order-button" onClick={handleOrderClick}>
-          Đặt hàng ngay
+          Đặt bàn ngay
         </Button>
       </div>
     </div>
