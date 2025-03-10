@@ -3,7 +3,8 @@ import './login.css';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { LoginForm } from './LoginForm/LoginForm';
 import { Link } from 'react-router-dom';
-import react from '../../assets/icon/icon.jpg';
+import react from '../../assets/image/icon.jpg';
+import React from "react";
 
 const Login = () => {
     return (
