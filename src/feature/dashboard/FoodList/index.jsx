@@ -1,15 +1,20 @@
-import "./Food.css";
-import React from "react";
-import FilterSearch from "../Foodcomponent/FilterSearch";
-import FoodDetail from "../Foodcomponent/foodDetail";
-import FoodList from "../Foodcomponent/foodList";
+import { useState } from "react";
+import FoodSearch from "./FoodSearch";
+import ListFood from "./ListFood";
 
-const FoodPage = () => {
+const FoodList = () => {
+    const [filteredFoods, setFilteredFoods] = useState([]);
+
+    const handleSearch = (foods) => {
+        setFilteredFoods(foods);
+    };
+
     return (
         <div>
-            <FoodList/>
+            <FoodSearch onSearch={handleSearch} />
+            <ListFood foods={filteredFoods} />
         </div>
     );
 };
 
-export default FoodPage;
+export default FoodList;

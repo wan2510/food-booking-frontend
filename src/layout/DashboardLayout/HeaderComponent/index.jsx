@@ -7,13 +7,6 @@ import "./header.css";
 
 const { Header } = Layout;
 
-const menuItems = [
-  { key: "/", label: <Link to="/">Trang chủ</Link> },
-  { key: "/foodlist", label: <Link to="/foodlist">Món ăn</Link> },
-  { key: "/booking", label: <Link to="/booking">Đặt bàn ngay</Link> },
-  { key: "/contacting", label: <Link to="/contacting">Liên hệ</Link> },
-];
-
 const HeaderComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,7 +14,7 @@ const HeaderComponent = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("userToken");
-    navigate("/login");
+    navigate("/");
   };
 
   const handleRedirect = (path) => {
@@ -53,30 +46,27 @@ const HeaderComponent = () => {
         ),
       },
       { type: "divider" },
-      userToken ? (
-        {
-          key: "3",
-          icon: <LogoutOutlined />,
-          danger: true,
-          label: (
-            <span onClick={handleLogout} style={{ cursor: "pointer" }}>
-              Đăng xuất
-            </span>
-          ),
-        }
-      ) : (
-        {
-          key: "4",
-          icon: <LoginOutlined />,
-          label: <Link to="/login">Đăng nhập</Link>,
-        }
-      ),
+      userToken
+        ? {
+            key: "3",
+            icon: <LogoutOutlined />,
+            danger: true,
+            label: (
+              <span onClick={handleLogout} style={{ cursor: "pointer" }}>
+                Đăng xuất
+              </span>
+            ),
+          }
+        : {
+            key: "4",
+            icon: <LoginOutlined />,
+            label: <Link to="/login">Đăng nhập</Link>,
+          },
     ],
   };
 
   return (
     <Layout>
-      {/* Thanh trên cùng */}
       <div className="top-bar">
         <div className="top-left">
           <span>About</span>
@@ -84,13 +74,18 @@ const HeaderComponent = () => {
           <span>Contact Us</span>
         </div>
         <div className="top-right">
-          <a href="#" className="social-icon"><FaFacebook /></a>
-          <a href="#" className="social-icon"><FaTwitter /></a>
-          <a href="#" className="social-icon"><FaInstagram /></a>
+          <a href="#" className="social-icon">
+            <FaFacebook />
+          </a>
+          <a href="#" className="social-icon">
+            <FaTwitter />
+          </a>
+          <a href="#" className="social-icon">
+            <FaInstagram />
+          </a>
         </div>
       </div>
 
-      {/* Header chính */}
       <Header className="header">
         <Link to="/" className="logo">
           Nomster
@@ -100,10 +95,14 @@ const HeaderComponent = () => {
           mode="horizontal"
           selectedKeys={[location.pathname]}
           className="menu"
-          items={menuItems}
+          items={[
+            { key: "/", label: <Link to="/">Trang chủ</Link> },
+            { key: "/foodlist", label: <Link to="/foodlist">Món ăn</Link> },
+            { key: "/book", label: <Link to="/book">Đặt bàn ngay</Link> },
+            { key: "/contact", label: <Link to="/contact">Liên hệ</Link> },
+          ]}
         />
 
-        {/* Avatar + Dropdown Menu */}
         <Dropdown menu={userMenu} trigger={["hover"]}>
           <Avatar
             size="large"

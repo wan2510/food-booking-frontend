@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import "./bookingForm.css";
+import React, { useState, useEffect } from "react";
+import "./BookingForm.css";
 
 const BookingForm = () => {
   const [formData, setFormData] = useState({
@@ -10,18 +10,29 @@ const BookingForm = () => {
     time: "",
   });
 
+  useEffect(() => {
+    const savedData = localStorage.getItem("bookingData");
+    if (savedData) {
+      setFormData(JSON.parse(savedData));
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+      localStorage.setItem("bookingData", JSON.stringify(updatedData));
+      return updatedData;
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     alert("Đặt bàn thành công!\n" + JSON.stringify(formData, null, 2));
-  };
+    const initialData = { name: "", phone: "", guests: 1, date: "", time: "" };
+    setFormData(initialData);
+    localStorage.setItem("bookingData", JSON.stringify(initialData));
+};
 
   return (
     <div className="booking-container">

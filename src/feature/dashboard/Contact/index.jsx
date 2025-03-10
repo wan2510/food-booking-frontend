@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./contactForm.css";
+import "./ContactForm.css";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -38,7 +38,7 @@ const ContactForm = () => {
       </form>
       <div className="contact-info">
         <h3>Thông tin liên hệ</h3>
-        <p><strong>Địa chỉ:</strong> 163 thôn 3, Thạch Hòa, Thạch Thất, Hà Nội</p>
+        <p><strong>Địa chỉ:</strong> 163 thôn 3, Thạch Hòa, Thạch Thất, Hà Nội, Việt Nam</p>
         <p><strong>Điện thoại:</strong> 0393095515</p>
         <p><strong>Email:</strong> contact@restaurant.com</p>
       </div>
