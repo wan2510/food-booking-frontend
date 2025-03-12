@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Row, Col, Layout, Typography, Card, Button, message } from "antd";
 import HandleOrderFood from "./handleOrderFood/handleOrderFood";
 import ModalBill from "./handleCreateBill.jsx/modalBill";
-import "./order.css"; // Đảm bảo file CSS đã được import
+import "./order.css";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -89,8 +89,6 @@ const OrderPage = () => {
   return (
     <Layout className="order-page">
       <Content className="order-content">
-        <Title level={1} className="page-title">Quản lý Đặt món</Title>
-
         <Row gutter={16} className="order-container">
           {/* Cột menu */}
           <Col span={16}>

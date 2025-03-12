@@ -1,7 +1,15 @@
-import { Menu as AntdMenu } from 'antd';
-import { menuItems } from './menuItems';
-import React from "react";
+import { Menu as AntdMenu } from "antd";
+import { menuItems } from "./menuItems";
+import { useNavigate } from "react-router-dom";
 
 export const Menu = () => {
-    return <AntdMenu items={menuItems} mode="inline" />;
+    const navigate = useNavigate(); 
+
+    return (
+        <AntdMenu
+            mode="inline"
+            items={menuItems}
+            onClick={({ key }) => navigate(key)} 
+        />
+    );
 };
