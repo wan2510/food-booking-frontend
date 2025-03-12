@@ -1,51 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Input, Dropdown } from "antd";
-import { PlusOutlined, FilterOutlined } from "@ant-design/icons";
+import { PlusOutlined, FilterOutlined, ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
 
-const ActionButtons = ({ onAdd }) => {
-    const onSearch = (value) => {
-        console.log("Tìm kiếm:", value);
+const ActionButtons = ({ onAdd, searchText, setSearchText, onSort }) => {
+    const [sortField, setSortField] = useState(null);
+    const [sortOrder, setSortOrder] = useState("asc");
+
+    const handleSort = ({ key }) => {
+        setSortField(key);
+        onSort(key, sortOrder);
     };
 
-    const handleMenuClick = (e) => {
-        console.log("Menu item clicked:", e);
+    const toggleSortOrder = () => {
+        const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+        setSortOrder(newSortOrder);
+        if (sortField) {
+            onSort(sortField, newSortOrder);
+        }
     };
 
     const items = [
-        {
-            key: "1",
-            label: <a href="http://localhost:5173/admin/Voucher">Giảm giá</a>,
-        },
-        {
-            key: "2",
-            label: <a href="http://localhost:5173/admin/Voucher">Giảm tối đa</a>,
-        },
-        {
-            key: "3",
-            label: <a href="http://localhost:5173/admin/Voucher">Mức tối thiểu</a>,
-        },
-        {
-            key: "4",
-            label: <a href="http://localhost:5173/admin/Voucher">Ngày tạo</a>,
-        },
-        {
-            key: "5",
-            label: <a href="http://localhost:5173/admin/Voucher">Ngày hết hạn</a>,
-        },
-        {
-            key: "6",
-            label: <a href="http://localhost:5173/admin/Voucher">Số lượng</a>,
-        },
-        {
-            key: "7",
-            label: <a href="http://localhost:5173/admin/Voucher">Còn lại</a>,
-        },
-        {
-            key: "8",
-            label: <a href="http://localhost:5173/admin/Voucher">Trạng thái</a>,
-        },
+        { key: "code", label: "Mã Voucher" },
+        { key: "name", label: "Tên Voucher" },
+        { key: "discount", label: "Giảm giá (%)" },
+        { key: "max_discount_value", label: "Giảm tối đa (kVNĐ)" },
+        { key: "min_order_value", label: "Mức tối thiểu (kVNĐ)" },
+        { key: "create_at", label: "Ngày tạo" },
+        { key: "expired_at", label: "Ngày hết hạn" },
+        { key: "type", label: "Loại" },
+        { key: "status", label: "Trạng thái" },
     ];
 
     return (
@@ -56,17 +41,11 @@ const ActionButtons = ({ onAdd }) => {
 
             <div style={{ display: "flex", marginLeft: "auto", gap: "8px" }}>
                 <Search
-                    placeholder="Nhập từ khóa tìm kiếm"
-                    onSearch={onSearch}
-                    enterButton
+                    placeholder="Nhập tên voucher"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
                     style={{ width: "250px" }}
                 />
-
-                <Dropdown menu={{ items, onClick: handleMenuClick }} placement="bottomLeft">
-                    <Button>
-                        Lọc <FilterOutlined style={{ fontSize: "16px", color: "#08c" }} />
-                    </Button>
-                </Dropdown>
             </div>
         </div>
     );

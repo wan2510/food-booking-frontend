@@ -1,86 +1,77 @@
 import React from "react";
-import { Table, Space, Button, Tag, Popconfirm } from "antd";
+import { Table, Space, Button, Tag } from "antd";
 import dayjs from "dayjs"; 
 
-const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
+const VoucherTable = ({ vouchers, onEdit }) => {
     const columns = [
         {
-            title: "Mã Voucher",
-            dataIndex: "id",
-            key: "id",
+            title: <strong>Mã Voucher</strong>,
+            dataIndex: "code",
+            key: "code",
+            sorter: (a, b) => a.code.localeCompare(b.code),
         },
         {
-            title: "Giảm giá (%)",
+            title: <strong>Tên Voucher</strong>,
+            dataIndex: "name",
+            key: "name",
+            sorter: (a, b) => a.name.localeCompare(b.name),
+        },
+        {
+            title: <strong>Giảm giá (%)</strong>,
             dataIndex: "discount",
             key: "discount",
+            sorter: (a, b) => Number(a.discount) - Number(b.discount),
         },
         {
-            title: "Giảm tối đa (kVNĐ)",
+            title: <strong>Giảm tối đa (kVNĐ)</strong>,
             dataIndex: "max_discount_value",
             key: "max_discount_value",
+            sorter: (a, b) => Number(a.max_discount_value) - Number(b.max_discount_value),
         },
         {
-            title: "Mức tối thiểu (kVNĐ)",
+            title: <strong>Mức tối thiểu (kVNĐ)</strong>,
             dataIndex: "min_order_value",
             key: "min_order_value",
+            sorter: (a, b) => Number(a.min_order_value) - Number(b.min_order_value),
         },
         {
-            title: "Ngày tạo",
+            title: <strong>Ngày tạo</strong>,
             dataIndex: "create_at",
             key: "create_at",
-            render: (text) => {
-                const formattedDate = dayjs(text);
-                return formattedDate.isValid() ? formattedDate.format("DD/MM/YYYY") : "Invalid Date";
-            },
+            render: (text) => dayjs(text).format("DD/MM/YYYY"),
+            sorter: (a, b) => dayjs(a.create_at).unix() - dayjs(b.create_at).unix(),
         },
         {
-            title: "Ngày hết hạn",
+            title: <strong>Ngày hết hạn</strong>,
             dataIndex: "expired_at",
             key: "expired_at",
-            render: (text) => {
-                const formattedDate = dayjs(text);
-                return formattedDate.isValid() ? formattedDate.format("DD/MM/YYYY") : "Invalid Date";
-            },
-        },        
+            render: (text) => dayjs(text).format("DD/MM/YYYY"),
+            sorter: (a, b) => dayjs(a.expired_at).unix() - dayjs(b.expired_at).unix(),
+        },  
         {
-            title: "Số lượng",
-            dataIndex: "quantity",
-            key: "quantity",
+            title: <strong>Loại</strong>,
+            dataIndex: "type",
+            key: "type",
+            sorter: (a, b) => a.type.localeCompare(b.type),
         },
         {
-            title: "Còn lại",
-            dataIndex: "remain_quantity",
-            key: "remain_quantity",
-        },
-        {
-            title: "Trạng thái",
+            title: <strong>Trạng thái</strong>,
             dataIndex: "status",
             key: "status",
             render: (status) => {
                 const color = status === "Khả dụng" ? "green" : "red";
                 return <Tag color={color}>{status}</Tag>;
             },
+            sorter: (a, b) => a.status.localeCompare(b.status),
         },
         {
-            title: "Thao tác",
+            title: <strong>Thao tác</strong>,
             key: "action",
             render: (_, record) => (
                 <Space>
                     <Button type="primary" onClick={() => onEdit(record)}>
                         Sửa
                     </Button>
-
-                    <Popconfirm
-                        title="Bạn có chắc chắn muốn xóa không?"
-                        onConfirm={() => onDelete(record.id)}
-                        okText="Có"
-                        cancelText="Không"
-                    >
-                        <Button type="primary" danger>
-                            Xóa
-                        </Button>
-                    </Popconfirm>
-
                 </Space>
             ),
         },
@@ -91,6 +82,8 @@ const VoucherTable = ({ vouchers, onEdit, onDelete }) => {
             dataSource={vouchers}
             columns={columns}
             rowKey="id"
+            bordered
+            pagination={{ pageSize: 5 }} 
         />
     );
 };
