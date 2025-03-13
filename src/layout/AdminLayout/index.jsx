@@ -8,19 +8,21 @@ const { Content } = Layout;
 const AdminLayout = () => {
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Header />
-            <Layout>
-                <Sider />
-                <Content
-                    style={{
-                        padding: 24, 
-                        margin: 0, 
-                        background: "#fff", 
-                        overflow: "auto",
-                    }}
-                >
-                    <Outlet />
-                </Content>
+            <Layout>  
+                <Header />
+                <Layout>
+                    <Sider />
+                    <Content
+                        style={{
+                            padding: 24,
+                            margin: 0,
+                            background: "#fff",
+                            overflow: "auto",
+                        }}
+                    >
+                        <Outlet />
+                    </Content>
+                </Layout>
             </Layout>
         </Layout>
     );

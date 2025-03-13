@@ -31,6 +31,7 @@ const FooterComponent = () => {
           <ul>
             <li><a href="#">Thông tin mới nhất</a></li>
             <li><a href="/food">Món ăn</a></li>
+            <li><a href="/order">Đặt món tại quầy</a></li>
             <li><a href="/book">Đặt bàn ngay</a></li>
             <li><a href="#">Dịch vụ và cài đặt</a></li>
             <li><a href="#">Món ăn sắp ra mắt</a></li>

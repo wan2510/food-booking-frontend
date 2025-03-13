@@ -29,7 +29,7 @@ export const InitialRouter = () => {
             {/* Dashboard */}
             <Route path="/" element={<DashboardLayout />}>
                 <Route path="/" element={<Home />} />
-                <Route path="/foodlist" element={<Order />} />
+                <Route path="/foodlist" element={<FoodList />} />
                 <Route path="/book" element={<Book/>} />
                 <Route path="/order" element={<OrderPage/>} />
                 <Route path="/contact" element={<Contact/>} />
