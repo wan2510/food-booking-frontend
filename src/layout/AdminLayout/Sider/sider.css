@@ -1,20 +1,21 @@
+
 .admin-sider {
     width: 250px !important;
     max-width: 250px !important;
     min-width: 250px !important;
     background-color: #743ba8; 
-    color: white; /* Chữ trắng cho dễ nhìn */
+    color: white; 
 }
 
 .admin-sider .ant-menu {
-    background: transparent !important; /* Menu trong suốt để đồng bộ màu nền */
+    background: transparent !important;
     color: white;
 }
 
 .admin-sider .ant-menu-item a {
-    color: white !important; /* Màu chữ trắng */
+    color: white !important; 
 }
 
 .admin-sider .ant-menu-item a:hover {
-    color: #ffdd57 !important; /* Màu vàng khi hover */
+    color: #ffdd57 !important; 
 }

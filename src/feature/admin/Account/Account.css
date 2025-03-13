@@ -1,0 +1,17 @@
+.account-container {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+}
