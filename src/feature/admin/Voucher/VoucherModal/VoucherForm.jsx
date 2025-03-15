@@ -30,7 +30,7 @@ const VoucherForm = ({ form, editingVoucher }) => {
     };
 
     const handleCodeChange = (e) => {
-        let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""); // Chỉ cho phép chữ và số, tự động viết hoa
+        let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""); 
         form.setFieldsValue({ code: value });
     };
 
