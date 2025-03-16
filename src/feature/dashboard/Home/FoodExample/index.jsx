@@ -1,32 +1,138 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Row, Col, Card, Spin, Dropdown } from 'antd';
+import { ShoppingCartOutlined } from '@ant-design/icons';
 import "./foodExample.css";
 
-const foodList = [
-  { id: 1, name: "Burger Bò Phô Mai", image: "src/assets/image/burgephomai.jpg", price: "79.000đ" },
-  { id: 2, name: "Pizza Hải Sản", image: "src/assets/image/pizzahaisan.jpg", price: "129.000đ" },
-  { id: 3, name: "Pizza Bò", image: "src/assets/image/pizzabo.jpg", price: "105.000đ" },
-  { id: 4, name: "Taco Bò", image: "src/assets/image/tacobo.jpg", price: "50.000đ" },
-];
+const BASE_URL = 'http://localhost:8080';
 
-const FoodExamples = () => {
-  return (
-    <div className="food-examples">
-      <h2>Một số món ăn đặc sắc</h2>
-      <div className="food-list">
-        {foodList.map((food) => (
-          <div key={food.id} className="food-card">
-            <img src={food.image} alt={food.name} />
-            <h3>{food.name}</h3>
-            <p className="price">{food.price}</p>
-          </div>
-        ))}
+const FoodExample = () => {
+  const [foods, setFoods] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchRandomFoods = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${BASE_URL}/api/food`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const allFoods = await response.json();
+      const shuffled = [...allFoods].sort(() => 0.5 - Math.random());
+      const randomFoods = shuffled.slice(0, 6);
+      
+      setFoods(randomFoods);
+      setError(null);
+    } catch (error) {
+      setError('Không thể tải danh sách món ăn');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRandomFoods();
+    const interval = setInterval(fetchRandomFoods, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Menu items cho Dropdown
+  const getMenuItems = (food) => ({
+    items: [
+      {
+        key: '1',
+        label: 'Thêm vào giỏ hàng',
+        icon: <ShoppingCartOutlined />,
+        onClick: () => handleAddToCart(food)
+      }
+    ]
+  });
+
+  const handleAddToCart = (food) => {
+    // Xử lý thêm vào giỏ hàng ở đây
+  };
+
+  if (loading && foods.length === 0) {
+    return (
+      <div className="food-example-loading">
+        <Spin size="large" />
+        <p>Đang tải món ăn...</p>
       </div>
-      <Link to="/foodlist" className="view-more">
-        Xem tất cả món ăn →
-      </Link>
+    );
+  }
+
+  if (error && foods.length === 0) {
+    return (
+      <div className="food-example-error">
+        <p>{error}</p>
+        <button onClick={fetchRandomFoods}>Thử lại</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="food-example-container">
+      <h2 className="section-title">Món ăn gợi ý</h2>
+      <Row gutter={[16, 16]}>
+        {foods.map((food) => (
+          <Col key={food.uuid} xs={24} sm={12} md={8} lg={8}>
+            <Card
+              hoverable
+              className="food-example-card"
+              cover={
+                <div className="food-example-image-container">
+                  <img 
+                    alt={food.name} 
+                    src={food.imageUrl} 
+                    className="food-example-image"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/images/default-food.png';
+                    }}
+                  />
+                </div>
+              }
+              actions={[
+                <Dropdown 
+                  key="more" 
+                  menu={getMenuItems(food)} 
+                  placement="bottomRight"
+                  trigger={['click']}
+                >
+                  <ShoppingCartOutlined className="add-to-cart-icon" />
+                </Dropdown>
+              ]}
+            >
+              <Card.Meta
+                title={<div className="food-example-name">{food.name}</div>}
+                description={
+                  <div className="food-example-details">
+                    <span className="food-example-price">
+                      {food.price?.toLocaleString('vi-VN')}đ
+                    </span>
+                    {food.description && (
+                      <span className="food-example-description">
+                        {food.description}
+                      </span>
+                    )}
+                  </div>
+                }
+              />
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </div>
   );
 };
 
-export default FoodExamples;
+export default FoodExample;
