@@ -24,6 +24,10 @@ export const menuItems = [
                 key: '/admin/voucher',
                 label: <Link to="/admin/voucher">Voucher</Link>,
             },
+            {
+                key: '/admin/account',
+                label: <Link to="/admin/account">Account</Link>,
+            }
         ],
     },
 ];

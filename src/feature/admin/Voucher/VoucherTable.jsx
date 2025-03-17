@@ -1,91 +1,83 @@
-import React from "react";
-import { Table, Space, Button, Tag } from "antd";
-import dayjs from "dayjs"; 
+import React from 'react';
+import { Table, Space, Button, Tag } from 'antd';
 
-const VoucherTable = ({ vouchers, onEdit }) => {
-    const columns = [
-        {
-            title: <strong>Mã Voucher</strong>,
-            dataIndex: "code",
-            key: "code",
-            sorter: (a, b) => a.code.localeCompare(b.code),
-        },
-        {
-            title: <strong>Tên Voucher</strong>,
-            dataIndex: "name",
-            key: "name",
-            sorter: (a, b) => a.name.localeCompare(b.name),
-        },
-        {
-            title: <strong>Giảm giá (%)</strong>,
-            dataIndex: "discount",
-            key: "discount",
-            sorter: (a, b) => Number(a.discount) - Number(b.discount),
-        },
-        {
-            title: <strong>Giảm tối đa (kVNĐ)</strong>,
-            dataIndex: "max_discount_value",
-            key: "max_discount_value",
-            sorter: (a, b) => Number(a.max_discount_value) - Number(b.max_discount_value),
-        },
-        {
-            title: <strong>Mức tối thiểu (kVNĐ)</strong>,
-            dataIndex: "min_order_value",
-            key: "min_order_value",
-            sorter: (a, b) => Number(a.min_order_value) - Number(b.min_order_value),
-        },
-        {
-            title: <strong>Ngày tạo</strong>,
-            dataIndex: "create_at",
-            key: "create_at",
-            render: (text) => dayjs(text).format("DD/MM/YYYY"),
-            sorter: (a, b) => dayjs(a.create_at).unix() - dayjs(b.create_at).unix(),
-        },
-        {
-            title: <strong>Ngày hết hạn</strong>,
-            dataIndex: "expired_at",
-            key: "expired_at",
-            render: (text) => dayjs(text).format("DD/MM/YYYY"),
-            sorter: (a, b) => dayjs(a.expired_at).unix() - dayjs(b.expired_at).unix(),
-        },  
-        {
-            title: <strong>Loại</strong>,
-            dataIndex: "type",
-            key: "type",
-            sorter: (a, b) => a.type.localeCompare(b.type),
-        },
-        {
-            title: <strong>Trạng thái</strong>,
-            dataIndex: "status",
-            key: "status",
-            render: (status) => {
-                const color = status === "Khả dụng" ? "green" : "red";
-                return <Tag color={color}>{status}</Tag>;
-            },
-            sorter: (a, b) => a.status.localeCompare(b.status),
-        },
-        {
-            title: <strong>Thao tác</strong>,
-            key: "action",
-            render: (_, record) => (
-                <Space>
-                    <Button type="primary" onClick={() => onEdit(record)}>
-                        Sửa
-                    </Button>
-                </Space>
-            ),
-        },
-    ];
+const AccountTable = ({ accounts, handleEdit, handleDelete }) => {
+  const columns = [
+    {
+      title: <strong>ID</strong>,
+      dataIndex: 'id',
+      key: 'id',
+      sorter: (a, b) => a.id - b.id,
+    },
+    {
+      title: <strong>Tên đầy đủ</strong>,
+      dataIndex: 'fullName',
+      key: 'fullName',
+      sorter: (a, b) => a.fullName.localeCompare(b.fullName),
+    },
+    {
+      title: <strong>Số điện thoại</strong>,
+      dataIndex: 'phone',
+      key: 'phone',
+      sorter: (a, b) => a.phone.localeCompare(b.phone),
+    },
+    {
+      title: <strong>Email</strong>,
+      dataIndex: 'email',
+      key: 'email',
+      sorter: (a, b) => a.email.localeCompare(b.email),
+    },
+    {
+      title: <strong>Trạng thái</strong>,
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => {
+        let color = "green"; // Mặc định là màu xanh cho "Kích hoạt"
+        if (status === "Khóa") color = "red"; // Màu đỏ cho "Khóa"
+        return <Tag color={color}>{status}</Tag>;
+      },
+      sorter: (a, b) => a.status.localeCompare(b.status),
+    },
+    {
+      title: <strong>Vai trò</strong>,
+      dataIndex: 'role',
+      key: 'role',
+      sorter: (a, b) => a.role.localeCompare(b.role),
+    },
+    {
+      title: <strong>Ngày tạo</strong>,
+      dataIndex: 'createdDate',
+      key: 'createdDate',
+      sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
+    },
+    {
+      title: <strong>Hành động</strong>,
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button type="primary" onClick={() => handleEdit(record)}>
+            Thay đổi quyền/trạng thái
+          </Button>
+          {handleDelete && (
+            <Button danger onClick={() => handleDelete(record.id)}>
+              Xóa
+            </Button>
+          )}
+        </Space>
+      ),
+    },
+  ];
 
-    return (
-        <Table
-            dataSource={vouchers}
-            columns={columns}
-            rowKey="id"
-            bordered
-            pagination={{ pageSize: 5 }} 
-        />
-    );
+  return (
+    <Table
+      className="account-table"
+      dataSource={accounts}
+      columns={columns}
+      rowKey="id"
+      bordered
+      pagination={{ pageSize: 5 }}
+    />
+  );
 };
 
-export default VoucherTable;
+export default AccountTable;

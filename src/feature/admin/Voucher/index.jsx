@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Form, message, Modal } from "antd";
+import { message, Modal, Empty } from "antd";
 import dayjs from "dayjs";
 import VoucherModal from "./VoucherModal/VoucherModal";
 import VoucherTable from "./VoucherTable";
 import ActionButtons from "./ActionButtons";
-
-const API_URL = "http://localhost:8080/api/vouchers";
+import { Form } from "antd";
+import { getVouchers, createVoucher, updateVoucher } from "./VoucherApi";
+import "./Voucher.css";
 
 const Voucher = () => {
   const [vouchers, setVouchers] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [filteredVouchers, setFilteredVouchers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVoucher, setEditingVoucher] = useState(null);
   const [form] = Form.useForm();
@@ -18,11 +18,8 @@ const Voucher = () => {
   // Fetch vouchers from backend
   const loadVouchers = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/getVouchers`);
-      if (!response.ok) throw new Error("Failed to fetch vouchers");
-      const data = await response.json();
+      const data = await getVouchers();
       setVouchers(data);
-      setFilteredVouchers(data);
     } catch (error) {
       console.error("Error loading vouchers:", error);
       message.error("Không thể tải danh sách voucher!");
@@ -36,12 +33,12 @@ const Voucher = () => {
   // Search vouchers
   const handleSearch = (text) => {
     setSearchText(text);
-    setFilteredVouchers(
-      vouchers.filter((voucher) =>
-        voucher.name.toLowerCase().includes(text.toLowerCase())
-      )
-    );
   };
+
+  // Filter vouchers based on search text
+  const filteredVouchers = vouchers.filter((voucher) =>
+    voucher.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   // Open modal for add/update
   const showModal = (voucher = null) => {
@@ -66,6 +63,7 @@ const Voucher = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
     setEditingVoucher(null);
+    form.resetFields();
   };
 
   // Save (Add/Update) Voucher
@@ -78,26 +76,15 @@ const Voucher = () => {
         ? "Không khả dụng"
         : "Khả dụng";
 
-      let response;
       if (editingVoucher) {
-        response = await fetch(`${API_URL}/updateVoucher/${editingVoucher.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
-        });
+        await updateVoucher(editingVoucher.id, values);
       } else {
-        response = await fetch(`${API_URL}/addVoucher`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
-        });
+        await createVoucher(values);
       }
-
-      if (!response.ok) throw new Error("Lưu voucher thất bại");
 
       loadVouchers();
       handleCancel();
-      message.success("Lưu voucher thành công!");
+      message.success(editingVoucher ? "Chỉnh sửa trạng thái voucher thành công!" : "Thêm voucher thành công!");
     } catch (error) {
       console.error("Error saving voucher:", error);
       message.error("Lưu voucher thất bại!");
@@ -105,9 +92,15 @@ const Voucher = () => {
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className="voucher-container">
+      <h1 className="voucher-title">Quản lý Voucher</h1>
       <ActionButtons onAdd={() => showModal()} searchText={searchText} setSearchText={handleSearch} />
       <VoucherTable vouchers={filteredVouchers} onEdit={showModal} />
+      {filteredVouchers.length === 0 && (
+        <div className="voucher-empty">
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
+        </div>
+      )}
       <VoucherModal visible={isModalOpen} onClose={handleCancel} onSave={handleSave} form={form} editingVoucher={editingVoucher} />
     </div>
   );
