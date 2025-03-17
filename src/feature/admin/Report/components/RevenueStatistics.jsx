@@ -1,6 +1,15 @@
 import React from 'react';
 import { Card, Row, Col, Statistic, Table } from 'antd';
-import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { 
+  ArrowUpOutlined, 
+  ArrowDownOutlined, 
+  DollarOutlined,
+  ShoppingOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  TrophyOutlined,
+  TagsOutlined
+} from '@ant-design/icons';
 
 const RevenueStatistics = ({ data, loading }) => {
   if (!data) return null;
@@ -59,54 +68,64 @@ const RevenueStatistics = ({ data, loading }) => {
 
   return (
     <>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} className="fade-in">
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card hoverable className="statistic-card revenue-card">
             <Statistic
               title="Tổng doanh thu"
               value={totalRevenue}
               precision={0}
               suffix="đ"
+              prefix={<DollarOutlined style={{ fontSize: '24px', color: '#1890ff' }} />}
               formatter={(value) => `${value.toLocaleString('vi-VN')}`}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card hoverable className="statistic-card orders-card">
             <Statistic
               title="Tổng số đơn hàng"
               value={totalOrders}
+              prefix={<ShoppingOutlined style={{ fontSize: '24px', color: '#52c41a' }} />}
               precision={0}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card hoverable className="statistic-card completion-card">
             <Statistic
               title="Tỷ lệ hoàn thành"
               value={completionRate}
               precision={1}
               suffix="%"
+              prefix={<CheckCircleOutlined style={{ fontSize: '24px', color: '#3f8600' }} />}
               valueStyle={{ color: '#3f8600' }}
-              prefix={<ArrowUpOutlined />}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card hoverable className="statistic-card cancelled-card">
             <Statistic
               title="Đơn hàng bị hủy"
               value={cancelledOrders}
+              prefix={<CloseCircleOutlined style={{ fontSize: '24px', color: '#cf1322' }} />}
               valueStyle={{ color: '#cf1322' }}
-              prefix={<ArrowDownOutlined />}
             />
           </Card>
         </Col>
       </Row>
 
-      <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
+      <Row gutter={[16, 16]} style={{ marginTop: '16px' }} className="fade-in">
         <Col xs={24} md={12}>
-          <Card title="Top 10 Món Ăn Bán Chạy">
+          <Card 
+            title={
+              <span>
+                <TrophyOutlined style={{ color: '#faad14', marginRight: '8px' }} />
+                Top 10 Món Ăn Bán Chạy
+              </span>
+            }
+            className="table-card"
+          >
             <Table
               dataSource={topSellingItems}
               columns={topItemsColumns}
@@ -114,11 +133,20 @@ const RevenueStatistics = ({ data, loading }) => {
               pagination={false}
               loading={loading}
               size="small"
+              className="custom-table"
             />
           </Card>
         </Col>
         <Col xs={24} md={12}>
-          <Card title="Doanh Thu Theo Danh Mục">
+          <Card 
+            title={
+              <span>
+                <TagsOutlined style={{ color: '#1890ff', marginRight: '8px' }} />
+                Doanh Thu Theo Danh Mục
+              </span>
+            }
+            className="table-card"
+          >
             <Table
               dataSource={revenueByCategory}
               columns={categoryColumns}
@@ -126,6 +154,7 @@ const RevenueStatistics = ({ data, loading }) => {
               pagination={false}
               loading={loading}
               size="small"
+              className="custom-table"
             />
           </Card>
         </Col>

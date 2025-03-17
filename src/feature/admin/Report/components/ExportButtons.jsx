@@ -10,8 +10,38 @@ const ExportButtons = ({ data }) => {
         message.error('Không có dữ liệu để xuất báo cáo');
         return;
       }
+
+      const testData = {
+        ...data,
+        startDate: data.startDate || new Date(),
+        endDate: data.endDate || new Date(),
+        totalRevenue: Number(data.totalRevenue) || 0,
+        orderStats: {
+          COMPLETED: Number(data.orderStats?.COMPLETED) || 0,
+          CANCELLED: Number(data.orderStats?.CANCELLED) || 0,
+          PENDING: Number(data.orderStats?.PENDING) || 0,
+          ...data.orderStats
+        },
+        revenueByTime: Object.fromEntries(
+          Object.entries(data.revenueByTime || {}).map(([key, value]) => [
+            key,
+            Number(value) || 0
+          ])
+        ),
+        topSellingItems: (data.topSellingItems || []).map(item => ({
+          ...item,
+          totalQuantity: Number(item.totalQuantity) || 0,
+          totalRevenue: Number(item.totalRevenue) || 0
+        })),
+        revenueByCategory: (data.revenueByCategory || []).map(cat => ({
+          ...cat,
+          orderCount: Number(cat.orderCount) || 0,
+          totalRevenue: Number(cat.totalRevenue) || 0
+        }))
+      };
+
       message.loading('Đang xuất báo cáo PDF...');
-      await generatePdfReport(data);
+      await generatePdfReport(testData);
       message.success('Xuất báo cáo PDF thành công');
     } catch (error) {
       console.error('Error exporting PDF:', error);
