@@ -1,28 +1,62 @@
-import React from "react";
-import { Layout, Menu, Avatar, Dropdown } from "antd";
-import { UserOutlined, ShoppingCartOutlined, LogoutOutlined, LoginOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Layout, Menu, Avatar, Dropdown, Input, Badge, Space, Button } from "antd";
+import { 
+  UserOutlined, 
+  ShoppingCartOutlined, 
+  LogoutOutlined, 
+  LoginOutlined,
+  BellOutlined,
+  SearchOutlined,
+  MenuOutlined
+} from "@ant-design/icons";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./header.css";
 
 const { Header } = Layout;
+const { Search } = Input;
 
 const HeaderComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const userToken = localStorage.getItem("userToken");
+  const accessToken = localStorage.getItem("accessToken");
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("userToken");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userUuid");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userRole");
     navigate("/");
   };
 
   const handleRedirect = (path) => {
-    if (userToken) {
+    if (accessToken) {
       navigate(path);
     } else {
       navigate("/login");
     }
+  };
+
+  const handleSearch = (value) => {
+    console.log("Searching for:", value);
+    // Implement search logic here
+  };
+
+  const notificationMenu = {
+    items: [
+      {
+        key: '1',
+        label: 'Thông báo mới về đơn hàng',
+        onClick: () => console.log('Notification 1 clicked'),
+      },
+      {
+        key: '2',
+        label: 'Khuyến mãi đặc biệt hôm nay',
+        onClick: () => console.log('Notification 2 clicked'),
+      },
+    ],
   };
 
   const userMenu = {
@@ -31,7 +65,7 @@ const HeaderComponent = () => {
         key: "1",
         icon: <UserOutlined />,
         label: (
-          <span onClick={() => handleRedirect("/profile")} style={{ cursor: "pointer" }}>
+          <span onClick={() => handleRedirect("/profile")} className="menu-item">
             Tài khoản của tôi
           </span>
         ),
@@ -40,19 +74,19 @@ const HeaderComponent = () => {
         key: "2",
         icon: <ShoppingCartOutlined />,
         label: (
-          <span onClick={() => handleRedirect("/cart")} style={{ cursor: "pointer" }}>
+          <span onClick={() => handleRedirect("/cart")} className="menu-item">
             Giỏ hàng của tôi
           </span>
         ),
       },
       { type: "divider" },
-      userToken
+      accessToken
         ? {
             key: "3",
             icon: <LogoutOutlined />,
             danger: true,
             label: (
-              <span onClick={handleLogout} style={{ cursor: "pointer" }}>
+              <span onClick={handleLogout} className="menu-item">
                 Đăng xuất
               </span>
             ),
@@ -60,56 +94,88 @@ const HeaderComponent = () => {
         : {
             key: "4",
             icon: <LoginOutlined />,
-            label: <Link to="/login">Đăng nhập</Link>,
+            label: <Link to="/login" className="menu-item">Đăng nhập</Link>,
           },
     ],
   };
+
+  const menuItems = [
+    { key: "/", label: <Link to="/">Trang chủ</Link> },
+    { key: "/foodlist", label: <Link to="/foodlist">Món ăn</Link> },
+    { key: "/book", label: <Link to="/book">Đặt bàn ngay</Link> },
+    { key: "/contact", label: <Link to="/contact">Liên hệ</Link> },
+  ];
 
   return (
     <Layout>
       <div className="top-bar">
         <div className="top-left">
-          <span>About</span>
-          <span>Setting</span>
-          <span>Contact Us</span>
+          <Space size={24}>
+            <span className="top-bar-item">About</span>
+            <span className="top-bar-item">Setting</span>
+            <span className="top-bar-item">Contact Us</span>
+          </Space>
         </div>
         <div className="top-right">
-          <a href="#" className="social-icon">
-            <FaFacebook />
-          </a>
-          <a href="#" className="social-icon">
-            <FaTwitter />
-          </a>
-          <a href="#" className="social-icon">
-            <FaInstagram />
-          </a>
+          <Space size={16}>
+            <a href="#" className="social-icon hover-effect">
+              <FaFacebook />
+            </a>
+            <a href="#" className="social-icon hover-effect">
+              <FaTwitter />
+            </a>
+            <a href="#" className="social-icon hover-effect">
+              <FaInstagram />
+            </a>
+          </Space>
         </div>
       </div>
 
       <Header className="header">
-        <Link to="/" className="logo">
-          Nomster
-        </Link>
-        <Menu
-          theme="light"
-          mode="horizontal"
-          selectedKeys={[location.pathname]}
-          className="menu"
-          items={[
-            { key: "/", label: <Link to="/">Trang chủ</Link> },
-            { key: "/foodlist", label: <Link to="/foodlist">Món ăn</Link> },
-            { key: "/book", label: <Link to="/book">Đặt bàn ngay</Link> },
-            { key: "/contact", label: <Link to="/contact">Liên hệ</Link> },
-          ]}
-        />
-
-        <Dropdown menu={userMenu} trigger={["hover"]}>
-          <Avatar
-            size="large"
-            src={userToken ? "/path-to-user-avatar.jpg" : null}
-            className="user-avatar"
+        <div className="header-left">
+          <Button 
+            className="mobile-menu-button"
+            icon={<MenuOutlined />}
+            onClick={() => setIsMenuVisible(!isMenuVisible)}
           />
-        </Dropdown>
+          <Link to="/" className="logo">
+            Nomster
+          </Link>
+        </div>
+
+        <div className={`header-center ${isMenuVisible ? 'visible' : ''}`}>
+          <Menu
+            theme="light"
+            mode="horizontal"
+            selectedKeys={[location.pathname]}
+            className="menu"
+            items={menuItems}
+          />
+          <Search
+            placeholder="Tìm kiếm món ăn..."
+            onSearch={handleSearch}
+            className="search-input"
+          />
+        </div>
+
+        <div className="header-right">
+          <Space size={16}>
+            <Dropdown menu={notificationMenu} trigger={["click"]}>
+              <Badge count={2} className="notification-badge">
+                <BellOutlined className="header-icon" />
+              </Badge>
+            </Dropdown>
+
+            <Dropdown menu={userMenu} trigger={["hover"]}>
+              <Avatar
+                size="large"
+                src={accessToken ? "/path-to-user-avatar.jpg" : null}
+                icon={!accessToken && <UserOutlined />}
+                className="user-avatar hover-effect"
+              />
+            </Dropdown>
+          </Space>
+        </div>
       </Header>
     </Layout>
   );

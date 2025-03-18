@@ -1,57 +1,71 @@
-import React from "react";
-import { Layout } from "antd";
-import { FaFacebook, FaInstagram, FaPinterest, FaTwitter, FaPhone } from "react-icons/fa";
-import "./footer.css";
+import React from 'react';
+import { FacebookOutlined, TwitterOutlined, InstagramOutlined, EnvironmentOutlined, PhoneOutlined, MailOutlined } from '@ant-design/icons';
+import './footer.css';
 
-const { Footer } = Layout;
-
-const FooterComponent = () => {
+const Footer = () => {
   return (
-    <Footer className="footer">
-      <div className="footer-container">
-        {/* Logo & About Us */}
-        <div className="footer-section about">
-          <h2 className="logo">
-          <img src="/icon.jpg" alt="Nomster Logo" className="logo-img" />
-          Nomster
-          </h2>
-          <p>
-            Ăn Thả Ga 
+    <footer className="footer">
+      <div className="footer-content">
+        <div className="footer-section">
+          <h3 className="footer-title">Nomster</h3>
+          <p className="footer-description">
+            Khám phá ẩm thực tuyệt vời tại Nomster. Chúng tôi mang đến những trải nghiệm ẩm thực độc đáo và phục vụ chu đáo.
           </p>
-          <div className="social-icons">
-            <a href="#" className="social-icon"><FaFacebook /></a>
-            <a href="#" className="social-icon"><FaInstagram /></a>
-            <a href="#" className="social-icon"><FaPinterest /></a>
-            <a href="#" className="social-icon"><FaTwitter /></a>
+          <div className="footer-social-links">
+            <a href="#" className="social-link"><FacebookOutlined /></a>
+            <a href="#" className="social-link"><TwitterOutlined /></a>
+            <a href="#" className="social-link"><InstagramOutlined /></a>
           </div>
         </div>
 
-        <div className="footer-section quick-links">
-          <h3>Liên kết nhanh</h3>
-          <ul>
-            <li><a href="#">Thông tin mới nhất</a></li>
-            <li><a href="/food">Món ăn</a></li>
-            <li><a href="/order">Đặt món tại quầy</a></li>
-            <li><a href="/book">Đặt bàn ngay</a></li>
-            <li><a href="#">Dịch vụ và cài đặt</a></li>
-            <li><a href="#">Món ăn sắp ra mắt</a></li>
+        <div className="footer-section">
+          <h3 className="footer-title">Liên Kết Nhanh</h3>
+          <ul className="footer-links">
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#">Thực đơn</a></li>
+            <li><a href="#">Đặt bàn</a></li>
+            <li><a href="#">Liên hệ</a></li>
+            <li><a href="#">Chính sách bảo mật</a></li>
           </ul>
         </div>
 
-        {/* Contact Section */}
-        <div className="footer-section contact">
-          <h3>Hãy liên lạc với chúng tôi nếu như gặp vấn đề!</h3>
-          <p className="phone">
-            <FaPhone className="phone-icon" /> 0393095515
-          </p>
+        <div className="footer-section">
+          <h3 className="footer-title">Liên Hệ</h3>
+          <div className="contact-info">
+            <EnvironmentOutlined className="anticon" />
+            <span>163 thôn 3 Thạch Hòa, Thạch Thất, TP. Hà Nội</span>
+          </div>
+          <div className="contact-info">
+            <PhoneOutlined className="anticon" />
+            <span>+84 393 095 515</span>
+          </div>
+          <div className="contact-info">
+            <MailOutlined className="anticon" />
+            <span>hucauvn37@gmail.com</span>
+          </div>
+        </div>
+
+        <div className="footer-section">
+          <h3 className="footer-title">Đăng ký nhận tin</h3>
+          <form className="newsletter-form">
+            <input type="email" className="newsletter-input" placeholder="Email của bạn" />
+            <button type="submit" className="newsletter-button">Gửi</button>
+          </form>
         </div>
       </div>
 
+      <hr className="footer-bottom-divider" />
+
       <div className="footer-bottom">
-        <p>Bản quyền thuộc về © Nomster.</p>
+        <p className="footer-text">© 2024 Nomster. Tất cả quyền được bảo lưu</p>
+        <div>
+          <a href="#">Điều khoản sử dụng</a>
+          <span style={{ margin: '0 10px' }}>|</span>
+          <a href="#">Chính sách bảo mật</a>
+        </div>
       </div>
-    </Footer>
+    </footer>
   );
 };
 
-export default FooterComponent;
+export default Footer; 

@@ -13,8 +13,10 @@ import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
 import Book from './feature/dashboard/Book';
 import Contact from './feature/dashboard/Contact';
-import OrderPage from './feature/dashboard/order';
-import Account from './feature/admin/Account';
+import CartPage from './feature/dashboard/Cart';
+import Orders from './feature/dashboard/Orders';
+import UserProfile from './feature/dashboard/Profile';
+import Checkout from './feature/dashboard/Checkout';
 
 export const InitialRouter = () => {
     return (
@@ -31,9 +33,11 @@ export const InitialRouter = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/foodlist" element={<FoodList />} />
                 <Route path="/book" element={<Book/>} />
-                <Route path="/order" element={<OrderPage/>} />
                 <Route path="/contact" element={<Contact/>} />
-               
+                <Route path="/cart" element={<CartPage/>} />
+                <Route path="/orders" element={<Orders/>} />
+                <Route path="/profile" element={<UserProfile/>} />
+                <Route path="/checkout" element={<Checkout/>} />
             </Route>
 
             {/* Admin */}
@@ -42,7 +46,6 @@ export const InitialRouter = () => {
                 <Route path="food-category" element={<FoodCategory />} />
                 <Route path="table" element={<Table />} />
                 <Route path="voucher" element={<Voucher />} />
-                <Route path="account" element={<Account/>} />
             </Route>
 
             {/* 404 */}

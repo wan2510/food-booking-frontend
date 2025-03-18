@@ -1,49 +1,80 @@
-import React, { useState } from "react";
-import "./ContactForm.css";
+import React, { useRef, useState } from 'react';
+import emailjs from '@emailjs/browser';
+import './ContactForm.css';
 
-const ContactForm = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e) => {
+function Contact() {
+  const form = useRef();
+  const [status, setStatus] = useState(null);
+  
+  const sendEmail = (e) => {
     e.preventDefault();
-    alert("Tin nhắn của bạn đã được gửi!\n" + JSON.stringify(formData, null, 2));
+    setStatus('sending');
+
+    // Đã cập nhật với thông tin thật
+    emailjs.sendForm(
+      'service_bos99g9', 
+      'template_s5b2k6j', 
+      form.current, 
+      'bkXxF_Z7J7OG_2V1d'
+    )
+      .then((result) => {
+        console.log(result.text);
+        setStatus('success');
+        form.current.reset();
+      }, (error) => {
+        console.log(error.text);
+        setStatus('error');
+      });
   };
 
   return (
     <div className="contact-container">
-      <h2>Liên hệ với chúng tôi</h2>
-      <form onSubmit={handleSubmit} className="contact-form">
-        <label>Tên:</label>
-        <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-
-        <label>Email:</label>
-        <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-
-        <label>Nội dung:</label>
-        <textarea name="message" value={formData.message} onChange={handleChange} required />
-
-        <button type="submit">Gửi tin nhắn</button>
-      </form>
+      <div className="contact-content">
+        <h2>Liên hệ với chúng tôi</h2>
+        <p>Có câu hỏi hoặc đề xuất? Hãy gửi cho chúng tôi một tin nhắn.</p>
+        
+        <form ref={form} onSubmit={sendEmail} className="contact-form">
+          <div className="form-group">
+            <label htmlFor="user_name">Họ tên</label>
+            <input type="text" name="name" id="user_name" required />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="user_email">Email</label>
+            <input type="email" name="email" id="user_email" required />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="message">Tin nhắn</label>
+            <textarea name="message" id="message" rows="5" required></textarea>
+          </div>
+          
+          <button type="submit" className="submit-btn" disabled={status === 'sending'}>
+            {status === 'sending' ? 'Đang gửi...' : 'Gửi tin nhắn'}
+          </button>
+          
+          {status === 'success' && <p className="success-message">Tin nhắn đã được gửi thành công!</p>}
+          {status === 'error' && <p className="error-message">Có lỗi xảy ra. Vui lòng thử lại.</p>}
+        </form>
+      </div>
+      
       <div className="contact-info">
         <h3>Thông tin liên hệ</h3>
-        <p><strong>Địa chỉ:</strong> 163 thôn 3, Thạch Hòa, Thạch Thất, Hà Nội, Việt Nam</p>
-        <p><strong>Điện thoại:</strong> 0393095515</p>
-        <p><strong>Email:</strong> contact@restaurant.com</p>
+        <div className="info-item">
+          <i className="fas fa-map-marker-alt"></i>
+          <span>163 Thôn 3, Xã Thạch Hòa, Huyện Thạch Thất, TP. Hà Nội</span>
+        </div>
+        <div className="info-item">
+          <i className="fas fa-phone"></i>
+          <span>+84 393 095 515</span>
+        </div>
+        <div className="info-item">
+          <i className="fas fa-envelope"></i>
+          <span>hucauvn37@gmail.com</span>
+        </div>
       </div>
     </div>
   );
-};
+}
 
-export default ContactForm;
+export default Contact;
