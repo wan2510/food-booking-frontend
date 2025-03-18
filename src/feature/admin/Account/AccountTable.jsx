@@ -28,17 +28,6 @@ const AccountTable = ({ accounts, handleEdit, handleDelete }) => {
       sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
-      title: <strong>Trạng thái</strong>,
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        let color = "green"; // Mặc định là màu xanh cho "Kích hoạt"
-        if (status === "Khóa") color = "red"; // Màu đỏ cho "Khóa"
-        return <Tag color={color}>{status}</Tag>;
-      },
-      sorter: (a, b) => a.status.localeCompare(b.status),
-    },
-    {
       title: <strong>Vai trò</strong>,
       dataIndex: 'role',
       key: 'role',
@@ -49,6 +38,17 @@ const AccountTable = ({ accounts, handleEdit, handleDelete }) => {
       dataIndex: 'createdDate',
       key: 'createdDate',
       sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
+    },
+    {
+      title: <strong>Trạng thái</strong>,
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => {
+        let color = "green"; // Mặc định là màu xanh cho "Kích hoạt"
+        if (status === "Khóa") color = "red"; // Màu đỏ cho "Khóa"
+        return <Tag color={color}>{status}</Tag>;
+      },
+      sorter: (a, b) => a.status.localeCompare(b.status),
     },
     {
       title: <strong>Hành động</strong>,

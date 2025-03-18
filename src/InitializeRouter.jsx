@@ -13,7 +13,7 @@ import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
 import Book from './feature/dashboard/Book';
 import Contact from './feature/dashboard/Contact';
-import OrderPage from './feature/dashboard/order';
+import Order from "./feature/dashboard/Order";
 import Account from './feature/admin/Account';
 
 export const InitialRouter = () => {
@@ -31,9 +31,8 @@ export const InitialRouter = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/foodlist" element={<FoodList />} />
                 <Route path="/book" element={<Book/>} />
-                <Route path="/order" element={<OrderPage/>} />
+                <Route path="/order" element={<Order/>} />
                 <Route path="/contact" element={<Contact/>} />
-               
             </Route>
 
             {/* Admin */}

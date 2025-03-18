@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Form } from "antd";
-import VoucherForm from "./voucherForm";
+import VoucherForm from "./VoucherForm";
 
 const VoucherModal = ({ visible, onClose, onSave, form, editingVoucher }) => {
   return (

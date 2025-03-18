@@ -1,96 +1,86 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Layout, Typography, Card, Button, message } from "antd";
-import HandleOrderFood from "./handleOrderFood/handleOrderFood";
-import ModalBill from "./handleCreateBill.jsx/modalBill";
-import "./order.css";
+import HandleOrderFood from "./handleOrderFood/HandleOrderFood";
+import ModalPurchase from "./modalPurchase/ModalPurchase";
+import ModalBill from "./modalBill/ModalBill";
+import { getState, subscribe, getMenuItems, getFoodCategories, getTables, getVouchers, addToBill, updateItem, setSelectedTable, setSelectedVoucher, setPaymentMethod, setCashReceived, validateBeforeCreate, clearOrder, getTotalPrice, getDiscount, getFinalPrice } from "./OrderApi";
+import "./Order.css";
 
 const { Content } = Layout;
 const { Title } = Typography;
 
-const menuItems = [
-  { id: 1, name: "Pizza", price: 150000, image: "", category: "Fast Food" },
-  { id: 2, name: "Burger", price: 80000, image: "", category: "Fast Food" },
-  { id: 3, name: "Sushi", price: 200000, image: "", category: "Japanese" },
-];
+const Order = ({ user }) => {
+  const [state, setState] = useState(getState());
+  const [menuItems, setMenuItems] = useState([]);
+  const [foodCategories, setFoodCategories] = useState([]);
+  const [tables, setTables] = useState([]);
+  const [vouchers, setVouchers] = useState([]);
 
-const foodCategories = [
-  { id: "Fast Food", name: "Fast Food" },
-  { id: "Japanese", name: "Japanese" },
-  { id: "Drinks", name: "Drinks" },
-  { id: "Desserts", name: "Desserts" },
-];
+  useEffect(() => {
+    const unsubscribe = subscribe((newState) => setState(newState));
 
-const tables = [
-  { number: 1, max_number_human: 4 },
-  { number: 2, max_number_human: 6 },
-  { number: 3, max_number_human: 2 },
-];
-
-const vouchers = [
-  { discount: 10, max_discount_value: 50000 },
-  { discount: 20, max_discount_value: 100000 },
-  { discount: 15, max_discount_value: 70000 },
-];
-
-const OrderPage = () => {
-  const [bill, setBill] = useState([]);
-  const [selectedTable, setSelectedTable] = useState(null);
-  const [selectedVoucher, setSelectedVoucher] = useState(null);
-
-  const addToBill = (item) => {
-    setBill((prevBill) => {
-      const updatedBill = prevBill.map((i) =>
-        i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-      );
-      return prevBill.some((i) => i.id === item.id)
-        ? updatedBill
-        : [...updatedBill, { ...item, quantity: 1 }];
-    });
-  };
-
-  const updateItem = (id, quantity) => {
-    setBill((prev) =>
-      quantity === 0
-        ? prev.filter((item) => item.id !== id)
-        : prev.map((item) =>
-            item.id === id ? { ...item, quantity } : item
-          )
-    );
-  };
-
-  const handleCreateBill = () => {
-    if (!selectedTable) {
-      message.error("Vui lòng chọn bàn trước khi tạo hóa đơn!");
-      return;
-    }
-    if (bill.length === 0) {
-      message.error("Chưa có món nào trong hóa đơn!");
-      return;
-    }
-
-    const totalPrice = bill.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const discount = selectedVoucher
-      ? Math.min((totalPrice * selectedVoucher.discount) / 100, selectedVoucher.max_discount_value)
-      : 0;
-    const finalPrice = totalPrice - discount;
-
-    const orderData = {
-      table: selectedTable,
-      items: bill,
-      total: totalPrice,
-      discount,
-      finalTotal: finalPrice,
+    const fetchInitialData = async () => {
+      try {
+        const [menuItemsData, foodCategoriesData, tablesData, vouchersData] = await Promise.all([
+          getMenuItems(),
+          getFoodCategories(),
+          getTables(),
+          getVouchers(),
+        ]);
+        setMenuItems(menuItemsData);
+        setFoodCategories(foodCategoriesData);
+        setTables(tablesData);
+        setVouchers(vouchersData);
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+        message.error("Không thể tải dữ liệu ban đầu!");
+      }
     };
 
-    message.success("Hóa đơn đã được tạo!");
-    console.log(orderData);
+    fetchInitialData();
+
+    return unsubscribe;
+  }, []);
+
+  const handleCreateBill = async () => {
+    const validation = await validateBeforeCreate();
+    if (validation.success) {
+      setState({ ...state, isPaymentModalOpen: true });
+      message.success("Hóa đơn đã được tạo!");
+    }
+  };
+
+  const handleConfirmPayment = async () => {
+    const totalPrice = getTotalPrice();
+    const discount = getDiscount();
+    const finalPrice = getFinalPrice();
+
+    if (state.paymentMethod === "Tiền mặt") {
+      if (state.cashReceived < finalPrice) {
+        message.error("Số tiền khách đưa không đủ để thanh toán!");
+        return;
+      }
+      message.success(
+        `Thanh toán thành công! Tiền trả lại: ${(state.cashReceived - finalPrice).toLocaleString("vi-VN")} VND`
+      );
+    } else {
+      message.success("Thanh toán qua chuyển khoản thành công!");
+    }
+
+    // Tạo hóa đơn và reset
+    await clearOrder();
+    setState({ ...state, isPaymentModalOpen: false, cashReceived: 0 }); // Reset cashReceived
+  };
+
+  const handleCancelPayment = () => {
+    setState({ ...state, isPaymentModalOpen: false });
+    message.info("Thanh toán đã bị hủy!");
   };
 
   return (
     <Layout className="order-page">
       <Content className="order-content">
         <Row gutter={16} className="order-container">
-          {/* Cột menu */}
           <Col span={16}>
             <Card className="menu-container">
               <Title level={2}>Menu</Title>
@@ -102,29 +92,42 @@ const OrderPage = () => {
             </Card>
           </Col>
 
-          {/* Cột hóa đơn */}
           <Col span={8}>
             <Card className="bill-container">
               <Title level={2}>Hóa đơn</Title>
               <ModalBill
-                bill={bill}
+                bill={state.bill}
                 updateItem={updateItem}
-                selectedTable={selectedTable}
-                setSelectedTable={setSelectedTable}
-                selectedVoucher={selectedVoucher}
-                setSelectedVoucher={setSelectedVoucher}
                 vouchers={vouchers}
                 tables={tables}
+                selectedTable={state.selectedTable}
+                setSelectedTable={setSelectedTable}
+                selectedVoucher={state.selectedVoucher}
+                setSelectedVoucher={setSelectedVoucher}
               />
-              <Button type="primary" className="create-bill-btn" onClick={handleCreateBill}>
+              <Button type="primary" onClick={handleCreateBill} block style={{ marginTop: 16 }}>
                 Tạo hóa đơn
               </Button>
             </Card>
           </Col>
         </Row>
       </Content>
+
+      <ModalPurchase
+        visible={state.isPaymentModalOpen}
+        onCancel={handleCancelPayment}
+        onConfirm={handleConfirmPayment}
+        bill={state.bill}
+        vouchers={vouchers}
+        selectedTable={state.selectedTable}
+        selectedVoucher={state.selectedVoucher}
+        paymentMethod={state.paymentMethod}
+        setPaymentMethod={setPaymentMethod}
+        cashReceived={state.cashReceived}
+        setCashReceived={setCashReceived}
+      />
     </Layout>
   );
 };
 
-export default OrderPage;
+export default Order;
