@@ -1,34 +1,49 @@
-import React, { useState } from "react";
-import { Form } from "antd";
+import React, { useState, useEffect, useCallback } from "react";
+import { message, Modal, Empty } from "antd";
 import dayjs from "dayjs";
-
 import VoucherModal from "./VoucherModal/VoucherModal";
 import VoucherTable from "./VoucherTable";
 import ActionButtons from "./ActionButtons";
+import { Form } from "antd";
+import { getVouchers, createVoucher, updateVoucher } from "./VoucherApi";
+import "./Voucher.css";
 
 const Voucher = () => {
-  const [vouchers, setVouchers] = useState([
-    {
-      id: 1,
-      discount: "20",
-      max_discount_value: "300",
-      min_order_value: "100",
-      expired_at: dayjs("19/02/2025", "DD/MM/YYYY").toISOString(),
-      remain_quantity: "13",
-      quantity: "30",
-      create_at: dayjs("01/02/2025", "DD/MM/YYYY").toISOString(),
-      status: "Khả dụng",
-    },
-  ]);
-
+  const [vouchers, setVouchers] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVoucher, setEditingVoucher] = useState(null);
   const [form] = Form.useForm();
 
+  // Fetch vouchers from backend
+  const loadVouchers = useCallback(async () => {
+    try {
+      const data = await getVouchers();
+      setVouchers(data);
+    } catch (error) {
+      console.error("Error loading vouchers:", error);
+      message.error("Không thể tải danh sách voucher!");
+    }
+  }, []);
+
+  useEffect(() => {
+    loadVouchers();
+  }, [loadVouchers]);
+
+  // Search vouchers
+  const handleSearch = (text) => {
+    setSearchText(text);
+  };
+
+  // Filter vouchers based on search text
+  const filteredVouchers = vouchers.filter((voucher) =>
+    voucher.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  // Open modal for add/update
   const showModal = (voucher = null) => {
     setEditingVoucher(voucher);
     setIsModalOpen(true);
-
     if (voucher) {
       form.setFieldsValue({
         ...voucher,
@@ -38,9 +53,9 @@ const Voucher = () => {
     } else {
       form.resetFields();
       form.setFieldsValue({
-        status: "Còn hiệu lực",
+        status: "Khả dụng",
         create_at: dayjs(),
-        expired_at: dayjs(),
+        expired_at: dayjs().add(30, "day"),
       });
     }
   };
@@ -48,73 +63,45 @@ const Voucher = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
     setEditingVoucher(null);
+    form.resetFields();
   };
 
-  const handleSave = () => {
-    form.validateFields().then((values) => {
+  // Save (Add/Update) Voucher
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields();
       values.create_at = values.create_at.toISOString();
       values.expired_at = values.expired_at.toISOString();
+      values.status = dayjs(values.expired_at).isBefore(dayjs())
+        ? "Không khả dụng"
+        : "Khả dụng";
 
-      if (!editingVoucher) {
-        values.remain_quantity = values.quantity;
-      } else if (values.remain_quantity > values.quantity) {
-        values.remain_quantity = values.quantity;
+      if (editingVoucher) {
+        await updateVoucher(editingVoucher.id, values);
+      } else {
+        await createVoucher(values);
       }
 
-      const isExpired = dayjs(values.expired_at).endOf("day").isBefore(dayjs());
-      const isOutOfStock = parseInt(values.remain_quantity, 10) === 0;
-
-      values.status = isExpired || isOutOfStock ? "Không khả dụng" : "Khả dụng";
-
-      setVouchers((prev) =>
-        editingVoucher
-          ? prev.map((v) => (v.id === editingVoucher.id ? { ...v, ...values } : v))
-          : [...prev, { id: Date.now(), ...values }]
-      );
-
+      loadVouchers();
       handleCancel();
-    });
-  };
-
-
-  const handleUseVoucher = (id) => {
-    setVouchers((prev) =>
-      prev.map((v) => {
-        if (v.id === id) {
-          const newRemainQuantity = Math.max(0, v.remain_quantity - 1);
-          const isOutOfStock = newRemainQuantity === 0;
-          const isExpired = dayjs(v.expired_at).endOf("day").isBefore(dayjs());
-
-          return {
-            ...v,
-            remain_quantity: newRemainQuantity,
-            status: isExpired || isOutOfStock ? "Không khả dụng" : "Khả dụng",
-          };
-        }
-        return v;
-      })
-    );
-  };
-
-  const handleDelete = (id) => {
-    setVouchers((prev) => prev.filter((v) => v.id !== id));
+      message.success(editingVoucher ? "Chỉnh sửa trạng thái voucher thành công!" : "Thêm voucher thành công!");
+    } catch (error) {
+      console.error("Error saving voucher:", error);
+      message.error("Lưu voucher thất bại!");
+    }
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Quản lý Voucher</h1>
-
-      <ActionButtons onAdd={() => showModal()} />
-
-      <VoucherTable vouchers={vouchers} onEdit={showModal} onDelete={handleDelete} />
-
-      <VoucherModal
-        visible={isModalOpen}
-        onClose={handleCancel}
-        onSave={handleSave}
-        form={form}
-        editingVoucher={editingVoucher}
-      />
+    <div className="voucher-container">
+      <h1 className="voucher-title">Quản lý Voucher</h1>
+      <ActionButtons onAdd={() => showModal()} searchText={searchText} setSearchText={handleSearch} />
+      <VoucherTable vouchers={filteredVouchers} onEdit={showModal} />
+      {filteredVouchers.length === 0 && (
+        <div className="voucher-empty">
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
+        </div>
+      )}
+      <VoucherModal visible={isModalOpen} onClose={handleCancel} onSave={handleSave} form={form} editingVoucher={editingVoucher} />
     </div>
   );
 };

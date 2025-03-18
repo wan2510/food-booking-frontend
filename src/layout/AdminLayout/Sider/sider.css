@@ -1,6 +1,21 @@
+
 .admin-sider {
-    background: var(--background);
     width: 250px !important;
     max-width: 250px !important;
     min-width: 250px !important;
+    background-color: #743ba8; 
+    color: white; 
+}
+
+.admin-sider .ant-menu {
+    background: transparent !important;
+    color: white;
+}
+
+.admin-sider .ant-menu-item a {
+    color: white !important; 
+}
+
+.admin-sider .ant-menu-item a:hover {
+    color: #ffdd57 !important; 
 }
