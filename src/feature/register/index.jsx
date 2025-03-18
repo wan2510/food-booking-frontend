@@ -54,36 +54,53 @@ const Register = () => {
 
     const handleRegister = async (values) => {
         console.log("Registering with:", values);
-    
+      
         try {
-            const response = await fetch("http://localhost:8080/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    email,
-                    phone: values.phone,
-                    fullName: values.fullName,
-                    password: values.password
-                })
+          const response = await fetch("http://localhost:8080/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              phone: values.phone,
+              fullName: values.fullName,
+              password: values.password
+            })
+          });
+      
+          if (response.ok) {
+            const userData = await response.json();
+            console.log("Đăng ký thành công!", userData);
+      
+            const loginResponse = await fetch("http://localhost:8080/api/auth/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: userData.email,
+                password: values.password,
+              })
             });
-    
-            if (response.ok) {
-                const userData = await response.json();
-                console.log("Đăng ký thành công!", userData);
-    
-                localStorage.setItem("user", JSON.stringify(userData));
-    
-                navigate("/");
+      
+            if (loginResponse.ok) {
+              const loginData = await loginResponse.json();
+              localStorage.setItem("user", JSON.stringify(loginData));
+      
+              console.log("Auto login thành công!", loginData);
+              navigate("/");
             } else {
-                const errorData = await response.json();
-                console.error("Đăng ký thất bại:", errorData);
-                alert(errorData.message || "Có lỗi xảy ra khi đăng ký. Vui lòng thử lại!");
+              console.error("Tự động đăng nhập thất bại");
+              alert("Đăng ký thành công, nhưng đăng nhập tự động thất bại. Vui lòng tự đăng nhập!");
             }
+          } else {
+            const errorData = await response.json();
+            console.error("Đăng ký thất bại:", errorData);
+            alert(errorData.message || "Có lỗi xảy ra khi đăng ký. Vui lòng thử lại!");
+          }
         } catch (error) {
-            console.error("Lỗi khi đăng ký:", error);
-            alert("Có lỗi xảy ra khi gửi yêu cầu đăng ký.");
+          console.error("Lỗi khi đăng ký:", error);
+          alert("Có lỗi xảy ra khi gửi yêu cầu đăng ký.");
         }
-    };
+      };
+      
     
     
 

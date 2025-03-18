@@ -19,17 +19,26 @@ export const LoginForm = () => {
                 }),
             });
 
-            if (response.ok) {
-                const userData = await response.json();
-                console.log("Đăng nhập thành công!", userData);
+            const data = await response.json();
 
-                localStorage.setItem("userToken", userData.token);
+            if (response.ok) {
+                console.log("Đăng nhập thành công!", data);
+
+                localStorage.setItem("userUuid", data.user.uuid);
+                localStorage.setItem("accessToken", data.accessToken);
+
+                localStorage.setItem("user", JSON.stringify({
+                    email: data.user.email,
+                    fullName: data.user.fullName,
+                    phone: data.user.phone,
+                    role: data.user.role,
+                }));
 
                 message.success("Đăng nhập thành công!");
                 form.resetFields();
                 navigate("/");
             } else {
-                message.error("Sai email hoặc mật khẩu!");
+                message.error(data.message || "Sai email hoặc mật khẩu!");
             }
         } catch (error) {
             console.error("Lỗi khi đăng nhập:", error);
@@ -38,7 +47,7 @@ export const LoginForm = () => {
     };
 
     return (
-        <Form form={form} onFinish={handleLogin}> 
+        <Form form={form} onFinish={handleLogin}>
             <Form.Item
                 name="email"
                 rules={[

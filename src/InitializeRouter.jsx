@@ -15,6 +15,10 @@ import Book from './feature/dashboard/Book';
 import Contact from './feature/dashboard/Contact';
 import Order from "./feature/dashboard/Order";
 import Account from './feature/admin/Account';
+import CartPage from './feature/dashboard/Cart';
+import Orders from './feature/dashboard/Orders';
+import UserProfile from './feature/dashboard/Profile';
+import Checkout from './feature/dashboard/Checkout';
 
 export const InitialRouter = () => {
     return (
@@ -33,6 +37,11 @@ export const InitialRouter = () => {
                 <Route path="/book" element={<Book/>} />
                 <Route path="/order" element={<Order/>} />
                 <Route path="/contact" element={<Contact/>} />
+                <Route path="/contact" element={<Contact/>} />
+                <Route path="/cart" element={<CartPage/>} />
+                <Route path="/orders" element={<Orders/>} />
+                <Route path="/profile" element={<UserProfile/>} />
+                <Route path="/checkout" element={<Checkout/>} />
             </Route>
 
             {/* Admin */}
@@ -41,7 +50,6 @@ export const InitialRouter = () => {
                 <Route path="food-category" element={<FoodCategory />} />
                 <Route path="table" element={<Table />} />
                 <Route path="voucher" element={<Voucher />} />
-                <Route path="account" element={<Account/>} />
             </Route>
 
             {/* 404 */}
