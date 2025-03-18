@@ -1,104 +1,71 @@
 import React from 'react';
-import { Layout, Row, Col, Typography, Space, Input, Button, Divider } from 'antd';
-import {
-  FacebookFilled,
-  TwitterOutlined,
-  InstagramOutlined,
-  YoutubeFilled,
-  EnvironmentOutlined,
-  PhoneOutlined,
-  MailOutlined,
-  SendOutlined
-} from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { FacebookOutlined, TwitterOutlined, InstagramOutlined, EnvironmentOutlined, PhoneOutlined, MailOutlined } from '@ant-design/icons';
 import './footer.css';
 
-const { Footer } = Layout;
-const { Title, Text, Paragraph } = Typography;
-
-const FooterComponent = () => {
+const Footer = () => {
   return (
-    <Footer className="footer">
+    <footer className="footer">
       <div className="footer-content">
-        <Row gutter={[32, 32]}>
-          {/* Thông tin về nhà hàng */}
-          <Col xs={24} sm={24} md={8} lg={8}>
-            <div className="footer-section">
-              <Title level={3} className="footer-title">Nomster</Title>
-              <Paragraph className="footer-description">
-                Khám phá ẩm thực tuyệt vời tại Nomster. Chúng tôi mang đến những trải nghiệm ẩm thực độc đáo và phục vụ chu đáo.
-              </Paragraph>
-              <Space className="footer-social-links">
-                <a href="#" className="social-link"><FacebookFilled /></a>
-                <a href="#" className="social-link"><TwitterOutlined /></a>
-                <a href="#" className="social-link"><InstagramOutlined /></a>
-                <a href="#" className="social-link"><YoutubeFilled /></a>
-              </Space>
-            </div>
-          </Col>
+        <div className="footer-section">
+          <h3 className="footer-title">Nomster</h3>
+          <p className="footer-description">
+            Khám phá ẩm thực tuyệt vời tại Nomster. Chúng tôi mang đến những trải nghiệm ẩm thực độc đáo và phục vụ chu đáo.
+          </p>
+          <div className="footer-social-links">
+            <a href="#" className="social-link"><FacebookOutlined /></a>
+            <a href="#" className="social-link"><TwitterOutlined /></a>
+            <a href="#" className="social-link"><InstagramOutlined /></a>
+          </div>
+        </div>
 
-          {/* Liên kết nhanh */}
-          <Col xs={24} sm={12} md={8} lg={8}>
-            <div className="footer-section">
-              <Title level={3} className="footer-title">Liên Kết Nhanh</Title>
-              <ul className="footer-links">
-                <li><Link to="/about">Về chúng tôi</Link></li>
-                <li><Link to="/menu">Thực đơn</Link></li>
-                <li><Link to="/book">Đặt bàn</Link></li>
-                <li><Link to="/contact">Liên hệ</Link></li>
-                <li><Link to="/privacy">Chính sách bảo mật</Link></li>
-                <li><Link to="/terms">Điều khoản sử dụng</Link></li>
-              </ul>
-            </div>
-          </Col>
+        <div className="footer-section">
+          <h3 className="footer-title">Liên Kết Nhanh</h3>
+          <ul className="footer-links">
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#">Thực đơn</a></li>
+            <li><a href="#">Đặt bàn</a></li>
+            <li><a href="#">Liên hệ</a></li>
+            <li><a href="#">Chính sách bảo mật</a></li>
+          </ul>
+        </div>
 
-          {/* Liên hệ và đăng ký */}
-          <Col xs={24} sm={12} md={8} lg={8}>
-            <div className="footer-section">
-              <Title level={3} className="footer-title">Liên Hệ</Title>
-              <Space direction="vertical" size={16} className="contact-info">
-                <Space>
-                  <EnvironmentOutlined />
-                  <Text>123 Đường ABC, Quận XYZ, TP.HCM</Text>
-                </Space>
-                <Space>
-                  <PhoneOutlined />
-                  <Text>+84 123 456 789</Text>
-                </Space>
-                <Space>
-                  <MailOutlined />
-                  <Text>info@nomster.com</Text>
-                </Space>
-              </Space>
+        <div className="footer-section">
+          <h3 className="footer-title">Liên Hệ</h3>
+          <div className="contact-info">
+            <EnvironmentOutlined className="anticon" />
+            <span>163 thôn 3 Thạch Hòa, Thạch Thất, TP. Hà Nội</span>
+          </div>
+          <div className="contact-info">
+            <PhoneOutlined className="anticon" />
+            <span>+84 393 095 515</span>
+          </div>
+          <div className="contact-info">
+            <MailOutlined className="anticon" />
+            <span>hucauvn37@gmail.com</span>
+          </div>
+        </div>
 
-              <Divider className="footer-divider" />
-
-              <div className="newsletter">
-                <Title level={4} className="newsletter-title">Đăng ký nhận tin</Title>
-                <Space.Compact style={{ width: '100%' }}>
-                  <Input placeholder="Email của bạn" />
-                  <Button type="primary" icon={<SendOutlined />}>
-                    Đăng ký
-                  </Button>
-                </Space.Compact>
-              </div>
-            </div>
-          </Col>
-        </Row>
+        <div className="footer-section">
+          <h3 className="footer-title">Đăng ký nhận tin</h3>
+          <form className="newsletter-form">
+            <input type="email" className="newsletter-input" placeholder="Email của bạn" />
+            <button type="submit" className="newsletter-button">Gửi</button>
+          </form>
+        </div>
       </div>
 
-      <Divider className="footer-bottom-divider" />
-      
+      <hr className="footer-bottom-divider" />
+
       <div className="footer-bottom">
-        <Text>© 2024 Nomster. Tất cả quyền được bảo lưu.</Text>
-        <Space split={<Divider type="vertical" />}>
-          <Link to="/privacy">Chính sách bảo mật</Link>
-          <Link to="/terms">Điều khoản</Link>
-          <Link to="/sitemap">Sơ đồ trang</Link>
-        </Space>
+        <p className="footer-text">© 2024 Nomster. Tất cả quyền được bảo lưu</p>
+        <div>
+          <a href="#">Điều khoản sử dụng</a>
+          <span style={{ margin: '0 10px' }}>|</span>
+          <a href="#">Chính sách bảo mật</a>
+        </div>
       </div>
-    </Footer>
+    </footer>
   );
 };
 
-export default FooterComponent;
+export default Footer; 

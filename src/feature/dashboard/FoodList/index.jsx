@@ -11,7 +11,6 @@ const FoodList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [cartItems, setCartItems] = useState(() => {
-        // Khởi tạo giỏ hàng từ localStorage nếu có
         const savedCart = localStorage.getItem('cartItems');
         return savedCart ? JSON.parse(savedCart) : [];
     });
