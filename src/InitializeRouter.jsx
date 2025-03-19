@@ -7,7 +7,7 @@ import AdminLayout from './layout/AdminLayout';
 import PageNotFound from './feature/pagenotfound';
 import Login from './feature/login';
 import FoodCategory from './feature/admin/FoodCategory';
-import Table from './feature/admin/Table';
+import TableManagement from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
 import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
@@ -16,6 +16,10 @@ import Contact from './feature/dashboard/Contact';
 import OrderPage from './feature/dashboard/order';
 import RevenueReport from './feature/admin/Report/RevenueReport';
 // import Account from './feature/admin/Account';
+import CartPage from './feature/dashboard/Cart';
+import Orders from './feature/dashboard/Orders';
+import UserProfile from './feature/dashboard/Profile';
+import Checkout from './feature/dashboard/Checkout';
 
 export const InitialRouter = () => {
     return (
@@ -32,16 +36,18 @@ export const InitialRouter = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/foodlist" element={<FoodList />} />
                 <Route path="/book" element={<Book/>} />
-                <Route path="/order" element={<OrderPage/>} />
                 <Route path="/contact" element={<Contact/>} />
-               
+                <Route path="/cart" element={<CartPage/>} />
+                <Route path="/orders" element={<Orders/>} />
+                <Route path="/profile" element={<UserProfile/>} />
+                <Route path="/checkout" element={<Checkout/>} />
             </Route>
 
             {/* Admin */}
             <Route path="/admin" element={<AdminLayout />}>
                 <Route path="food" element={<Food />} />
                 <Route path="food-category" element={<FoodCategory />} />
-                <Route path="table" element={<Table />} />
+                <Route path="table" element={<TableManagement />} />
                 <Route path="voucher" element={<Voucher />} />
                 <Route path="revenue" element={<RevenueReport/>} />
                 {/* <Route path="account" element={<Account/>} /> */}
