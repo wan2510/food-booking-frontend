@@ -1,0 +1,338 @@
+.revenue-report {
+  padding: 24px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.filter-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+/* Card styling */
+.ant-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: none;
+  overflow: hidden;
+}
+
+.ant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.ant-card-head {
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 16px;
+  padding: 16px 24px;
+  background: linear-gradient(to right, #ffffff, #f8f9fa);
+}
+
+/* Statistics cards */
+.ant-statistic {
+  text-align: center;
+  padding: 8px;
+}
+
+.ant-statistic-title {
+  color: #5a6d7e;
+  font-size: 15px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ant-statistic-content {
+  background: linear-gradient(135deg, #1890ff, #36cfc9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Statistic cards */
+.statistic-card {
+  transition: all 0.3s ease;
+}
+
+.revenue-card .ant-statistic-title {
+  color: #1890ff;
+}
+
+.orders-card .ant-statistic-title {
+  color: #52c41a;
+}
+
+.completion-card .ant-statistic-title {
+  color: #3f8600;
+}
+
+.cancelled-card .ant-statistic-title {
+  color: #cf1322;
+}
+
+/* Tables */
+.custom-table {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.table-card .ant-card-head-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ant-table-thead > tr > th {
+  background: linear-gradient(to right, #f8f9fa, #ffffff);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  color: #2c3e50;
+  padding: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.ant-table-thead > tr > th:hover {
+  background: #f0f2f5 !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: rgba(24, 144, 255, 0.05) !important;
+  transition: all 0.3s ease;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 16px;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-table-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+
+.custom-table .ant-table-cell {
+  color: #2c3e50;
+}
+
+.custom-table .ant-table-row:hover .ant-table-cell {
+  color: #1890ff;
+}
+
+/* Charts */
+.ant-chart {
+  margin: 16px 0;
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Chart container customization */
+.ant-plot {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Export buttons */
+.ant-btn {
+  border-radius: 8px;
+  height: 38px;
+  padding: 6px 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary {
+  text-shadow: none;
+  background: linear-gradient(135deg, #1890ff, #096dd9);
+  border: none;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.35);
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.45);
+  background: linear-gradient(135deg, #40a9ff, #1890ff);
+}
+
+.ant-btn > .anticon {
+  vertical-align: -1px;
+  margin-right: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .revenue-report {
+    padding: 16px;
+  }
+
+  .ant-card {
+    margin-bottom: 16px;
+  }
+
+  .ant-statistic-title {
+    font-size: 13px;
+  }
+
+  .ant-statistic-content {
+    font-size: 24px;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 12px 8px;
+  }
+}
+
+/* Loading states */
+.ant-spin {
+  margin: 32px 0;
+}
+
+.ant-spin-dot i {
+  background-color: #1890ff;
+}
+
+/* Empty states */
+.ant-empty {
+  margin: 40px 0;
+  opacity: 0.8;
+}
+
+/* Date picker customization */
+.ant-picker-range {
+  width: 100%;
+  border-radius: 8px;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  transition: all 0.3s ease;
+}
+
+.ant-picker-range:hover {
+  border-color: #40a9ff;
+}
+
+.ant-picker-range:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Select customization */
+.ant-select {
+  width: 100%;
+}
+
+.ant-select-selector {
+  border-radius: 8px !important;
+  padding: 4px 12px !important;
+  height: 40px !important;
+  transition: all 0.3s ease !important;
+}
+
+.ant-select-selection-item {
+  line-height: 30px !important;
+}
+
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+  border-color: #40a9ff !important;
+}
+
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom scrollbar for tables */
+.ant-table-body::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.ant-table-body::-webkit-scrollbar-track {
+  background: #f0f2f5;
+  border-radius: 3px;
+}
+
+.ant-table-body::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 3px;
+}
+
+.ant-table-body::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}
+
+/* Loading animation enhancement */
+.ant-spin-dot-item {
+  background-color: #1890ff !important;
+}
+
+.ant-spin-text {
+  color: #1890ff;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* Empty state enhancement */
+.ant-empty {
+  padding: 32px 0;
+}
+
+.ant-empty-image {
+  opacity: 0.5;
+}
+
+.ant-empty-description {
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+/* Hover effects for cards */
+.statistic-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}

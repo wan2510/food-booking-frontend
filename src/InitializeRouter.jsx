@@ -7,7 +7,7 @@ import AdminLayout from './layout/AdminLayout';
 import PageNotFound from './feature/pagenotfound';
 import Login from './feature/login';
 import FoodCategory from './feature/admin/FoodCategory';
-import Table from './feature/admin/Table';
+import TableManagement from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
 import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
@@ -15,6 +15,7 @@ import Book from './feature/dashboard/Book';
 import Contact from './feature/dashboard/Contact';
 import Order from "./feature/dashboard/Order";
 import Account from './feature/admin/Account';
+import RevenueReport from './feature/admin/Report/RevenueReport';
 import CartPage from './feature/dashboard/Cart';
 import Orders from './feature/dashboard/Orders';
 import UserProfile from './feature/dashboard/Profile';
@@ -48,8 +49,10 @@ export const InitialRouter = () => {
             <Route path="/admin" element={<AdminLayout />}>
                 <Route path="food" element={<Food />} />
                 <Route path="food-category" element={<FoodCategory />} />
-                <Route path="table" element={<Table />} />
+                <Route path="table" element={<TableManagement />} />
                 <Route path="voucher" element={<Voucher />} />
+                <Route path="revenue" element={<RevenueReport/>} />
+                <Route path="account" element={<Account/>} />
             </Route>
 
             {/* 404 */}
