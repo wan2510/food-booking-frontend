@@ -7,7 +7,7 @@ import AdminLayout from './layout/AdminLayout';
 import PageNotFound from './feature/pagenotfound';
 import Login from './feature/login';
 import FoodCategory from './feature/admin/FoodCategory';
-import Table from './feature/admin/Table';
+import TableManagement from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
 import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
@@ -44,7 +44,7 @@ export const InitialRouter = () => {
             <Route path="/admin" element={<AdminLayout />}>
                 <Route path="food" element={<Food />} />
                 <Route path="food-category" element={<FoodCategory />} />
-                <Route path="table" element={<Table />} />
+                <Route path="table" element={<TableManagement />} />
                 <Route path="voucher" element={<Voucher />} />
             </Route>
 
