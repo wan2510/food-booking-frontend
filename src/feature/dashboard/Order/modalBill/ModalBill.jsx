@@ -7,7 +7,7 @@ import { getTotalPrice, getDiscount, getFinalPrice } from "../OrderApi";
 const { Title } = Typography;
 
 const ModalBill = ({ bill, updateItem, vouchers, tables, selectedTable, setSelectedTable, selectedVoucher, setSelectedVoucher }) => {
-  const totalPrice = getTotalPrice(); // Tổng bill
+  const totalPrice = getTotalPrice();
   const discount = getDiscount(); // Giảm giá
   const finalPrice = getFinalPrice(); // Thực chi
 

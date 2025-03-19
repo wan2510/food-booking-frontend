@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 const API_URL = 'http://your-backend-url/api'; // Thay bằng URL backend của bạn
 
 // Dữ liệu mẫu để test

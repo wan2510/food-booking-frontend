@@ -48,7 +48,7 @@ export const subscribe = (listener) => {
 
 export const setState = (newState) => {
   orderState = { ...orderState, ...newState };
-  console.log("Updated orderState:", { ...orderState }); // Debug log chi tiết
+  console.log("Updated orderState:", { ...orderState }); 
   subscribers.forEach((listener) => listener(orderState));
 };
 

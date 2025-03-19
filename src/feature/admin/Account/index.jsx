@@ -3,7 +3,7 @@ import AccountModals from './AccountModal/AccountModal';
 import AccountTable from './AccountTable';
 import './Account.css';
 import { Button, message, Input, Empty } from 'antd';
-import { getAccounts, createAccount, updateAccount } from './AccountApi';
+import { getAccounts, createAccount, updateAccount } from '../../../api/AccountApi';
 const { Search } = Input;
 
 const Account = () => {

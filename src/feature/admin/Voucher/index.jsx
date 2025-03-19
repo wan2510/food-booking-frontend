@@ -1,3 +1,4 @@
+// src/feature/dashboard/Voucher/Voucher.js
 import React, { useState, useEffect, useCallback } from "react";
 import { message, Modal, Empty } from "antd";
 import dayjs from "dayjs";
@@ -5,7 +6,7 @@ import VoucherModal from "./VoucherModal/VoucherModal";
 import VoucherTable from "./VoucherTable";
 import ActionButtons from "./ActionButtons";
 import { Form } from "antd";
-import { getVouchers, createVoucher, updateVoucher } from "./VoucherApi";
+import { getVouchers, createVoucher, updateVoucher } from "../../../api/VoucherApi";
 import "./Voucher.css";
 
 const Voucher = () => {
@@ -15,17 +16,13 @@ const Voucher = () => {
   const [editingVoucher, setEditingVoucher] = useState(null);
   const [form] = Form.useForm();
 
-  // Fetch vouchers from backend
+  // Hàm tải vouchers từ API
   const loadVouchers = useCallback(async () => {
-    try {
-      const data = await getVouchers();
-      setVouchers(data);
-    } catch (error) {
-      console.error("Error loading vouchers:", error);
-      message.error("Không thể tải danh sách voucher!");
-    }
+    const data = await getVouchers();
+    setVouchers(data || []);
   }, []);
 
+  // Fetch vouchers từ VoucherApi khi component mount
   useEffect(() => {
     loadVouchers();
   }, [loadVouchers]);
@@ -36,7 +33,7 @@ const Voucher = () => {
   };
 
   // Filter vouchers based on search text
-  const filteredVouchers = vouchers.filter((voucher) =>
+  const filteredVouchers = (vouchers || []).filter((voucher) =>
     voucher.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -82,7 +79,7 @@ const Voucher = () => {
         await createVoucher(values);
       }
 
-      loadVouchers();
+      await loadVouchers(); // Tải lại danh sách vouchers sau khi lưu
       handleCancel();
       message.success(editingVoucher ? "Chỉnh sửa trạng thái voucher thành công!" : "Thêm voucher thành công!");
     } catch (error) {
@@ -101,7 +98,13 @@ const Voucher = () => {
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
         </div>
       )}
-      <VoucherModal visible={isModalOpen} onClose={handleCancel} onSave={handleSave} form={form} editingVoucher={editingVoucher} />
+      <VoucherModal
+        visible={isModalOpen}
+        onClose={handleCancel}
+        onSave={handleSave}
+        form={form}
+        editingVoucher={editingVoucher}
+      />
     </div>
   );
 };

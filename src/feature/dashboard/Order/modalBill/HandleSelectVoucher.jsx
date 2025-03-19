@@ -8,7 +8,7 @@ const HandleSelectVoucher = ({ vouchers, selectedVoucher, setSelectedVoucher }) 
     <Select
       placeholder="Chọn voucher"
       style={{ width: "100%" }}
-      value={selectedVoucher ? selectedVoucher.id : undefined} // Sử dụng id để chọn voucher
+      value={selectedVoucher ? selectedVoucher.id : undefined} 
       onChange={(value) => {
         const voucher = vouchers.find((v) => v.id === value);
         setSelectedVoucher(voucher || null);

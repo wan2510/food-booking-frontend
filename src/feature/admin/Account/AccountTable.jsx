@@ -45,7 +45,7 @@ const AccountTable = ({ accounts, handleEdit, handleDelete }) => {
       key: 'status',
       render: (status) => {
         let color = "green"; // Mặc định là màu xanh cho "Kích hoạt"
-        if (status === "Khóa") color = "red"; // Màu đỏ cho "Khóa"
+        if (status === "Vô hiệu hóa") color = "red"; // Màu đỏ cho "Khóa"
         return <Tag color={color}>{status}</Tag>;
       },
       sorter: (a, b) => a.status.localeCompare(b.status),

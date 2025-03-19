@@ -8,7 +8,7 @@ const HandleSelectTable = ({ tables, selectedTable, setSelectedTable }) => {
     <Select
       placeholder="Chọn bàn"
       style={{ width: "100%" }}
-      value={selectedTable || undefined} // Xử lý undefined để tránh lỗi
+      value={selectedTable || undefined} 
       onChange={setSelectedTable}
     >
       {tables && tables.length > 0 ? (
