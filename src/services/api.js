@@ -122,5 +122,38 @@ export const api = {
                 email,
                 password
             })
-        }).then(handleResponse)
+        }).then(handleResponse),
+
+    // Table APIs
+    getTables: (params, token) => 
+        fetch(`${API_BASE_URL}/api/tables?${new URLSearchParams(params).toString()}`, {
+            ...authConfig(token),
+            method: 'GET'
+        }).then(handleResponse),
+    
+    getTableById: (id, token) =>
+        fetch(`${API_BASE_URL}/api/tables/${id}`, {
+            ...authConfig(token),
+            method: 'GET'
+        }).then(handleResponse),
+    
+    createTable: (tableData, token) =>
+        fetch(`${API_BASE_URL}/api/tables`, {
+            ...authConfig(token),
+            method: 'POST',
+            body: JSON.stringify(tableData)
+        }).then(handleResponse),
+    
+    updateTable: (id, tableData, token) =>
+        fetch(`${API_BASE_URL}/api/tables/${id}`, {
+            ...authConfig(token),
+            method: 'PUT',
+            body: JSON.stringify(tableData)
+        }).then(handleResponse),
+    
+    deleteTable: (id, token) =>
+        fetch(`${API_BASE_URL}/api/tables/${id}`, {
+            ...authConfig(token),
+            method: 'DELETE'
+        }).then(handleResponse),
 };
