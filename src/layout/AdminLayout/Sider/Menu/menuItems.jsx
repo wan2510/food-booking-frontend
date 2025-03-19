@@ -27,7 +27,12 @@ export const menuItems = [
             {
                 key: '/admin/account',
                 label: <Link to="/admin/account">Account</Link>,
-            }
+            },
+            {
+                key: '/admin/revenue',
+                label: <Link to="/admin/revenue">Doanh thu</Link>,
+            },
+
         ],
     },
 ];
