@@ -13,6 +13,9 @@ import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
 import Book from './feature/dashboard/Book';
 import Contact from './feature/dashboard/Contact';
+import OrderPage from './feature/dashboard/order';
+import RevenueReport from './feature/admin/Report/RevenueReport';
+// import Account from './feature/admin/Account';
 import CartPage from './feature/dashboard/Cart';
 import Orders from './feature/dashboard/Orders';
 import UserProfile from './feature/dashboard/Profile';
@@ -46,6 +49,8 @@ export const InitialRouter = () => {
                 <Route path="food-category" element={<FoodCategory />} />
                 <Route path="table" element={<TableManagement />} />
                 <Route path="voucher" element={<Voucher />} />
+                <Route path="revenue" element={<RevenueReport/>} />
+                {/* <Route path="account" element={<Account/>} /> */}
             </Route>
 
             {/* 404 */}
