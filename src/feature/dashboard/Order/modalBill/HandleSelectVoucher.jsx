@@ -1,31 +1,32 @@
 import React from "react";
 import { Select } from "antd";
+import { setSelectedVoucher } from "../../../../api/OrderApi";
 
 const { Option } = Select;
 
 const HandleSelectVoucher = ({ vouchers, selectedVoucher, setSelectedVoucher }) => {
+  const handleChange = (voucherId) => {
+    const selected = vouchers.find((v) => v.id === voucherId) || null;
+    console.log("Selected voucher in HandleSelectVoucher:", selected); // Debug log
+    setSelectedVoucher(selected); // Gọi hàm từ OrderApi với đối tượng voucher
+  };
+
   return (
-    <Select
-      placeholder="Chọn voucher"
-      style={{ width: "100%" }}
-      value={selectedVoucher ? selectedVoucher.id : undefined} 
-      onChange={(value) => {
-        const voucher = vouchers.find((v) => v.id === value);
-        setSelectedVoucher(voucher || null);
-      }}
-    >
-      {vouchers && vouchers.length > 0 ? (
-        vouchers.map((voucher) => (
-          <Option key={voucher.id} value={voucher.id} disabled={voucher.status === "Không khả dụng"}>
-            {`${voucher.code} - Giảm ${voucher.discount}% (Tối đa ${voucher.max_discount_value.toLocaleString()} VND)`}
+    <div style={{ marginBottom: 16 }}>
+      <Select
+        style={{ width: "100%" }}
+        placeholder="Chọn voucher"
+        value={selectedVoucher ? selectedVoucher.id : null}
+        onChange={handleChange}
+        allowClear
+      >
+        {vouchers.map((voucher) => (
+          <Option key={voucher.id} value={voucher.id}>
+            {voucher.code} - {voucher.name} (Giảm {voucher.discount}%, tối đa {voucher.max_discount_value.toLocaleString()} VND)
           </Option>
-        ))
-      ) : (
-        <Option value="" disabled>
-          Không có voucher
-        </Option>
-      )}
-    </Select>
+        ))}
+      </Select>
+    </div>
   );
 };
 

@@ -1,10 +1,10 @@
 import React from "react";
 import { List, Typography, Space, Card } from "antd";
-import { getTotalPrice, getDiscount, getFinalPrice } from "../OrderApi";
+import { getTotalPrice, getDiscount, getFinalPrice } from "../../../../api/OrderApi";
 
 const { Title } = Typography;
 
-const ModalBillReadOnly = ({ bill, selectedTable, selectedVoucher, vouchers }) => {
+const ModalBillReadOnly = ({ bill, selectedTable, selectedVoucher}) => {
   const totalPrice = getTotalPrice();
   const discount = getDiscount();
   const finalPrice = getFinalPrice();

@@ -3,7 +3,7 @@ import { Row, Col, Layout, Typography, Card, Button, message } from "antd";
 import HandleOrderFood from "./handleOrderFood/HandleOrderFood";
 import ModalPurchase from "./modalPurchase/ModalPurchase";
 import ModalBill from "./modalBill/ModalBill";
-import { getState, subscribe, getMenuItems, getFoodCategories, getTables, getVouchers, addToBill, updateItem, setSelectedTable, setSelectedVoucher, setPaymentMethod, setCashReceived, validateBeforeCreate, clearOrder, getTotalPrice, getDiscount, getFinalPrice } from "./OrderApi";
+import { getState, subscribe, getMenuItems, getFoodCategories, getTables, getVouchers, addToBill, updateItem, setSelectedTable, setSelectedVoucher, setPaymentMethod, setCashReceived, validateBeforeCreate, getTotalPrice, getDiscount, getFinalPrice } from "../../../../api/OrderApi";
 import "./Order.css";
 
 const { Content } = Layout;
@@ -82,7 +82,7 @@ const Order = ({ user }) => {
       <Content className="order-content">
         <Row gutter={16} className="order-container">
           <Col span={16}>
-            <Card className="menu-container">
+            <Card style={{marginLeft: "1.25vw" , marginTop: "2vw"}}>
               <Title level={2}>Menu</Title>
               <HandleOrderFood
                 menuItems={menuItems}
@@ -93,7 +93,7 @@ const Order = ({ user }) => {
           </Col>
 
           <Col span={8}>
-            <Card className="bill-container">
+            <Card className="bill-container" style={{ margin: "2vw 2vw 0vw 1.25vw"}}>
               <Title level={2}>Hóa đơn</Title>
               <ModalBill
                 bill={state.bill}

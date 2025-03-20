@@ -3,7 +3,7 @@ import { Modal, Row, Col, Button, Input } from "antd";
 import ModalBillReadOnly from "../modalBill/ModalBillReadOnly";
 import HandleQRPayment from "./HandleQRPayment";
 import HandleSelectMethod from "./HandleSelectMethod";
-import { getTotalPrice, getDiscount, getFinalPrice } from "../OrderApi";
+import { getTotalPrice, getDiscount, getFinalPrice } from "../../../../api/OrderApi";
 
 const ModalPurchase = ({
   visible,

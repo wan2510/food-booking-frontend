@@ -11,7 +11,13 @@ const HandleSearchFood = ({ searchText, setSearchText }) => {
       placeholder="Tìm kiếm món ăn..."
       value={searchText}
       onChange={handleInputChange}
-      style={{ marginBottom: "10px", width: "100%" }}
+      style={{
+        width: "100%",
+        borderRadius: 8,
+        padding: "8px 12px",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        border: "1px solid #d9d9d9",
+      }}
       allowClear
     />
   );

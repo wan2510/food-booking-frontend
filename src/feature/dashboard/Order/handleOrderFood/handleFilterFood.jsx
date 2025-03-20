@@ -9,14 +9,24 @@ const HandleFilterFood = ({ foodCategories, selectedCategories, setSelectedCateg
   };
 
   return (
-    <Card title="Lọc theo danh mục" bordered={false} style={{ marginBottom: 16 }}>
-      <Row gutter={[0, 8]}>
+    <Card
+      title={<span style={{ fontSize: 16, fontWeight: 500 }}>Lọc theo danh mục</span>}
+      bordered={false}
+      style={{
+        marginBottom: 16,
+        borderRadius: 8,
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+        backgroundColor: "#fff",
+      }}
+    >
+      <Row gutter={[0, 12]}>
         {foodCategories.length > 0 ? (
           foodCategories.map((category) => (
             <Col span={24} key={category.id}>
               <Checkbox
                 checked={selectedCategories.includes(category.id)}
                 onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
+                style={{ fontSize: 14 }}
               >
                 {category.name}
               </Checkbox>
@@ -24,7 +34,9 @@ const HandleFilterFood = ({ foodCategories, selectedCategories, setSelectedCateg
           ))
         ) : (
           <Col span={24}>
-            <p style={{ color: "#888" }}>Không có danh mục.</p>
+            <p style={{ color: "#999", fontStyle: "italic", margin: 0 }}>
+              Không có danh mục nào.
+            </p>
           </Col>
         )}
       </Row>

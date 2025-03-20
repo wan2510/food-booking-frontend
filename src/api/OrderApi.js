@@ -1,19 +1,23 @@
 import { message } from "antd";
 
-// URL API (dùng mock cho test)
-const API_URL = "http://localhost:8080/api/order";
+// URL API (sẽ dùng khi có backend)
+const API_URL = "http://localhost:8080/api";
 
-// Dữ liệu mẫu để test
+// Dữ liệu tạm thời để test
 const mockTables = [
   { id: 1, number: 1, max_number_human: 4 },
   { id: 2, number: 2, max_number_human: 6 },
   { id: 3, number: 3, max_number_human: 2 },
+  { id: 4, number: 4, max_number_human: 8 },
+  { id: 5, number: 5, max_number_human: 4 },
 ];
 
 const mockMenuItems = [
   { id: 1, name: "Pizza", price: 150000, image: "", category: "Fast Food" },
   { id: 2, name: "Burger", price: 80000, image: "", category: "Fast Food" },
   { id: 3, name: "Sushi", price: 200000, image: "", category: "Japanese" },
+  { id: 4, name: "Coke", price: 20000, image: "", category: "Drinks" },
+  { id: 5, name: "Ice Cream", price: 30000, image: "", category: "Desserts" },
 ];
 
 const mockFoodCategories = [
@@ -48,47 +52,54 @@ export const subscribe = (listener) => {
 
 export const setState = (newState) => {
   orderState = { ...orderState, ...newState };
-  console.log("Updated orderState:", { ...orderState }); 
   subscribers.forEach((listener) => listener(orderState));
 };
 
 // Lấy danh sách bàn
 export const getTables = async () => {
   try {
-    return [...mockTables];
+    const response = await fetch(`${API_URL}/tables`);
+    if (!response.ok) throw new Error("Failed to fetch tables");
+    return await response.json();
   } catch (error) {
     console.error("Error fetching tables:", error);
-    return mockTables;
+    return [...mockTables]; // Dữ liệu tạm thời nếu API lỗi
   }
 };
 
 // Lấy danh sách món ăn
 export const getMenuItems = async () => {
   try {
-    return [...mockMenuItems];
+    const response = await fetch(`${API_URL}/menu-items`);
+    if (!response.ok) throw new Error("Failed to fetch menu items");
+    return await response.json();
   } catch (error) {
     console.error("Error fetching menu items:", error);
-    return mockMenuItems;
+    return [...mockMenuItems]; // Dữ liệu tạm thời nếu API lỗi
   }
 };
 
 // Lấy danh sách danh mục
 export const getFoodCategories = async () => {
   try {
-    return [...mockFoodCategories];
+    const response = await fetch(`${API_URL}/food-categories`);
+    if (!response.ok) throw new Error("Failed to fetch food categories");
+    return await response.json();
   } catch (error) {
     console.error("Error fetching food categories:", error);
-    return mockFoodCategories;
+    return [...mockFoodCategories]; // Dữ liệu tạm thời nếu API lỗi
   }
 };
 
 // Lấy danh sách voucher
 export const getVouchers = async () => {
   try {
-    return [...mockVouchers];
+    const response = await fetch(`${API_URL}/vouchers`);
+    if (!response.ok) throw new Error("Failed to fetch vouchers");
+    return await response.json();
   } catch (error) {
     console.error("Error fetching vouchers:", error);
-    return mockVouchers;
+    return [...mockVouchers]; // Dữ liệu tạm thời nếu API lỗi
   }
 };
 
@@ -140,7 +151,7 @@ export const updateItem = async (id, quantity) => {
 // Chọn bàn
 export const setSelectedTable = async (tableNumber) => {
   try {
-    const table = mockTables.find((t) => t.number === tableNumber);
+    const table = mockTables.find((t) => t.number === tableNumber); // Dùng mock tạm thời
     if (table) {
       setState({ selectedTable: table.number });
       return { success: true, selectedTable: table.number };
@@ -150,26 +161,6 @@ export const setSelectedTable = async (tableNumber) => {
     }
   } catch (error) {
     console.error("Error setting table:", error);
-    return { success: false, error };
-  }
-};
-
-// Chọn voucher
-export const setSelectedVoucher = async (voucherId) => {
-  try {
-    const voucher = mockVouchers.find((v) => v.id === voucherId);
-    const totalPrice = getTotalPrice();
-    console.log("Attempting to set voucher:", voucherId, "Voucher found:", voucher, "Total price:", totalPrice); // Debug log
-    if (voucher && totalPrice < voucher.min_order_value) {
-      message.warning(`Đơn hàng phải từ ${voucher.min_order_value.toLocaleString()} VND để áp dụng voucher này!`);
-      setState({ selectedVoucher: null });
-      return { success: false, selectedVoucher: null };
-    }
-    setState({ selectedVoucher: voucher || null });
-    console.log("Voucher set successfully:", orderState.selectedVoucher); // Debug log
-    return { success: true, selectedVoucher: voucher || null };
-  } catch (error) {
-    console.error("Error setting voucher:", error);
     return { success: false, error };
   }
 };
@@ -206,30 +197,39 @@ export const setCashReceived = async (amount) => {
 
 // Tính tổng giá
 export const getTotalPrice = () => {
-  const total = orderState.bill.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  console.log("Calculated total price:", total); // Debug log
-  return total;
+  return orderState.bill.reduce((sum, item) => sum + item.price * item.quantity, 0);
 };
 
 // Tính giảm giá
 export const getDiscount = () => {
   const totalPrice = getTotalPrice();
-  console.log("Checking discount - Total price:", totalPrice, "Selected voucher:", orderState.selectedVoucher); // Debug log
   if (orderState.selectedVoucher && totalPrice >= orderState.selectedVoucher.min_order_value) {
     const discountAmount = (totalPrice * orderState.selectedVoucher.discount) / 100;
-    const discount = Math.min(discountAmount, orderState.selectedVoucher.max_discount_value);
-    console.log("Discount calculated:", discount); // Debug log
-    return discount;
+    return Math.min(discountAmount, orderState.selectedVoucher.max_discount_value);
   }
-  console.log("No discount applied - Reason: Voucher null or total below min_order_value"); // Debug log
   return 0;
 };
 
 // Tính giá cuối cùng
 export const getFinalPrice = () => {
-  const final = getTotalPrice() - getDiscount();
-  console.log("Calculated final price:", final); // Debug log
-  return final;
+  return getTotalPrice() - getDiscount();
+};
+
+// Chọn voucher
+export const setSelectedVoucher = async (voucher) => {
+  try {
+    const totalPrice = getTotalPrice();
+    if (voucher && totalPrice < voucher.min_order_value) {
+      message.warning(`Đơn hàng phải từ ${voucher.min_order_value.toLocaleString()} VND để áp dụng voucher này!`);
+      setState({ selectedVoucher: null });
+      return { success: false, selectedVoucher: null };
+    }
+    setState({ selectedVoucher: voucher || null });
+    return { success: true, selectedVoucher: voucher || null };
+  } catch (error) {
+    console.error("Error setting voucher:", error);
+    return { success: false, error };
+  }
 };
 
 // Kiểm tra trước khi tạo hóa đơn
@@ -243,23 +243,6 @@ export const validateBeforeCreate = async () => {
     return { success: false };
   }
   return { success: true };
-};
-
-// Xóa toàn bộ đơn hàng
-export const clearOrder = async () => {
-  try {
-    setState({
-      bill: [],
-      selectedTable: null,
-      selectedVoucher: null,
-      paymentMethod: "Tiền mặt",
-      cashReceived: 0,
-    });
-    return { success: true };
-  } catch (error) {
-    console.error("Error clearing order:", error);
-    return { success: false, error };
-  }
 };
 
 // Lấy state hiện tại

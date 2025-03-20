@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col } from "antd";
 import HandleSearchFood from "./HandleSearchFood";
 import HandleFilterFood from "./HandleFilterFood";
@@ -8,34 +8,41 @@ const HandleOrderFood = ({ menuItems, addToBill, foodCategories }) => {
   const [searchText, setSearchText] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
 
+  // Debug dữ liệu
+  useEffect(() => {
+    console.log("menuItems in HandleOrderFood:", menuItems);
+    console.log("foodCategories in HandleOrderFood:", foodCategories);
+    console.log("selectedCategories:", selectedCategories);
+  }, [menuItems, foodCategories, selectedCategories]);
+
   const filteredMenu = (menuItems || []).filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(searchText.toLowerCase());
-    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(item.category);
+    const matchesCategory =
+      selectedCategories.length === 0 || selectedCategories.includes(item.category);
     return matchesSearch && matchesCategory;
   });
 
   return (
-    <>
-      <HandleSearchFood searchText={searchText} setSearchText={setSearchText} />
+    <div style={{ padding: "0 16px"}}>
       <Row gutter={[16, 16]}>
-        <Col span={6}>
-          <HandleFilterFood
-            foodCategories={foodCategories || []}
-            selectedCategories={selectedCategories}
-            setSelectedCategories={setSelectedCategories}
-          />
+        {/* Bên trái: Ô tìm kiếm và bộ lọc danh mục */}
+        <Col xs={24} md={6}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <HandleSearchFood searchText={searchText} setSearchText={setSearchText} />
+            <HandleFilterFood
+              foodCategories={foodCategories || []}
+              selectedCategories={selectedCategories}
+              setSelectedCategories={setSelectedCategories}
+            />
+          </div>
         </Col>
-        <Col span={18}>
-          {filteredMenu.length > 0 ? (
-            <HandleSelectFood filteredMenu={filteredMenu} addToBill={addToBill} />
-          ) : (
-            <div style={{ textAlign: "center", padding: "20px", color: "#888" }}>
-              Không có món ăn nào phù hợp.
-            </div>
-          )}
+
+        {/* Bên phải: Danh sách món ăn */}
+        <Col xs={24} md={18}>
+          <HandleSelectFood filteredMenu={filteredMenu} addToBill={addToBill} />
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 
