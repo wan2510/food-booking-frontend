@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Layout, Menu, Avatar, Dropdown, Input, Badge, Space, Button } from "antd";
+import React, { useState, useEffect } from "react";
+import { Layout, Menu, Avatar, Dropdown, Input, Badge, Space, Button, message } from "antd";
 import { 
   UserOutlined, 
   ShoppingCartOutlined, 
@@ -21,6 +21,8 @@ const HeaderComponent = () => {
   const location = useLocation();
   const accessToken = localStorage.getItem("accessToken");
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -28,6 +30,8 @@ const HeaderComponent = () => {
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userName");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("user");
+    message.success("Bạn đã đăng xuất thành công");
     navigate("/");
   };
 
@@ -39,63 +43,40 @@ const HeaderComponent = () => {
     }
   };
 
-  const handleSearch = (value) => {
-    console.log("Searching for:", value);
-    // Implement search logic here
+  const handleSearch = async (value) => {
+    setSearchTerm(value);
+    if (!value.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/food?name=${value}`);
+      if (!response.ok) throw new Error("Lỗi khi tìm kiếm món ăn");
+
+      const data = await response.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Lỗi tìm kiếm món ăn:", error);
+      setSearchResults([]);
+    }
   };
 
   const notificationMenu = {
     items: [
-      {
-        key: '1',
-        label: 'Thông báo mới về đơn hàng',
-        onClick: () => console.log('Notification 1 clicked'),
-      },
-      {
-        key: '2',
-        label: 'Khuyến mãi đặc biệt hôm nay',
-        onClick: () => console.log('Notification 2 clicked'),
-      },
+      { key: '1', label: 'Thông báo mới về đơn hàng', onClick: () => console.log('Notification 1 clicked') },
+      { key: '2', label: 'Khuyến mãi đặc biệt hôm nay', onClick: () => console.log('Notification 2 clicked') },
     ],
   };
 
   const userMenu = {
     items: [
-      {
-        key: "1",
-        icon: <UserOutlined />,
-        label: (
-          <span onClick={() => handleRedirect("/profile")} className="menu-item">
-            Tài khoản của tôi
-          </span>
-        ),
-      },
-      {
-        key: "2",
-        icon: <ShoppingCartOutlined />,
-        label: (
-          <span onClick={() => handleRedirect("/cart")} className="menu-item">
-            Giỏ hàng của tôi
-          </span>
-        ),
-      },
+      { key: "1", icon: <UserOutlined />, label: <span onClick={() => handleRedirect("/profile")}>Tài khoản của tôi</span> },
+      { key: "2", icon: <ShoppingCartOutlined />, label: <span onClick={() => handleRedirect("/cart")}>Giỏ hàng của tôi</span> },
       { type: "divider" },
       accessToken
-        ? {
-            key: "3",
-            icon: <LogoutOutlined />,
-            danger: true,
-            label: (
-              <span onClick={handleLogout} className="menu-item">
-                Đăng xuất
-              </span>
-            ),
-          }
-        : {
-            key: "4",
-            icon: <LoginOutlined />,
-            label: <Link to="/login" className="menu-item">Đăng nhập</Link>,
-          },
+        ? { key: "3", icon: <LogoutOutlined />, danger: true, label: <span onClick={handleLogout}>Đăng xuất</span> }
+        : { key: "4", icon: <LoginOutlined />, label: <Link to="/login">Đăng nhập</Link> },
     ],
   };
 
@@ -109,54 +90,32 @@ const HeaderComponent = () => {
 
   return (
     <Layout>
-      <div className="top-bar">
-        <div className="top-left">
-          <Space size={24}>
-            <span className="top-bar-item">About</span>
-            <span className="top-bar-item">Setting</span>
-            <span className="top-bar-item">Contact Us</span>
-          </Space>
-        </div>
-        <div className="top-right">
-          <Space size={16}>
-            <a href="#" className="social-icon hover-effect">
-              <FaFacebook />
-            </a>
-            <a href="#" className="social-icon hover-effect">
-              <FaTwitter />
-            </a>
-            <a href="#" className="social-icon hover-effect">
-              <FaInstagram />
-            </a>
-          </Space>
-        </div>
-      </div>
-
       <Header className="header">
         <div className="header-left">
-          <Button 
-            className="mobile-menu-button"
-            icon={<MenuOutlined />}
-            onClick={() => setIsMenuVisible(!isMenuVisible)}
-          />
-          <Link to="/" className="logo">
-            Nomster
-          </Link>
+          <Button className="mobile-menu-button" icon={<MenuOutlined />} onClick={() => setIsMenuVisible(!isMenuVisible)} />
+          <Link to="/" className="logo">Nomster</Link>
         </div>
 
         <div className={`header-center ${isMenuVisible ? 'visible' : ''}`}>
-          <Menu
-            theme="light"
-            mode="horizontal"
-            selectedKeys={[location.pathname]}
-            className="menu"
-            items={menuItems}
-          />
-          <Search
-            placeholder="Tìm kiếm món ăn..."
-            onSearch={handleSearch}
-            className="search-input"
-          />
+          <Menu theme="light" mode="horizontal" selectedKeys={[location.pathname]} className="menu" items={menuItems} />
+          <div className="search-container">
+            <Search 
+              placeholder="Tìm kiếm món ăn..." 
+              onChange={(e) => handleSearch(e.target.value)}
+              value={searchTerm}
+              className="search-input"
+            />
+            {searchResults.length > 0 && (
+              <ul className="search-dropdown">
+                {searchResults.map((food) => (
+                  <li key={food.uuid} onClick={() => navigate(`/food/${food.uuid}`)}>
+                    <img src={food.imageUrl || "/images/default-food.png"} alt={food.name} className="search-food-img" />
+                    <span>{food.name} - {food.price?.toLocaleString('vi-VN')}đ</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         <div className="header-right">

@@ -72,6 +72,7 @@
   flex-grow: 1;
   display: flex;
   justify-content: center;
+  flex: 1;
 }
 
 .menu-item {
@@ -79,10 +80,64 @@
   cursor: pointer;
 }
 
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-left: 0;
+  position: relative;
+}
+
 .search-input {
+  width: 100%;
   max-width: 300px;
   margin-left: 16px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
+
+.search-input:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 8px rgba(24, 144, 255, 0.2);
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 8px 8px;
+  z-index: 1000;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.search-dropdown li {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.search-dropdown li:hover {
+  background: #f0f0f0;
+}
+
+.search-food-img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
 
 .user-avatar {
   cursor: pointer;
