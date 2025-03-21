@@ -1,0 +1,29 @@
+.food-table {
+    width: 100%;
+    border-collapse: collapse; /* Đảm bảo không có khoảng cách thừa giữa các ô */
+  }
+  
+  .food-table th, .food-table td {
+    padding: 8px; /* Giảm padding nếu cần */
+    text-align: left;
+  }
+  
+  /* Cột Hình ảnh */
+  .food-table th:nth-child(1),
+  .food-table td:nth-child(1) {
+    width: 200px; /* Giảm chiều rộng cột Hình ảnh */
+    padding-right: 5px; /* Giảm khoảng cách bên phải */
+  }
+  
+  /* Cột Tên món */
+  .food-table th:nth-child(2),
+  .food-table td:nth-child(2) {
+    padding-left: 5px; /* Giảm khoảng cách bên trái */
+  }
+  
+  /* Đảm bảo hình ảnh không vượt quá kích thước */
+  .food-image {
+    width: 80px; /* Điều chỉnh kích thước hình ảnh */
+    height: auto;
+    border-radius: 8px;
+  }

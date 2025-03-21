@@ -8,6 +8,10 @@ import Login from './feature/login';
 import FoodCategory from './feature/admin/FoodCategory';
 import Table from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
+import Bill from './feature/admin/Bill/Bill';
+import NotificationPage from './feature/admin/Notification/NotificationPage';
+
+
 
 export const InitialRouter = () => {
     return (
@@ -26,6 +30,8 @@ export const InitialRouter = () => {
                 <Route path="food-category" element={<FoodCategory />} />
                 <Route path="table" element={<Table />} />
                 <Route path="voucher" element={<Voucher />} />
+                <Route path="Bill" element={<Bill />} />
+                <Route path='Notification' element={<NotificationPage />} />
             </Route>
 
             {/* 404 */}

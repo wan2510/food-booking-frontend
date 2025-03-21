@@ -4,7 +4,7 @@ import { InitialRouter } from './InitializeRouter';
 const App = () => {
     return (
         <div className="app">
-            <InitialRouter />
+            <InitialRouter/>
         </div>
     );
 };

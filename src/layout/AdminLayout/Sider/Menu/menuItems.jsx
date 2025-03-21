@@ -14,6 +14,10 @@ export const menuItems = [
                 key: 'food',
                 label: 'Thức ăn',
             },
+            {
+                key: 'bill',
+                label: 'Danh sách hóa đơn',
+            },
         ],
     },
 ];
