@@ -15,6 +15,7 @@ const HandleOrderFood = ({ menuItems, addToBill, foodCategories }) => {
     console.log("selectedCategories:", selectedCategories);
   }, [menuItems, foodCategories, selectedCategories]);
 
+  // Lọc danh sách món ăn dựa trên tìm kiếm và danh mục
   const filteredMenu = (menuItems || []).filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(searchText.toLowerCase());
     const matchesCategory =
@@ -23,7 +24,7 @@ const HandleOrderFood = ({ menuItems, addToBill, foodCategories }) => {
   });
 
   return (
-    <div style={{ padding: "0 16px"}}>
+    <div style={{ padding: "0 16px" }}>
       <Row gutter={[16, 16]}>
         {/* Bên trái: Ô tìm kiếm và bộ lọc danh mục */}
         <Col xs={24} md={6}>

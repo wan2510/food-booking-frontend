@@ -3,7 +3,7 @@ import { Row, Col, Layout, Typography, Card, Button, message } from "antd";
 import HandleOrderFood from "./handleOrderFood/HandleOrderFood";
 import ModalPurchase from "./modalPurchase/ModalPurchase";
 import ModalBill from "./modalBill/ModalBill";
-import { getState, subscribe, getMenuItems, getFoodCategories, getTables, getVouchers, addToBill, updateItem, setSelectedTable, setSelectedVoucher, setPaymentMethod, setCashReceived, validateBeforeCreate, getTotalPrice, getDiscount, getFinalPrice } from "../../../../api/OrderApi";
+import { getState, subscribe, getMenuItems, getFoodCategories, getTables, getVouchers, addToBill, updateItem, setSelectedTable, setSelectedVoucher, setPaymentMethod, setCashReceived, validateBeforeCreate, getTotalPrice, getDiscount, getFinalPrice, setState } from "@/api/OrderApi";
 import "./Order.css";
 
 const { Content } = Layout;
@@ -42,11 +42,22 @@ const Order = ({ user }) => {
     return unsubscribe;
   }, []);
 
+  const clearOrder = async () => {
+    setState({
+      bill: [],
+      selectedTable: null,
+      selectedVoucher: null,
+      paymentMethod: "Tiền mặt",
+      cashReceived: 0,
+      isPaymentModalOpen: false,
+    });
+  };
+
   const handleCreateBill = async () => {
     const validation = await validateBeforeCreate();
     if (validation.success) {
       setState({ ...state, isPaymentModalOpen: true });
-      message.success("Hóa đơn đã được tạo!");
+      // Không hiển thị thông báo ở đây
     }
   };
 
@@ -70,6 +81,9 @@ const Order = ({ user }) => {
     // Tạo hóa đơn và reset
     await clearOrder();
     setState({ ...state, isPaymentModalOpen: false, cashReceived: 0 }); // Reset cashReceived
+
+    // Hiển thị thông báo "Hóa đơn đã được tạo thành công" sau khi xác nhận thanh toán
+    message.success("Hóa đơn đã được tạo thành công!");
   };
 
   const handleCancelPayment = () => {
@@ -82,7 +96,7 @@ const Order = ({ user }) => {
       <Content className="order-content">
         <Row gutter={16} className="order-container">
           <Col span={16}>
-            <Card style={{marginLeft: "1.25vw" , marginTop: "2vw"}}>
+            <Card style={{ marginLeft: "1.25vw", marginTop: "2vw" }}>
               <Title level={2}>Menu</Title>
               <HandleOrderFood
                 menuItems={menuItems}
@@ -93,7 +107,7 @@ const Order = ({ user }) => {
           </Col>
 
           <Col span={8}>
-            <Card className="bill-container" style={{ margin: "2vw 2vw 0vw 1.25vw"}}>
+            <Card className="bill-container" style={{ margin: "2vw 2vw 0vw 1.25vw" }}>
               <Title level={2}>Hóa đơn</Title>
               <ModalBill
                 bill={state.bill}
@@ -104,10 +118,9 @@ const Order = ({ user }) => {
                 setSelectedTable={setSelectedTable}
                 selectedVoucher={state.selectedVoucher}
                 setSelectedVoucher={setSelectedVoucher}
+                onCreateBill={handleCreateBill} // Truyền handleCreateBill vào ModalBill
               />
-              <Button type="primary" onClick={handleCreateBill} block style={{ marginTop: 16 }}>
-                Tạo hóa đơn
-              </Button>
+              {/* Bỏ nút "Tạo hóa đơn" ở đây vì đã có trong ModalBill */}
             </Card>
           </Col>
         </Row>

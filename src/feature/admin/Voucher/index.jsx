@@ -93,11 +93,6 @@ const Voucher = () => {
       <h1 className="voucher-title">Quản lý Voucher</h1>
       <ActionButtons onAdd={() => showModal()} searchText={searchText} setSearchText={handleSearch} />
       <VoucherTable vouchers={filteredVouchers} onEdit={showModal} />
-      {filteredVouchers.length === 0 && (
-        <div className="voucher-empty">
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
-        </div>
-      )}
       <VoucherModal
         visible={isModalOpen}
         onClose={handleCancel}

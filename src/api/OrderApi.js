@@ -1,30 +1,19 @@
 import { message } from "antd";
 
-// URL API (sẽ dùng khi có backend)
+// URL API
 const API_URL = "http://localhost:8080/api";
 
-// Dữ liệu tạm thời để test
+const foodHeaders = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+};
+
 const mockTables = [
   { id: 1, number: 1, max_number_human: 4 },
   { id: 2, number: 2, max_number_human: 6 },
   { id: 3, number: 3, max_number_human: 2 },
   { id: 4, number: 4, max_number_human: 8 },
   { id: 5, number: 5, max_number_human: 4 },
-];
-
-const mockMenuItems = [
-  { id: 1, name: "Pizza", price: 150000, image: "", category: "Fast Food" },
-  { id: 2, name: "Burger", price: 80000, image: "", category: "Fast Food" },
-  { id: 3, name: "Sushi", price: 200000, image: "", category: "Japanese" },
-  { id: 4, name: "Coke", price: 20000, image: "", category: "Drinks" },
-  { id: 5, name: "Ice Cream", price: 30000, image: "", category: "Desserts" },
-];
-
-const mockFoodCategories = [
-  { id: "Fast Food", name: "Fast Food" },
-  { id: "Japanese", name: "Japanese" },
-  { id: "Drinks", name: "Drinks" },
-  { id: "Desserts", name: "Desserts" },
 ];
 
 const mockVouchers = [
@@ -39,9 +28,9 @@ let orderState = {
   selectedVoucher: null,
   paymentMethod: "Tiền mặt",
   cashReceived: 0,
+  isPaymentModalOpen: false,
 };
 
-// Subscribe để theo dõi thay đổi state
 const subscribers = new Set();
 
 export const subscribe = (listener) => {
@@ -55,50 +44,75 @@ export const setState = (newState) => {
   subscribers.forEach((listener) => listener(orderState));
 };
 
+export const getState = () => {
+  return { ...orderState };
+};
+
 // Lấy danh sách bàn
 export const getTables = async () => {
   try {
-    const response = await fetch(`${API_URL}/tables`);
+    const response = await fetch(`${API_URL}/getAllTables`);
     if (!response.ok) throw new Error("Failed to fetch tables");
     return await response.json();
   } catch (error) {
     console.error("Error fetching tables:", error);
+    message.error("Không thể tải danh sách bàn!");
     return [...mockTables]; // Dữ liệu tạm thời nếu API lỗi
   }
 };
 
-// Lấy danh sách món ăn
+// Lấy danh sách món ăn từ API /api/food
 export const getMenuItems = async () => {
   try {
-    const response = await fetch(`${API_URL}/menu-items`);
-    if (!response.ok) throw new Error("Failed to fetch menu items");
-    return await response.json();
+    const response = await fetch(`${API_URL}/food`, {
+      method: 'GET',
+      headers: foodHeaders,
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('Không thể tải danh sách món ăn');
+    }
+
+    const data = await response.json();
+    // Ánh xạ dữ liệu từ API /api/food để phù hợp với các component
+    return data.map(item => ({
+      id: item.uuid, // Dùng uuid làm id
+      name: item.name,
+      price: item.price,
+      image: item.imageUrl || "", // Dùng imageUrl làm image
+      category: item.tag || "Không có danh mục", // Dùng tag làm category
+      description: item.description || "Không có mô tả", // Thêm description nếu cần
+    }));
   } catch (error) {
-    console.error("Error fetching menu items:", error);
-    return [...mockMenuItems]; // Dữ liệu tạm thời nếu API lỗi
+    console.error('Error fetching foods:', error);
+    message.error('Không thể tải danh sách món ăn!');
+    throw error; 
   }
 };
 
 // Lấy danh sách danh mục
 export const getFoodCategories = async () => {
   try {
-    const response = await fetch(`${API_URL}/food-categories`);
+    const response = await fetch(`${API_URL}/category`);
     if (!response.ok) throw new Error("Failed to fetch food categories");
     return await response.json();
   } catch (error) {
     console.error("Error fetching food categories:", error);
-    return [...mockFoodCategories]; // Dữ liệu tạm thời nếu API lỗi
+    message.error("Không thể tải danh sách danh mục!");
+    return [...mockFoodCategories];
   }
 };
 
 // Lấy danh sách voucher
 export const getVouchers = async () => {
   try {
-    const response = await fetch(`${API_URL}/vouchers`);
+    const response = await fetch(`${API_URL}/getVouchers`);
     if (!response.ok) throw new Error("Failed to fetch vouchers");
     return await response.json();
   } catch (error) {
     console.error("Error fetching vouchers:", error);
+    message.error("Không thể tải danh sách voucher!");
     return [...mockVouchers]; // Dữ liệu tạm thời nếu API lỗi
   }
 };
@@ -106,7 +120,7 @@ export const getVouchers = async () => {
 // Thêm món vào hóa đơn
 export const addToBill = async (item) => {
   try {
-    if (!item || !item.id || !item.name || !item.price || !item.category) {
+    if (!item || !item.id || !item.name || !item.price) {
       message.error("Dữ liệu món ăn không hợp lệ!");
       return { success: false };
     }
@@ -151,7 +165,7 @@ export const updateItem = async (id, quantity) => {
 // Chọn bàn
 export const setSelectedTable = async (tableNumber) => {
   try {
-    const table = mockTables.find((t) => t.number === tableNumber); // Dùng mock tạm thời
+    const table = mockTables.find((t) => t.number === tableNumber);
     if (table) {
       setState({ selectedTable: table.number });
       return { success: true, selectedTable: table.number };
@@ -243,9 +257,4 @@ export const validateBeforeCreate = async () => {
     return { success: false };
   }
   return { success: true };
-};
-
-// Lấy state hiện tại
-export const getState = () => {
-  return { ...orderState };
 };

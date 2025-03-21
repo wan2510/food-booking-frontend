@@ -1,73 +1,43 @@
-// src/feature/dashboard/Voucher/api/VoucherApi.js
 import { message } from "antd";
 
-const API_URL = "http://your-backend-url/api"; // Thay bằng URL backend của bạn sau này
+const API_URL = "http://localhost:8888/api/voucher"; // Cập nhật thành 8888 nếu cần
 
-// Dữ liệu mẫu để test
-const mockVouchers = [
-  {
-    id: 1,
-    code: "WELCOME10",
-    name: "Chào mừng người mới",
-    discount: 10,
-    max_discount_value: 50000,
-    min_order_value: 200000,
-    create_at: "2024-01-01T00:00:00Z",
-    expired_at: "2024-12-31T23:59:59Z",
-    type: "cho người mới",
-    status: "Khả dụng",
-  },
-  {
-    id: 2,
-    code: "VIP20",
-    name: "Ưu đãi khách VIP",
-    discount: 20,
-    max_discount_value: 100000,
-    min_order_value: 500000,
-    create_at: "2024-02-01T00:00:00Z",
-    expired_at: "2024-11-30T23:59:59Z",
-    type: "cho khách vip",
-    status: "Khả dụng",
-  },
-  {
-    id: 3,
-    code: "SUMMER15",
-    name: "Giảm giá mùa hè",
-    discount: 15,
-    max_discount_value: 75000,
-    min_order_value: 300000,
-    create_at: "2024-06-01T00:00:00Z",
-    expired_at: "2024-09-30T23:59:59Z",
-    type: "cho người dùng",
-    status: "Không khả dụng",
-  },
-];
+const headers = {
+  "Content-Type": "application/json",
+  "Accept": "application/json",
+};
 
 export const getVouchers = async () => {
   try {
-    // Nếu backend không hoạt động, trả về dữ liệu mẫu
-    // const response = await fetch(`${API_URL}/getVouchers`);
-    // if (!response.ok) throw new Error("Failed to fetch vouchers");
-    // return await response.json();
-    return [...mockVouchers]; // Trả về bản sao của dữ liệu mẫu
+    const response = await fetch(`${API_URL}/getVouchers`, { headers });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch vouchers: ${response.status} - ${errorText}`);
+    }
+    const data = await response.json();
+    console.log("Vouchers received:", data);
+    return data;
   } catch (error) {
     console.error("Error fetching vouchers:", error);
     message.error("Không thể tải danh sách voucher!");
-    return [...mockVouchers]; // Trả về dữ liệu mẫu nếu có lỗi
+    throw error;
   }
 };
 
+// Phần còn lại của mã giữ nguyên
 export const createVoucher = async (voucherData) => {
   try {
-    // const response = await fetch(`${API_URL}/addVoucher`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(voucherData),
-    // });
-    // if (!response.ok) throw new Error("Failed to create voucher");
-    // return await response.json();
-    const newVoucher = { id: Date.now(), ...voucherData };
-    mockVouchers.push(newVoucher); // Thêm vào danh sách mẫu
+    const response = await fetch(`${API_URL}/addVoucher`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(voucherData),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to create voucher: ${response.status} - ${errorText}`);
+    }
+    const newVoucher = await response.json();
+    console.log("New voucher created:", newVoucher);
     message.success("Tạo voucher thành công!");
     return newVoucher;
   } catch (error) {
@@ -79,20 +49,19 @@ export const createVoucher = async (voucherData) => {
 
 export const updateVoucher = async (id, voucherData) => {
   try {
-    // const response = await fetch(`${API_URL}/updateVoucher/${id}`, {
-    //   method: "PUT",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(voucherData),
-    // });
-    // if (!response.ok) throw new Error("Failed to update voucher");
-    // return await response.json();
-    const index = mockVouchers.findIndex((voucher) => voucher.id === id);
-    if (index !== -1) {
-      mockVouchers[index] = { ...mockVouchers[index], ...voucherData };
-      message.success("Cập nhật voucher thành công!");
-      return mockVouchers[index];
+    const response = await fetch(`${API_URL}/updateVoucher/${id}`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(voucherData),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to update voucher: ${response.status} - ${errorText}`);
     }
-    throw new Error("Không tìm thấy voucher!");
+    const updatedVoucher = await response.json();
+    console.log("Updated voucher:", updatedVoucher);
+    message.success("Cập nhật voucher thành công!");
+    return updatedVoucher;
   } catch (error) {
     console.error("Error updating voucher:", error);
     message.error("Cập nhật voucher thất bại!");
