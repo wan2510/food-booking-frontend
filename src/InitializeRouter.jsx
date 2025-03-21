@@ -9,6 +9,11 @@ import Login from './feature/login';
 import FoodCategory from './feature/admin/FoodCategory';
 import TableManagement from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
+import Bill from './feature/admin/Bill/Bill';
+import NotificationPage from './feature/admin/Notification/NotificationPage';
+
+
+
 import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
 import Book from './feature/dashboard/Book';
@@ -20,6 +25,7 @@ import CartPage from './feature/dashboard/Cart';
 import Orders from './feature/dashboard/Orders';
 import UserProfile from './feature/dashboard/Profile';
 import Checkout from './feature/dashboard/Checkout';
+
 
 export const InitialRouter = () => {
     return (
@@ -51,8 +57,13 @@ export const InitialRouter = () => {
                 <Route path="food-category" element={<FoodCategory />} />
                 <Route path="table" element={<TableManagement />} />
                 <Route path="voucher" element={<Voucher />} />
+
+                <Route path="Bill" element={<Bill />} />
+                <Route path='Notification' element={<NotificationPage />} />
+
                 <Route path="revenue" element={<RevenueReport/>} />
                 <Route path="account" element={<Account/>} />
+
             </Route>
 
             {/* 404 */}

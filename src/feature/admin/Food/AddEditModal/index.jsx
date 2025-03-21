@@ -1,75 +1,126 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, InputNumber, Rate } from 'antd';
+import React, { useState, useEffect } from "react";
+import { Modal, Form, Input, InputNumber, message } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import ImagePicker from "../ImagePicker";
 
 const AddEditModal = ({ visible, onCancel, onSave, editItem }) => {
-    const [form] = Form.useForm();
-    const [rating, setRating] = useState(0); // State cho sao đánh giá
+  const [form] = Form.useForm();
+  const [imageUrl, setImageUrl] = useState(null);
+  const [showImagePicker, setShowImagePicker] = useState(false);
 
-    // Khi modal mở, nếu là sửa món, điền thông tin vào form
-    useEffect(() => {
-        if (editItem) {
-            form.setFieldsValue({
-                name: editItem.name,
-                description: editItem.description,
-                price: editItem.price,
-            });
-            setRating(editItem.rating || 0); // Nếu có rating, set giá trị rating
-        }
-    }, [editItem, form]);
+  useEffect(() => {
+    if (!visible) {
+      form.resetFields();
+      setImageUrl(null);
+    }
+  }, [visible, form]);
 
-    const handleOk = () => {
-        form.validateFields().then((values) => {
-            onSave({ ...values, rating }); // Thêm rating vào giá trị lưu
-            form.resetFields();
-        });
-    };
+  useEffect(() => {
+    if (editItem) {
+      form.setFieldsValue({
+        name: editItem.name,
+        description: editItem.description,
+        price: editItem.price ?? 0,
+      });
+      setImageUrl(editItem.imageUrl);
+    }
+  }, [editItem, form]);
 
-    return (
-        <Modal
-            title={editItem ? 'Chỉnh Sửa Món' : 'Thêm Món'}
-            visible={visible}
-            onCancel={onCancel}
-            onOk={handleOk}
-            okText={editItem ? 'Cập Nhật' : 'Thêm'}
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      if (!imageUrl) {
+        message.error("Vui lòng chọn hoặc tải lên ảnh!");
+        return;
+      }
+      onSave({ ...values, imageUrl });
+      form.resetFields();
+      setImageUrl(null);
+    } catch (error) {
+      console.error("Lỗi khi validate form hoặc gửi yêu cầu:", error);
+      message.error("Có lỗi xảy ra, vui lòng thử lại!");
+    }
+  };
+
+  return (
+    <Modal
+      title={editItem ? "Chỉnh Sửa Món" : "Thêm Món"}
+      open={visible}
+      onCancel={onCancel}
+      onOk={handleOk}
+      okText={editItem ? "Cập Nhật" : "Thêm"}
+    >
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={{ price: 0 }}
+        requiredMark="optional"
+      >
+        <Form.Item
+          label="Tên Món"
+          name="name"
+          rules={[{ required: true, message: "Vui lòng nhập tên món!" }]}
         >
-            <Form
-                form={form}
-                layout="vertical"
-                initialValues={{ price: 0, rating: 0 }}
-            >
-                <Form.Item
-                    label="Tên Món"
-                    name="name"
-                    rules={[
-                        { required: true, message: 'Vui lòng nhập tên món!' },
-                    ]}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="Mô Tả"
-                    name="description"
-                    rules={[
-                        { required: true, message: 'Vui lòng nhập mô tả món!' },
-                    ]}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="Giá"
-                    name="price"
-                    rules={[
-                        { required: true, message: 'Vui lòng nhập giá món!' },
-                    ]}
-                >
-                    <InputNumber min={0} />
-                </Form.Item>
-                <Form.Item label="Đánh giá">
-                    <Rate value={rating} onChange={setRating} />
-                </Form.Item>
-            </Form>
-        </Modal>
-    );
+          <Input placeholder="Nhập tên món ăn" />
+        </Form.Item>
+
+        <Form.Item
+          label="Mô Tả"
+          name="description"
+          rules={[{ required: true, message: "Vui lòng nhập mô tả món!" }]}
+        >
+          <Input placeholder="Nhập mô tả món ăn" />
+        </Form.Item>
+
+        <Form.Item
+          label="Giá"
+          name="price"
+          rules={[{ required: true, message: "Vui lòng nhập giá món!" }]}
+        >
+          <InputNumber min={0} style={{ width: "100%" }} placeholder="Nhập giá món ăn" />
+        </Form.Item>
+
+        <Form.Item label="Chọn Hình Ảnh">
+          <div
+            onClick={() => setShowImagePicker(true)}
+            style={{
+              width: 100,
+              height: 100,
+              border: "2px dashed #aaa",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              cursor: "pointer",
+              overflow: "hidden",
+            }}
+          >
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt="Selected"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                onError={(e) => {
+                  console.log(`Không tải được ảnh: ${imageUrl}`);
+                  e.target.src = "/images/default-food.jpg";
+                }}
+              />
+            ) : (
+              <PlusOutlined style={{ fontSize: 24, color: "#aaa" }} />
+            )}
+          </div>
+        </Form.Item>
+
+        <ImagePicker
+          visible={showImagePicker}
+          onClose={() => setShowImagePicker(false)}
+          onSelect={(image) => {
+            setImageUrl(image);
+            setShowImagePicker(false);
+          }}
+        />
+      </Form>
+    </Modal>
+  );
 };
 
 export default AddEditModal;

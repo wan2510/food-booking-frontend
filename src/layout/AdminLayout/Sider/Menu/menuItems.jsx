@@ -17,6 +17,11 @@ export const menuItems = [
                 label: <Link to="/admin/food-category">Danh mục thức ăn</Link>,
             },
             {
+
+                key: 'bill',
+                label: 'Danh sách hóa đơn',
+            },
+
                 key: '/admin/table',
                 label: <Link to="/admin/table">Bàn</Link>,
             },
@@ -32,6 +37,7 @@ export const menuItems = [
                 key: '/admin/revenue',
                 label: <Link to="/admin/revenue">Doanh thu</Link>,
             },
+
 
         ],
     },
