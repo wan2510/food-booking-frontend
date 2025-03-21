@@ -1,0 +1,165 @@
+/* Tổng thể container bao quanh form và thông tin liên hệ */
+.contact-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 40px auto; /* Tạo khoảng trống trên dưới */
+  padding: 40px;
+  background-color: #fdfdfd; /* Màu nền sáng */
+  border-radius: 8px;        /* Bo góc nhẹ */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08); /* Bóng đổ nhẹ */
+}
+
+/* Phần chứa tiêu đề và form */
+.contact-content {
+  flex: 1;
+  min-width: 300px;
+  padding: 20px 0;
+}
+
+/* Tiêu đề lớn */
+.contact-content h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Đoạn mô tả ngắn */
+.contact-content p {
+  margin-bottom: 20px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Form liên hệ */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Mỗi nhóm form-group (label + input/textarea) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* Ô input, textarea */
+.form-group input,
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+/* Hiệu ứng focus cho input, textarea */
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Nút gửi form */
+.submit-btn {
+  padding: 14px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}
+
+.submit-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Thông báo thành công/lỗi */
+.success-message {
+  color: #4CAF50;
+  font-weight: 500;
+  margin-top: -10px; /* Kéo nhẹ lên để sát nút */
+}
+
+.error-message {
+  color: #f44336;
+  font-weight: 500;
+  margin-top: -10px;
+}
+
+/* Phần thông tin liên hệ bên phải */
+.contact-info {
+  flex: 0 0 350px;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Tiêu đề của phần thông tin liên hệ */
+.contact-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Từng dòng thông tin liên hệ */
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.info-item i {
+  margin-right: 10px;
+  color: #4CAF50;
+  font-size: 20px;
+  width: 24px;
+  text-align: center;
+}
+
+.info-item span {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 992px) {
+  .contact-container {
+    flex-direction: column;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  .contact-info {
+    width: 100%;
+    margin-top: 30px;
+  }
+}

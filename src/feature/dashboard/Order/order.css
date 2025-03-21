@@ -1,0 +1,141 @@
+Điều chỉnh khoảng cách tổng thể
+.page-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    min-height: calc(100vh - 80px); /* Đảm bảo chiều cao đầy đủ */
+    background-color: #f5f5f5; /* Nền nhẹ nhàng */
+  }
+  
+  /* Menu container */
+  .menu-container {
+    flex-basis: 60%; /* Chiếm 60% chiều rộng */
+    margin-left: 20px;
+    margin-right: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto; /* Cuộn nếu nội dung dài */
+    max-height: calc(100vh - 120px); /* Giới hạn chiều cao */
+  }
+  
+  /* Hóa đơn container */
+  .bill-container {
+    flex-basis: 35%; /* Chiếm 35% chiều rộng */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-right: 20px;
+    overflow-y: auto; /* Cuộn nếu nội dung dài */
+    max-height: calc(100vh - 120px); /* Giới hạn chiều cao */
+  }
+  
+  /* Khoảng cách giữa các phần tử trong hóa đơn */
+  .bill-container .ant-typography {
+    margin-bottom: 12px;
+  }
+  
+  /* Danh sách món ăn trong hóa đơn */
+  .bill-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafafa;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease; /* Hiệu ứng mượt mà */
+  }
+  
+  .bill-item:hover {
+    background: #e0f7fa; /* Màu nền khi hover */
+    transform: translateY(-2px); /* Nâng nhẹ khi hover */
+  }
+  
+  .bill-item .item-info {
+    flex-grow: 1;
+    margin-right: 10px;
+  }
+  
+  .bill-item .item-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .bill-item .item-price {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .bill-item .final-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ff5722;
+  }
+  
+  .bill-item .item-quantity {
+    width: 70px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    background: #fff;
+    font-weight: 500;
+  }
+  
+  .bill-item .delete-btn {
+    background: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s ease;
+  }
+  
+  .bill-item .delete-btn:hover {
+    background: #d9363e;
+  }
+  
+  /* Tổng tiền */
+  .total-price {
+    font-weight: 600;
+    font-size: 18px;
+    color: #ff5722;
+    text-align: right;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+  }
+  
+  /* Danh mục filter mỗi dòng một mục */
+  .filter-container .ant-checkbox-wrapper {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #444;
+  }
+  
+  /* Nút tạo hóa đơn */
+  .bill-container .ant-btn-primary {
+    width: 100%;
+    margin-top: 20px;
+    background: #1890ff;
+    border-color: #1890ff;
+    font-weight: 500;
+  }
+  
+  .bill-container .ant-btn-primary:hover {
+    background: #40a9ff;
+    border-color: #40a9ff;
+  }
+  
+  /* Chọn bàn và voucher */
+  .bill-container .ant-select {
+    width: 100%;
+    margin-bottom: 15px;
+  }

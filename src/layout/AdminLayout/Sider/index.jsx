@@ -9,3 +9,4 @@ export const Sider = () => {
         </Layout.Sider>
     );
 };
+export default Sider;
