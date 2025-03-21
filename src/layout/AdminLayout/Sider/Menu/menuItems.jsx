@@ -21,7 +21,7 @@ export const menuItems = [
                 key: 'bill',
                 label: 'Danh sách hóa đơn',
             },
-
+            {
                 key: '/admin/table',
                 label: <Link to="/admin/table">Bàn</Link>,
             },
