@@ -6,6 +6,11 @@ import './Cart.css';
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    // State cho Voucher
+    const [voucherCode, setVoucherCode] = useState('');
+    const [discount, setDiscount] = useState(0);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,31 +30,50 @@ const Cart = () => {
         loadCartItems();
     }, []);
 
+    // Cập nhật số lượng
     const handleUpdateQuantity = (itemId, change) => {
-        const updatedCart = cartItems.map(item => {
-            if (item.uuid === itemId) {
-                const newQuantity = (item.quantity || 1) + change;
-                if (newQuantity < 1) return null;
-                return { ...item, quantity: newQuantity };
-            }
-            return item;
-        }).filter(Boolean);
+        const updatedCart = cartItems
+            .map(item => {
+                if (item.uuid === itemId) {
+                    const newQuantity = (item.quantity || 1) + change;
+                    if (newQuantity < 1) return null; // Không cho < 1
+                    return { ...item, quantity: newQuantity };
+                }
+                return item;
+            })
+            .filter(Boolean);
 
         setCartItems(updatedCart);
         localStorage.setItem('cartItems', JSON.stringify(updatedCart));
     };
 
+    // Xóa món khỏi giỏ
     const handleRemoveItem = (itemId) => {
         const updatedCart = cartItems.filter(item => item.uuid !== itemId);
         setCartItems(updatedCart);
         localStorage.setItem('cartItems', JSON.stringify(updatedCart));
     };
 
+    // Tính tổng (chưa tính giảm giá)
     const calculateTotal = () => {
         return cartItems.reduce((total, item) => {
             return total + (item.price || 0) * (item.quantity || 1);
         }, 0);
     };
+
+const handleApplyVoucher = () => {
+    if (voucherCode.trim().toUpperCase() === 'DISCOUNT10') {
+        const discountValue = calculateTotal() * 0.1;
+        setDiscount(discountValue);
+        localStorage.setItem('cartDiscount', discountValue);
+        alert('Áp dụng mã giảm giá thành công! Giảm 10%.');
+    } else {
+        setDiscount(0);
+        localStorage.setItem('cartDiscount', 0);
+        alert('Mã giảm giá không hợp lệ!');
+    }
+};
+
 
     if (loading) {
         return (
@@ -79,6 +103,8 @@ const Cart = () => {
             </div>
         );
     }
+
+    const totalAfterDiscount = calculateTotal() - discount;
 
     return (
         <div className="container mx-auto py-8 px-4">
@@ -112,19 +138,15 @@ const Cart = () => {
                             </div>
                             <div className="item-actions">
                                 <div className="quantity-controls">
-                                    <button
-                                        onClick={() => handleUpdateQuantity(item.uuid, -1)}
-                                    >
+                                    <button onClick={() => handleUpdateQuantity(item.uuid, -1)}>
                                         <FaMinus />
                                     </button>
                                     <span>{item.quantity || 1}</span>
-                                    <button
-                                        onClick={() => handleUpdateQuantity(item.uuid, 1)}
-                                    >
+                                    <button onClick={() => handleUpdateQuantity(item.uuid, 1)}>
                                         <FaPlus />
                                     </button>
                                 </div>
-                                <button
+                                <button 
                                     className="remove-btn"
                                     onClick={() => handleRemoveItem(item.uuid)}
                                 >
@@ -138,10 +160,29 @@ const Cart = () => {
                     ))}
                 </div>
 
+                <div className="voucher-section">
+                    <input
+                        type="text"
+                        className="voucher-input"
+                        placeholder="Nhập mã giảm giá..."
+                        value={voucherCode}
+                        onChange={(e) => setVoucherCode(e.target.value)}
+                    />
+                    <button className="voucher-apply-btn" onClick={handleApplyVoucher}>
+                        Áp dụng
+                    </button>
+                </div>
+
                 <div className="cart-summary">
+                    {discount > 0 && (
+                        <div className="discount-amount">
+                            <span>Giảm giá:</span>
+                            <span>- {discount.toLocaleString('vi-VN')} VND</span>
+                        </div>
+                    )}
                     <div className="total-amount">
                         <span>Tổng cộng:</span>
-                        <span>{calculateTotal().toLocaleString('vi-VN')} VND</span>
+                        <span>{totalAfterDiscount.toLocaleString('vi-VN')} VND</span>
                     </div>
                     <button 
                         className="checkout-btn"

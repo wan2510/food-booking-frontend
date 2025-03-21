@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Tag, Descriptions, Spin, notification } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
+const statusMapping = {
+  'BẾP ĐÃ NHẬN': { display: 'Bếp đã nhận', color: 'orange' },
+  'ĐÃ LÀM XONG': { display: 'Đã làm xong', color: 'green' },
+  'HỦY ĐƠN': { display: 'Hủy đơn', color: 'red' },
+  'LIÊN HỆ': { display: 'Liên hệ với nhân viên phụ trách', color: 'purple' },
+};
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,7 +23,13 @@ const Orders = () => {
       notification.warning({ message: 'User chưa đăng nhập' });
       return;
     }
-    fetchOrders();
+    // Ưu tiên lấy đơn hàng từ Local Storage (đã được gửi từ /checkout)
+    const localOrders = localStorage.getItem('orders');
+    if (localOrders) {
+      setOrders(JSON.parse(localOrders));
+    } else {
+      fetchOrders();
+    }
   }, []);
 
   const fetchOrders = async () => {
@@ -24,8 +37,8 @@ const Orders = () => {
     try {
       const res = await fetch(`http://localhost:8080/api/order/user/${userUuid}`, {
         headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
       if (!res.ok) {
         const errorData = await res.json();
@@ -44,6 +57,7 @@ const Orders = () => {
     setModalVisible(true);
   };
 
+  // Hủy đơn hàng (nếu đơn hàng đang ở trạng thái PENDING, ví dụ)
   const cancelOrder = (orderUuid) => {
     Modal.confirm({
       title: 'Xác nhận hủy đơn hàng',
@@ -55,9 +69,9 @@ const Orders = () => {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`
+              Authorization: `Bearer ${accessToken}`,
             },
-            body: JSON.stringify({ status: 'CANCELLED' })
+            body: JSON.stringify({ status: 'HỦY ĐƠN' }),
           });
           if (!res.ok) {
             const errorData = await res.json();
@@ -73,7 +87,7 @@ const Orders = () => {
         } catch (error) {
           notification.error({ message: error.message });
         }
-      }
+      },
     });
   };
 
@@ -81,24 +95,23 @@ const Orders = () => {
     {
       title: 'Order ID',
       dataIndex: 'uuid',
-      key: 'uuid'
+      key: 'uuid',
     },
     {
       title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'orderStatus', // hoặc dùng `status` nếu backend trả về tên khác
+      key: 'orderStatus',
       render: (status) => {
-        let color = 'blue';
-        if (status === 'COMPLETED') color = 'green';
-        else if (status === 'CANCELLED') color = 'red';
-        return <Tag color={color}>{status}</Tag>;
-      }
+        // Dùng mapping để hiển thị trạng thái đẹp hơn
+        const mapping = statusMapping[status] || { display: status, color: 'blue' };
+        return <Tag color={mapping.color}>{mapping.display}</Tag>;
+      },
     },
     {
       title: 'Total Price',
       dataIndex: 'totalPrice',
       key: 'totalPrice',
-      render: (price) => `${price.toLocaleString('vi-VN')} đ`
+      render: (price) => `${price.toLocaleString('vi-VN')} đ`,
     },
     {
       title: 'Actions',
@@ -106,14 +119,14 @@ const Orders = () => {
       render: (text, record) => (
         <>
           <Button onClick={() => showOrderDetails(record)}>Xem</Button>
-          {record.status === 'PENDING' && (
+          {record.orderStatus === 'BẾP ĐÃ NHẬN' && (
             <Button danger onClick={() => cancelOrder(record.uuid)}>
               Hủy
             </Button>
           )}
         </>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -132,13 +145,15 @@ const Orders = () => {
         footer={[
           <Button key="close" onClick={() => setModalVisible(false)}>
             Đóng
-          </Button>
+          </Button>,
         ]}
       >
         {selectedOrder && (
           <Descriptions bordered column={1}>
             <Descriptions.Item label="Status">
-              {selectedOrder.status}
+              {statusMapping[selectedOrder.orderStatus]
+                ? statusMapping[selectedOrder.orderStatus].display
+                : selectedOrder.orderStatus}
             </Descriptions.Item>
             <Descriptions.Item label="Total Price">
               {selectedOrder.totalPrice?.toLocaleString('vi-VN')} đ
