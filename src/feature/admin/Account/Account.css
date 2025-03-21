@@ -1,4 +1,4 @@
-.voucher-container {
+.account-container {
   padding: 20px;
   position: relative;
   border: 2px solid #722ed1; /* Viền tím giống trong hình */
@@ -7,14 +7,15 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
 }
 
-.voucher-title {
+h1 {
   text-align: center;
   color: #333;
   font-size: 24px;
   font-weight: 600;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
+/* Style cho ô tìm kiếm và nút "Thêm tài khoản" */
 .action-buttons {
   display: flex;
   align-items: center;
@@ -28,26 +29,28 @@
   gap: 8px;
 }
 
-.voucher-table {
+/* Style cho bảng */
+.account-table {
   margin-top: 16px;
 }
 
-.voucher-table .ant-table-thead > tr > th {
+.account-table .ant-table-thead > tr > th {
   background-color: #f5f5f5;
   color: #333;
   font-weight: 600;
 }
 
-.voucher-table .ant-table-tbody > tr:hover > td {
+.account-table .ant-table-tbody > tr:hover > td {
   background-color: #e6f7ff;
 }
 
-.voucher-empty {
+/* Style cho phần "Không có dữ liệu" */
+.account-empty {
   text-align: center;
   padding: 50px;
 }
 
-.voucher-empty .ant-empty-description {
+.account-empty .ant-empty-description {
   color: #888;
   font-size: 16px;
 }
