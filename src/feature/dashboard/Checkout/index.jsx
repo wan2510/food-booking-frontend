@@ -11,8 +11,11 @@ const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(false);
   const navigate = useNavigate();
 
+  const [discount, setDiscount] = useState(0);
+
   useEffect(() => {
     loadCartItems();
+    loadDiscount();
   }, []);
 
   const loadCartItems = () => {
@@ -29,19 +32,27 @@ const Checkout = () => {
     }
   };
 
+  const loadDiscount = () => {
+    const savedDiscount = localStorage.getItem('cartDiscount');
+    if (savedDiscount) {
+      setDiscount(parseFloat(savedDiscount));
+    } else {
+      setDiscount(0);
+    }
+  };  
+
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => {
       const price = typeof item.price === 'number'
         ? item.price
-        : parseFloat(item.price?.replace(/[^\d]/g, ''));
+        : parseFloat(item.price?.replace(/[^\d]/g, '')); 
       return total + price * (item.quantity || 1);
     }, 0);
   };
 
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
-    // Nếu cần cộng thêm phí vận chuyển, thuế, ... thì xử lý ở đây
-    return subtotal;
+    return subtotal - discount;
   };
 
   const handlePayment = () => {
@@ -54,53 +65,51 @@ const Checkout = () => {
 
   const handleCompleteOrder = async () => {
     const userUuid = localStorage.getItem('userUuid');
-    const accessToken = localStorage.getItem('accessToken');
     if (!userUuid) {
       message.error('User chưa đăng nhập');
       return;
     }
-    // Xây dựng OrderDTO từ cartItems
+  
+    const finalTotal = calculateTotal();
+  
     const orderDTO = {
-      uuid: "ord-" + Date.now(), // Nếu backend tự sinh UUID, bạn có thể không cần trường này
+      uuid: "ord-" + Date.now(),
       userUuid: userUuid,
       status: "COMPLETED",
       items: cartItems.map((item, index) => ({
         uuid: "item-" + index + "-" + Date.now(),
-        foodUuid: item.food ? item.food.uuid : item.uuid, // Ưu tiên item.food.uuid nếu có
-        foodName: item.food ? item.food.name : item.name,
+        foodUuid: item.uuid,
+        foodName: item.name,
         quantity: item.quantity || 1,
         price: item.price,
       })),
-      totalPrice: calculateTotal()
+      totalPrice: finalTotal
     };
-
+  
     try {
-      const res = await fetch("http://localhost:8080/api/order", {
+      await fetch("http://localhost:8080/api/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
         },
         body: JSON.stringify(orderDTO)
       });
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.errorMessage || "Không thể tạo đơn hàng");
-      }
-      const createdOrder = await res.json();
-      // Sau khi tạo đơn hàng thành công:
+  
       localStorage.removeItem('cartItems');
+      localStorage.removeItem('cartDiscount');
       setCartItems([]);
-      setShowQRCode(false);
+  
       setOrderComplete(true);
       message.success('Đặt hàng thành công!');
+      
       setTimeout(() => {
         navigate('/orders');
       }, 3000);
     } catch (error) {
-      message.error(error.message);
+      message.error('Có lỗi xảy ra khi tạo đơn hàng');
     }
   };
+  
 
   if (loading) {
     return (
@@ -156,6 +165,14 @@ const Checkout = () => {
                 <span>Tạm tính:</span>
                 <span>{calculateSubtotal().toLocaleString('vi-VN')} đ</span>
               </div>
+
+              {discount > 0 && (
+                <div className="price-row discount-row">
+                  <span>Giảm giá:</span>
+                  <span>- {discount.toLocaleString('vi-VN')} đ</span>
+                </div>
+              )}
+
               <div className="price-row total">
                 <span>Tổng cộng:</span>
                 <span>{calculateTotal().toLocaleString('vi-VN')} đ</span>

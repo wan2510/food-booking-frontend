@@ -49,48 +49,32 @@ const FoodList = () => {
     }, []);
 
     const handleAddToCart = (food) => {
-        // Kiểm tra xem món ăn đã có trong giỏ hàng chưa
+        const accessToken = localStorage.getItem('accessToken');
+    
+        if (!accessToken) {
+            message.warning('Bạn cần đăng nhập để thêm vào giỏ hàng');
+            navigate('/login');
+            return;
+        }
+    
         const existingItem = cartItems.find(item => item.uuid === food.uuid);
         
         let updatedCart;
         if (existingItem) {
-            // Nếu món ăn đã có trong giỏ, tăng số lượng
             updatedCart = cartItems.map(item =>
                 item.uuid === food.uuid
                     ? { ...item, quantity: (item.quantity || 1) + 1 }
                     : item
             );
         } else {
-            // Nếu món ăn chưa có trong giỏ, thêm mới với số lượng là 1
             updatedCart = [...cartItems, { ...food, quantity: 1 }];
         }
-
-        // Cập nhật state và localStorage
+    
         setCartItems(updatedCart);
         localStorage.setItem('cartItems', JSON.stringify(updatedCart));
-        
-        // Hiển thị thông báo thành công
         message.success('Đã thêm món ăn vào giỏ hàng');
     };
-
-    if (loading) {
-        return (
-            <div className="loading-container">
-                <Spin size="large" />
-                <p>Đang tải danh sách món ăn...</p>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="error-container">
-                <p>{error}</p>
-                <button onClick={fetchFoods}>Thử lại</button>
-            </div>
-        );
-    }
-
+    
     return (
         <div className="food-list-container">
             <div className="food-list-header">
@@ -99,7 +83,15 @@ const FoodList = () => {
                     <div className="header-actions">
                         <button 
                             className="cart-btn"
-                            onClick={() => navigate('/cart')}
+                            onClick={() => {
+                                const accessToken = localStorage.getItem('accessToken');
+                                if (!accessToken) {
+                                    message.warning('Bạn cần đăng nhập để xem giỏ hàng');
+                                    navigate('/login');
+                                    return;
+                                }
+                                navigate('/cart');
+                            }}
                         >
                             <ShoppingCartOutlined />
                             Giỏ hàng
@@ -112,7 +104,7 @@ const FoodList = () => {
                     </div>
                 </div>
             </div>
-
+    
             <div className="food-grid">
                 {foods.map((food) => (
                     <div key={food.uuid} className="food-card">
