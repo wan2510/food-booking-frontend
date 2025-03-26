@@ -270,6 +270,7 @@ const FoodList = () => {
                                 ) : (
                                     <HeartOutlined />
                                 )}
+                                
                             </button>
                         </div>
                         <div className="food-content">
