@@ -3,7 +3,7 @@ import AccountModals from './AccountModal/AccountModal';
 import AccountTable from './AccountTable';
 import './Account.css';
 import { Button, message, Input, Empty } from 'antd';
-import { getAccounts, createAccount, updateAccount } from '../../../api/AccountApi';
+import { getAccounts, createNewStaffAccount, updateAccount } from '../../../api/AccountApi';
 const { Search } = Input;
 
 const Account = () => {
@@ -64,7 +64,7 @@ const Account = () => {
           createdDate: new Date().toLocaleDateString('vi-VN'),
           isLockedRole: true,
         };
-        const createdAccount = await createAccount(newAccount);
+        const createdAccount = await createNewStaffAccount(newAccount);
         setAccounts([...accounts, createdAccount]);
         setIsCreateModalOpen(false);
         message.success('Tạo tài khoản thành công!');
