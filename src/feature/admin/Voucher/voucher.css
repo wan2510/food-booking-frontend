@@ -1,53 +1,99 @@
+/* Voucher.css */
 .voucher-container {
   padding: 20px;
-  position: relative;
   border: 2px solid #722ed1; /* Viền tím giống trong hình */
   border-radius: 8px; /* Bo góc */
   background-color: #fff; /* Nền trắng */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+  margin: 0 auto; /* Căn giữa container */
+}
+/* Container chính */
+.voucher-container {
+  padding: 20px;
+  background-color: #fff; /* Nền trắng giống trong ảnh */
 }
 
+/* Tiêu đề */
 .voucher-title {
-  text-align: center;
-  color: #333;
   font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-weight: bold;
+  color: #000; /* Màu đen */
+  margin-bottom: 20px;
 }
 
+/* Style cho ActionButtons */
 .action-buttons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px; /* Khoảng cách nhỏ hơn, giống trong ảnh */
   margin-bottom: 16px;
 }
 
-.search-container {
-  display: flex;
-  margin-left: auto;
-  gap: 8px;
+.action-buttons .ant-btn-primary {
+  background-color: #1890ff; /* Màu xanh dương của Ant Design */
+  border-color: #1890ff;
+  color: white;
+  transition: all 0.3s ease;
 }
 
-.voucher-table {
-  margin-top: 16px;
+.action-buttons .ant-btn-primary:hover {
+  background-color: #40a9ff; /* Sáng hơn khi hover */
+  border-color: #40a9ff;
 }
 
-.voucher-table .ant-table-thead > tr > th {
-  background-color: #f5f5f5;
-  color: #333;
-  font-weight: 600;
+.action-buttons .ant-select,
+.action-buttons .ant-picker,
+.action-buttons .ant-input-search {
+  width: 150px !important; /* Kích thước đồng đều cho các bộ lọc */
 }
 
-.voucher-table .ant-table-tbody > tr:hover > td {
-  background-color: #e6f7ff;
+.action-buttons .ant-input-search {
+  width: 200px !important; /* Ô tìm kiếm hơi rộng hơn */
 }
 
-.voucher-empty {
-  text-align: center;
-  padding: 50px;
+/* Style cho bảng */
+.ant-table-thead > tr > th {
+  font-weight: bold; /* Tiêu đề cột in đậm */
+  background-color: #f5f5f5; /* Nền xám nhạt cho tiêu đề cột */
+  color: #000;
 }
 
-.voucher-empty .ant-empty-description {
-  color: #888;
-  font-size: 16px;
+/* Hiệu ứng cho nút Sửa (màu xanh dương của Ant Design) */
+.edit-button {
+  background-color: #1890ff !important; /* Màu xanh dương mặc định của Ant Design */
+  border-color: #1890ff !important;
+  color: white !important;
+  transition: all 0.3s ease; /* Hiệu ứng chuyển màu mượt mà */
+}
+
+.edit-button:hover {
+  background-color: #40a9ff !important; /* Màu xanh dương sáng hơn khi hover */
+  border-color: #40a9ff !important;
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+}
+
+.edit-button:active {
+  background-color: #096dd9 !important; /* Màu xanh dương đậm hơn khi nhấn */
+  border-color: #096dd9 !important;
+  transform: scale(0.95); /* Thu nhỏ nhẹ khi nhấn */
+}
+
+/* Hiệu ứng cho nút Xóa (màu đỏ của Ant Design) */
+.delete-button {
+  background-color: #ff4d4f !important; /* Màu đỏ mặc định của Ant Design */
+  border-color: #ff4d4f !important;
+  color: white !important;
+  transition: all 0.3s ease; /* Hiệu ứng chuyển màu mượt mà */
+}
+
+.delete-button:hover {
+  background-color: #ff7875 !important; /* Màu đỏ sáng hơn khi hover */
+  border-color: #ff7875 !important;
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+}
+
+.delete-button:active {
+  background-color: #d9363e !important; /* Màu đỏ đậm hơn khi nhấn */
+  border-color: #d9363e !important;
+  transform: scale(0.95); /* Thu nhỏ nhẹ khi nhấn */
 }

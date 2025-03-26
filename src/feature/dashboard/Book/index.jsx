@@ -3,6 +3,23 @@ import { message } from 'antd';
 import { addBooking } from "../../../api/BookingApi";
 import "./BookingForm.css";
 
+const BASE_URL = 'http://localhost:8080';
+
+// Dữ liệu mẫu bàn (nếu API không có)
+const sampleTable = [
+  { id: 1, tableNumber: 'S1', capacity: 4, bookedGuests: 0, status: 'available', type: 'bàn thường' },
+  { id: 2, tableNumber: 'S2', capacity: 4, bookedGuests: 1, status: 'available', type: 'bàn thường' },
+  { id: 3, tableNumber: 'S3', capacity: 4, bookedGuests: 0, status: 'available', type: 'bàn thường' },
+  { id: 4, tableNumber: 'V1', capacity: 4, bookedGuests: 4, status: 'unavailable', type: 'bàn vip' },
+  { id: 5, tableNumber: 'V2', capacity: 4, bookedGuests: 0, status: 'available', type: 'bàn vip' },
+  { id: 6, tableNumber: 'F1', capacity: 8, bookedGuests: 2, status: 'available', type: 'bàn gia đình' },
+  { id: 7, tableNumber: 'F2', capacity: 8, bookedGuests: 0, status: 'available', type: 'bàn gia đình' },
+  { id: 8, tableNumber: 'F3', capacity: 8, bookedGuests: 6, status: 'unavailable', type: 'bàn gia đình' },
+  { id: 9, tableNumber: 'O1', capacity: 6, bookedGuests: 0, status: 'available', type: 'bàn ngoài trời' },
+  { id: 10, tableNumber: 'O2', capacity: 6, bookedGuests: 3, status: 'unavailable', type: 'bàn ngoài trời' },
+  { id: 11, tableNumber: 'O3', capacity: 6, bookedGuests: 0, status: 'available', type: 'bàn ngoài trời' },
+];
+
 const BookingForm = () => {
   const initialFormData = {
     name: "",
@@ -16,6 +33,8 @@ const BookingForm = () => {
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const [table, setTable] = useState([]); // Danh sách bàn
+  const [lastBooking, setLastBooking] = useState(null); // Lưu đặt bàn gần nhất (Quick Booking)
 
   // Lấy thông tin user từ localStorage nếu có
   const getUserInfo = () => {
@@ -55,6 +74,41 @@ const BookingForm = () => {
         console.error('Error parsing saved booking data:', error);
       }
     }
+
+    // Lấy thông tin đặt bàn cuối cùng (Quick Booking)
+    const lastData = localStorage.getItem("lastBookingData");
+    if (lastData) {
+      try {
+        setLastBooking(JSON.parse(lastData));
+      } catch (error) {
+        console.error('Error parsing last booking data:', error);
+      }
+    }
+
+    // Lấy danh sách bàn từ API (nếu có) hoặc sử dụng dữ liệu mẫu
+    const fetchTable = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/table`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setTable(data);
+        } else {
+          // Nếu không có API, sử dụng dữ liệu mẫu
+          setTable(sampleTable);
+        }
+      } catch (error) {
+        console.error('Error fetching table:', error);
+        setTable(sampleTable);
+      }
+    };
+
+    fetchTable();
   }, []);
 
   const handleChange = (e) => {
@@ -84,7 +138,25 @@ const BookingForm = () => {
       return false;
     }
 
+    // Kiểm tra giờ đặt bàn hợp lệ (ví dụ: từ 10:00 đến 22:00)
+    if (formData.time) {
+      const [hour] = formData.time.split(":").map(Number);
+      if (hour < 10 || hour >= 22) {
+        message.error('Giờ đặt bàn phải từ 10:00 đến 22:00!');
+        return false;
+      }
+    }
+
     return true;
+  };
+
+  const handleQuickBooking = () => {
+    if (lastBooking) {
+      setFormData(lastBooking);
+      message.info('Đã điền thông tin từ lần đặt bàn gần nhất');
+    } else {
+      message.info('Chưa có thông tin đặt bàn gần nhất');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -103,11 +175,24 @@ const BookingForm = () => {
         createdAt: new Date().toISOString()
       };
 
-      // Lưu booking vào localStorage thông qua BookingApi
+      // Lưu booking vào hệ thống thông qua BookingApi
       await addBooking(bookingDetails);
 
-      // Hiển thị thông báo thành công
-      message.success('Đặt bàn thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
+      // Lưu thông tin đặt bàn cuối cùng để dùng cho Quick Booking
+      localStorage.setItem("lastBookingData", JSON.stringify(formData));
+
+      // Hiển thị thông báo thành công và thông báo reminder
+      message.success('Đặt bàn thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất. Bạn sẽ nhận được thông báo nhắc nhở 1 tiếng trước giờ đặt.');
+
+      // (Mô phỏng gửi reminder) Nếu thời gian đặt bàn trong vòng 2 tiếng, đặt timer để nhắc nhở trước 1 tiếng
+      const bookingDateTime = new Date(`${formData.date}T${formData.time}`);
+      const now = new Date();
+      const diff = bookingDateTime - now - (60 * 60 * 1000); // 1 tiếng trước
+      if (diff > 0 && diff < 2 * 60 * 60 * 1000) {
+        setTimeout(() => {
+          message.info('Nhắc nhở: Bạn sắp có đặt bàn trong 1 tiếng.');
+        }, diff);
+      }
 
       // Reset form và xóa dữ liệu tạm trong localStorage
       setFormData(initialFormData);
@@ -221,8 +306,38 @@ const BookingForm = () => {
           />
         </div>
 
-        <button type="submit" className="submit-btn">Xác nhận đặt bàn</button>
+        <div className="form-actions">
+          <button type="submit" className="submit-btn">Xác nhận đặt bàn</button>
+          <button type="button" className="quick-book-btn" onClick={handleQuickBooking}>
+            Đặt lại (Quick Booking)
+          </button>
+        </div>
       </form>
+
+      {/* Hiển thị danh sách bàn có trong quán */}
+      <div className="tables-section">
+        <h3>Bàn có sẵn tại quán</h3>
+        <div className="tables-grid">
+          {table.map(table => (
+            <div key={table.id} className={`table-card ${table.status === 'available' ? 'available' : 'unavailable'}`}>
+              <div className="table-info">
+                <span className="table-number">Bàn {table.tableNumber}</span>
+                <span className="table-capacity">
+                  Sức chứa: {table.capacity} {table.bookedGuests > 0 && `(Đã đặt: ${table.bookedGuests})`}
+                </span>
+                <span className="table-type">Loại: {table.type}</span>
+              </div>
+              <div className="table-status">
+                {table.status === 'available' ? (
+                  <span className="status-indicator green"></span>
+                ) : (
+                  <span className="status-indicator red"></span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,9 +1,11 @@
+/* Container tổng quát */
 .container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* Khung tổng thể cho trang FoodList */
 .food-list-container {
     padding: 40px 20px;
     max-width: 1400px;
@@ -32,6 +34,7 @@
     gap: 12px;
 }
 
+/* Nút giỏ hàng */
 .cart-btn {
     display: flex;
     align-items: center;
@@ -64,65 +67,48 @@
     text-align: center;
 }
 
+/* Thanh lọc + tìm kiếm */
 .filters {
     display: flex;
+    flex-wrap: wrap; /* Cho phép xuống hàng nếu hẹp */
     gap: 16px;
     margin-bottom: 24px;
-}
-
-.search-bar {
+    align-items: center;
+  }
+  
+  /* Vùng search-bar */
+  .search-bar {
     flex: 1;
-    position: relative;
-}
-
-.search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-}
-
-.search-bar input {
+    /* position: relative; // Chỉ cần nếu có icon hoặc nút clear */
+  }
+  .search-bar input {
     width: 100%;
-    padding: 10px 40px;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
-}
-
-.search-bar input:focus {
+  }
+  .search-bar input:focus {
     outline: none;
     border-color: #4a90e2;
-}
-
-.clear-search {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #666;
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0;
-}
-
-.category-select {
-    min-width: 200px;
+  }
+  
+  /* Dropdown danh mục */
+  .category-select {
+    min-width: 160px; 
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
     background-color: white;
-}
-
-.category-select:focus {
+  }
+  .category-select:focus {
     outline: none;
     border-color: #4a90e2;
-}
+  }
+  
 
+/* Grid món ăn */
 .food-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -138,7 +124,6 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
-    height: 90%;
     position: relative;
     min-width: 300px;
 }
@@ -210,6 +195,50 @@
     transform: scale(1.2);
 }
 
+/* Nút yêu thích (favorite) */
+.favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #ccc;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.favorite-btn:hover {
+    color: red;
+    transform: scale(1.2);
+}
+
+/* Khu vực đánh giá sao (vote) */
+.food-vote {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.vote-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #ccc;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.vote-btn:hover {
+    color: gold;
+    transform: scale(1.2);
+}
+
+.vote-btn .anticon {
+    pointer-events: none; /* Để tránh sự kiện click ảnh hưởng đến icon */
+}
+
+/* Tag hiển thị trên ảnh (nếu có) */
 .food-tag {
     position: absolute;
     top: 10px;
@@ -230,39 +259,6 @@
     bottom: -5px;
     border-top: 5px solid #c73e1d;
     border-left: 5px solid transparent;
-}
-
-.quantity-control {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.quantity-btn {
-    background-color: #f5f5f5;
-    border: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.quantity-btn:hover {
-    background-color: #e0e0e0;
-}
-
-.quantity-display {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #333;
-    min-width: 30px;
-    text-align: center;
 }
 
 /* Loading state */

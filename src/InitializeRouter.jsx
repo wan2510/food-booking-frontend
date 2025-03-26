@@ -18,11 +18,11 @@ import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
 import Book from './feature/dashboard/Book';
 import Contact from './feature/dashboard/Contact';
-import Order from "./feature/dashboard/Order";
 import Account from './feature/admin/Account';
 import RevenueReport from './feature/admin/Report/RevenueReport';
 import CartPage from './feature/dashboard/Cart';
 import Orders from './feature/dashboard/Orders';
+import Order from './feature/dashboard/Order';
 import UserProfile from './feature/dashboard/Profile';
 import Checkout from './feature/dashboard/Checkout';
 import Attendance from './feature/admin/Attendance/AttendancePage';
@@ -50,7 +50,7 @@ export const InitialRouter = () => {
                 <Route path="/orders" element={<Orders/>} />
                 <Route path="/profile" element={<UserProfile/>} />
                 <Route path="/checkout" element={<Checkout/>} />
-                
+                <Route path="/order" element={<Order/>}/>
             </Route>
 
             {/* Admin */}

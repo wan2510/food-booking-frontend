@@ -1,17 +1,17 @@
 .account-container {
   padding: 20px;
-  position: relative;
   border: 2px solid #722ed1; /* Viền tím giống trong hình */
   border-radius: 8px; /* Bo góc */
   background-color: #fff; /* Nền trắng */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+  margin: 0 auto; /* Căn giữa container */
 }
 
-h1 {
-  text-align: center;
-  color: #333;
+.account-title {
+  text-align: center; /* Căn giữa tiêu đề */
   font-size: 24px;
   font-weight: 600;
+  color: #333;
   margin-bottom: 20px;
 }
 
@@ -19,29 +19,31 @@ h1 {
 .action-buttons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between; /* Nút "Thêm Tài Khoản" bên trái, bộ lọc bên phải */
+  gap: 16px;
   margin-bottom: 16px;
 }
 
 .search-container {
   display: flex;
-  margin-left: auto;
   gap: 8px;
 }
 
 /* Style cho bảng */
-.account-table {
-  margin-top: 16px;
+.account-table .ant-table {
+  border: 1px solid #e8e8e8; /* Viền bảng */
+  border-radius: 4px;
 }
 
 .account-table .ant-table-thead > tr > th {
-  background-color: #f5f5f5;
+  background-color: #f5f5f5; /* Màu nền cho header */
   color: #333;
   font-weight: 600;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 .account-table .ant-table-tbody > tr:hover > td {
-  background-color: #e6f7ff;
+  background-color: #e6f7ff; /* Hiệu ứng hover màu xanh nhạt */
 }
 
 /* Style cho phần "Không có dữ liệu" */
@@ -53,4 +55,44 @@ h1 {
 .account-empty .ant-empty-description {
   color: #888;
   font-size: 16px;
+}
+
+/* Hiệu ứng cho nút Sửa */
+.edit-button {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.edit-button:hover {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+  transform: scale(1.05);
+}
+
+.edit-button:active {
+  background-color: #096dd9 !important;
+  border-color: #096dd9 !important;
+  transform: scale(0.95);
+}
+
+/* Hiệu ứng cho nút Xóa */
+.delete-button {
+  background-color: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #ff7875 !important;
+  border-color: #ff7875 !important;
+  transform: scale(1.05);
+}
+
+.delete-button:active {
+  background-color: #d9363e !important;
+  border-color: #d9363e !important;
+  transform: scale(0.95);
 }

@@ -3,7 +3,7 @@ import { message } from "antd";
 // URL API
 const API_URL = "http://localhost:8080/api";
 
-const foodHeaders = {
+const headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json'
 };
@@ -66,7 +66,7 @@ export const getMenuItems = async () => {
   try {
     const response = await fetch(`${API_URL}/food`, {
       method: 'GET',
-      headers: foodHeaders,
+      headers: headers,
       credentials: 'include',
     });
 
@@ -107,7 +107,7 @@ export const getFoodCategories = async () => {
 // Lấy danh sách voucher
 export const getVouchers = async () => {
   try {
-    const response = await fetch(`${API_URL}/getVouchers`);
+    const response = await fetch(`${API_URL}/voucher/getVouchers`);
     if (!response.ok) throw new Error("Failed to fetch vouchers");
     return await response.json();
   } catch (error) {
