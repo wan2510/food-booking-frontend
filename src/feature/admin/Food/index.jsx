@@ -52,7 +52,7 @@ const Food = () => {
       const payload = {
         name: foodData.name,
         description: foodData.description,
-        price: parseFloat(Number(foodData.price)).toFixed(2), // Chuỗi: "123.45"
+        price: parseFloat(Number(foodData.price)).toFixed(2), 
         imageUrl: foodData.imageUrl,
       };
   
@@ -155,7 +155,7 @@ const Food = () => {
             }}
             style={{ fontSize: "16px", padding: "8px 16px" }}
           >
-            Thêm Món
+            Thêm Món Mới Vào Danh Sách
           </Button>
         </Col>
         <Col>

@@ -7,7 +7,13 @@ const { Content } = Layout;
 
 const AdminLayout = () => {
     return (
-        <Layout style={{ minHeight: "100vh" }}>
+        <Layout
+            style={{
+                minHeight: "100vh",
+                border: "2px solid #722ed1", // Thêm viền màu tím cho Layout ngoài cùng
+                background: "#fff", // Nền trắng cho toàn bộ trang
+            }}
+        >
             <Layout>  
                 <Header />
                 <Layout>

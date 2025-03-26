@@ -44,11 +44,11 @@ const AddEditModal = ({ visible, onCancel, onSave, editItem }) => {
 
   return (
     <Modal
-      title={editItem ? "Chỉnh Sửa Món" : "Thêm Món"}
+      title={editItem ? "Chỉnh Sửa Món" : "Thêm Món Mới Vào Danh Sách"}
       open={visible}
       onCancel={onCancel}
       onOk={handleOk}
-      okText={editItem ? "Cập Nhật" : "Thêm"}
+      okText={editItem ? "Cập Nhật" : "Thêm món"}
     >
       <Form
         form={form}
@@ -84,8 +84,8 @@ const AddEditModal = ({ visible, onCancel, onSave, editItem }) => {
           <div
             onClick={() => setShowImagePicker(true)}
             style={{
-              width: 100,
-              height: 100,
+              width: 150,
+              height: 150,
               border: "2px dashed #aaa",
               display: "flex",
               justifyContent: "center",
@@ -105,7 +105,7 @@ const AddEditModal = ({ visible, onCancel, onSave, editItem }) => {
                 }}
               />
             ) : (
-              <PlusOutlined style={{ fontSize: 24, color: "#aaa" }} />
+              <PlusOutlined style={{ fontSize: 26, color: "#aaa" }} />
             )}
           </div>
         </Form.Item>

@@ -9,18 +9,18 @@ export const createColumns = (setEditItem, setIsModalVisible, handleDelete) => [
       // Xử lý đường dẫn ảnh
       const displayImage = imageUrl
         ? imageUrl.startsWith("http")
-          ? imageUrl // Ảnh từ URL bên ngoài (nếu có)
-          : imageUrl // Ảnh từ public (đã có dạng /images/food1.jpg)
-        : "/images/default-food.jpg"; // Ảnh mặc định nếu không có imageUrl
+          ? imageUrl 
+          : imageUrl 
+        : "/images/default-food.jpg"; 
 
       return (
         <img
           src={displayImage}
           alt="Hình món ăn"
-          style={{ width: 150, height: 100, objectFit: "cover", borderRadius: 10 }}
+          style={{ width: 180, height: 150, objectFit: "cover", borderRadius: 10 }}
           onError={(e) => {
             console.log(`Không tải được ảnh: ${displayImage}`);
-            e.target.src = "/images/default-food.jpg"; // Ảnh mặc định nếu lỗi
+            e.target.src = "/images/default-food.jpg"; 
           }}
         />
       );
@@ -40,7 +40,7 @@ export const createColumns = (setEditItem, setIsModalVisible, handleDelete) => [
     title: "Giá",
     dataIndex: "price",
     key: "price",
-    render: (price) => (price % 1 === 0 ? `$${price}` : `$${price.toFixed(2)}`),
+    render: (price) => price.toLocaleString("vi-VN") + " ₫",
   },
   {
     title: "Hành động",

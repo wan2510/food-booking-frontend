@@ -4,39 +4,47 @@ import { PlusOutlined, EyeOutlined, DeleteOutlined, SearchOutlined } from '@ant-
 import moment from 'moment';
 import axios from 'axios';
 
+const API_BASE_URL = 'http://localhost:8080/api/invoice';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-
-// URL cơ bản của backend
-const API_BASE_URL = 'http://localhost:8080/api/invoice';
 
 const Bill = () => {
   const [form] = Form.useForm();
   const [advancedSearchForm] = Form.useForm();
   const [pastPaidSearchForm] = Form.useForm();
-  const invoiceStatuses = ['Tất cả', 'Đang xử lý', 'Đã thanh toán', 'Chưa thanh toán', 'Đã hủy'];
+
+  const invoiceStatuses = [
+    { display: 'Tất cả', value: 'Tất cả' },
+    { display: 'Đang xử lý', value: 'Đang xử lý' },
+    { display: 'Đã thanh toán', value: 'Đã thanh toán' },
+    { display: 'Chưa thanh toán', value: 'Chưa thanh toán' },
+    { display: 'Đã hủy', value: 'Đã hủy' },
+  ];
 
   const [invoices, setInvoices] = useState([]);
   const [pastPaidInvoices, setPastPaidInvoices] = useState([]);
   const [paidByDateStats, setPaidByDateStats] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({
-    status: 'Tất cả',
-    type: 'Tất cả',
-    searchTerm: '',
-    dateRange: null,
-  });
-  const [pastPaidFilters, setPastPaidFilters] = useState({
-    dateRange: null,
-    searchTerm: '',
-  });
+  const [filters, setFilters] = useState({ status: 'Tất cả', type: 'Tất cả', searchTerm: '', dateRange: null });
+  const [pastPaidFilters, setPastPaidFilters] = useState({ dateRange: null, searchTerm: '' });
+  const [statsDateRange, setStatsDateRange] = useState(null);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isAdvancedSearchVisible, setIsAdvancedSearchVisible] = useState(false);
   const [isPastPaidSearchVisible, setIsPastPaidSearchVisible] = useState(false);
 
-  // Lấy danh sách hóa đơn từ API
+  const axiosInstance = axios.create({
+    baseURL: API_BASE_URL,
+    withCredentials: true,
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const formatDate = (date) => {
+    if (!date) return null;
+    return moment(date).format('YYYY-MM-DD');
+  };
+
   const fetchInvoices = async () => {
     setLoading(true);
     try {
@@ -45,56 +53,97 @@ const Bill = () => {
       if (filters.type && filters.type !== 'Tất cả') params.type = filters.type;
       if (filters.searchTerm) params.searchTerm = filters.searchTerm;
       if (filters.dateRange) {
-        params.startDate = moment(filters.dateRange[0]).format('YYYY-MM-DD');
-        params.endDate = moment(filters.dateRange[1]).format('YYYY-MM-DD');
+        params.startDate = formatDate(filters.dateRange[0]);
+        params.endDate = formatDate(filters.dateRange[1]);
       }
 
-      const response = await axios.get(API_BASE_URL, { params });
-      setInvoices(response.data || []);
+      console.log('Đang lấy danh sách hóa đơn với tham số:', params);
+      const response = await axiosInstance.get('', { params });
+      const data = response.data.map((item) => ({
+        ...item,
+        uuid: String(item.uuid),
+        date: item.date ? moment(item.date).format('YYYY-MM-DD') : null,
+      }));
+      setInvoices(data || []);
     } catch (error) {
-      console.error('Error fetching invoices:', error);
-      message.error('Không thể kết nối đến server. Vui lòng kiểm tra backend!');
+      console.error('Lỗi khi lấy danh sách hóa đơn:', error);
+      if (error.response) {
+        console.log('Mã trạng thái:', error.response.status);
+        console.log('Dữ liệu lỗi:', error.response.data);
+        const errorMessage = error.response.data.errorMessage || error.response.data || 'Không thể kết nối đến server';
+        message.error(`Lỗi: ${errorMessage}`);
+      } else {
+        message.error('Không thể kết nối đến server. Vui lòng kiểm tra backend!');
+      }
       setInvoices([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Lấy hóa đơn đã thanh toán trước đây từ API
   const fetchPastPaidInvoices = async () => {
     setLoading(true);
     try {
       const params = {};
       if (pastPaidFilters.searchTerm) params.searchTerm = pastPaidFilters.searchTerm;
       if (pastPaidFilters.dateRange) {
-        params.startDate = moment(pastPaidFilters.dateRange[0]).format('YYYY-MM-DD');
-        params.endDate = moment(pastPaidFilters.dateRange[1]).format('YYYY-MM-DD');
+        params.startDate = formatDate(pastPaidFilters.dateRange[0]);
+        params.endDate = formatDate(pastPaidFilters.dateRange[1]);
       }
 
-      const response = await axios.get(`${API_BASE_URL}/past-paid`, { params });
-      setPastPaidInvoices(response.data || []);
+      console.log('Đang lấy danh sách hóa đơn đã thanh toán với tham số:', params);
+      const response = await axiosInstance.get('/past-paid', { params });
+      const data = response.data.map((item) => ({
+        ...item,
+        uuid: String(item.uuid),
+        date: item.date ? moment(item.date).format('YYYY-MM-DD') : null,
+      }));
+      setPastPaidInvoices(data || []);
     } catch (error) {
-      console.error('Error fetching past paid invoices:', error);
-      message.error('Không thể tải hóa đơn đã thanh toán. Vui lòng kiểm tra server!');
+      console.error('Lỗi khi lấy hóa đơn đã thanh toán:', error);
+      if (error.response) {
+        console.log('Mã trạng thái:', error.response.status);
+        console.log('Dữ liệu lỗi:', error.response.data);
+        const errorMessage = error.response.data.errorMessage || error.response.data || 'Không thể tải hóa đơn đã thanh toán';
+        message.error(`Lỗi: ${errorMessage}`);
+      } else {
+        message.error('Không thể tải hóa đơn đã thanh toán. Vui lòng kiểm tra server!');
+      }
       setPastPaidInvoices([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Lấy thống kê hóa đơn đã thanh toán theo ngày từ API
   const fetchPaidByDateStats = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/stats/paid-by-date`);
-      setPaidByDateStats(response.data || []);
+      const params = {};
+      if (statsDateRange) {
+        params.startDate = formatDate(statsDateRange[0]);
+        params.endDate = formatDate(statsDateRange[1]);
+      }
+
+      console.log('Đang lấy thống kê thanh toán theo ngày với tham số:', params);
+      const response = await axiosInstance.get('/stats/paid-by-date', { params });
+      const data = response.data.map((item) => ({
+        ...item,
+        date: item.date ? moment(item.date).format('YYYY-MM-DD') : null,
+      }));
+      setPaidByDateStats(data || []);
     } catch (error) {
-      console.error('Error fetching paid by date stats:', error);
-      message.error('Không thể tải thống kê. Vui lòng kiểm tra server!');
+      console.error('Lỗi khi lấy thống kê thanh toán theo ngày:', error);
+      if (error.response) {
+        console.log('Mã trạng thái:', error.response.status);
+        console.log('Dữ liệu lỗi:', error.response.data);
+        const errorMessage = error.response.data.errorMessage || error.response.data || 'Không thể tải thống kê';
+        message.error(`Lỗi: ${errorMessage}`);
+      } else {
+        message.error('Không thể tải thống kê. Vui lòng kiểm tra server!');
+      }
       setPaidByDateStats([]);
     }
   };
 
-  // Gọi API khi component mount
   useEffect(() => {
     fetchInvoices();
     fetchPastPaidInvoices();
@@ -109,49 +158,74 @@ const Bill = () => {
     fetchPastPaidInvoices();
   }, [pastPaidFilters]);
 
+  useEffect(() => {
+    fetchPaidByDateStats();
+  }, [statsDateRange]);
+
   const handleAddInvoice = async (values) => {
     setLoading(true);
     try {
-      const newInvoice = {
+      const invoiceData = {
         customer: values.customer,
         amount: parseFloat(values.amount),
-        date: values.date.format('YYYY-MM-DD'),
         type: values.type,
       };
-      const response = await axios.post(API_BASE_URL, newInvoice);
-      setInvoices([...invoices, response.data]);
-      setIsAddModalVisible(false);
+      const response = await axiosInstance.post('', invoiceData);
+      const newInvoice = {
+        ...response.data,
+        uuid: String(response.data.uuid),
+        date: response.data.date ? moment(response.data.date).format('YYYY-MM-DD') : null,
+      };
+      setInvoices([...invoices, newInvoice]);
+      message.success('Thêm hóa đơn thành công');
       form.resetFields();
-      message.success('Đặt đơn thành công!');
-      fetchInvoices();
-      fetchPastPaidInvoices();
+      setIsAddModalVisible(false);
     } catch (error) {
-      console.error('Error adding invoice:', error);
-      message.error(error.response?.data?.message || 'Lỗi khi thêm hóa đơn');
+      console.error('Lỗi khi thêm hóa đơn:', error);
+      if (error.response) {
+        const errorMessage = error.response.data.errorMessage || error.response.data || 'Lỗi khi thêm hóa đơn';
+        message.error(`Lỗi: ${errorMessage}`);
+      } else {
+        message.error('Lỗi khi thêm hóa đơn');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleStatusChange = async (id, value) => {
+  const handleStatusChange = async (uuid, newStatus) => {
     setLoading(true);
     try {
-        await axios.put(`${API_BASE_URL}/${id}/status?status=${value}`);
-        message.success('Cập nhật trạng thái thành công');
-        if (value === 'Đã thanh toán') {
-            message.success('Thanh toán thành công!');
-        }
-        // Gọi lại cả fetchInvoices và fetchPastPaidInvoices để làm mới dữ liệu từ DB
-        await Promise.all([fetchInvoices(), fetchPastPaidInvoices()]);
+      const response = await axiosInstance.put(`/${uuid}/status`, null, {
+        params: { status: newStatus },
+      });
+      setInvoices(
+        invoices.map((invoice) =>
+          invoice.uuid === uuid ? { ...invoice, status: newStatus } : invoice
+        )
+      );
+      message.success('Cập nhật trạng thái thành công');
+      fetchPastPaidInvoices();
     } catch (error) {
-        console.error('Error updating status:', error);
-        message.error(error.response?.data?.message || 'Lỗi khi cập nhật trạng thái');
+      console.error('Lỗi khi cập nhật trạng thái:', error);
+      if (error.response) {
+        console.log('Mã trạng thái:', error.response.status);
+        console.log('Dữ liệu lỗi:', error.response.data);
+        const errorMessage = error.response.data.errorMessage || error.response.data || 'Lỗi khi cập nhật trạng thái';
+        if (error.response.status === 404) {
+          message.error('Hóa đơn không tồn tại. Vui lòng làm mới trang!');
+        } else {
+          message.error(`Lỗi: ${errorMessage}`);
+        }
+      } else {
+        message.error('Không thể kết nối đến server. Vui lòng kiểm tra backend!');
+      }
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
-  const handleDeleteInvoice = async (id) => {
+  const handleDeleteInvoice = async (uuid) => {
     Modal.confirm({
       title: 'Xác nhận xóa',
       content: 'Bạn có chắc chắn muốn xóa hóa đơn này?',
@@ -161,13 +235,22 @@ const Bill = () => {
       onOk: async () => {
         setLoading(true);
         try {
-          await axios.delete(`${API_BASE_URL}/${id}`);
-          setInvoices(invoices.filter(invoice => invoice.id !== id));
+          await axiosInstance.delete(`/${uuid}`);
+          setInvoices(invoices.filter((invoice) => invoice.uuid !== uuid));
           message.success('Xóa hóa đơn thành công');
           fetchPastPaidInvoices();
         } catch (error) {
-          console.error('Error deleting invoice:', error);
-          message.error(error.response?.data?.message || 'Lỗi khi xóa hóa đơn');
+          console.error('Lỗi khi xóa hóa đơn:', error);
+          if (error.response) {
+            if (error.response.status === 404) {
+              message.error('Hóa đơn không tồn tại. Vui lòng làm mới trang!');
+            } else {
+              const errorMessage = error.response.data.errorMessage || error.response.data || 'Lỗi khi xóa hóa đơn';
+              message.error(errorMessage);
+            }
+          } else {
+            message.error('Lỗi khi xóa hóa đơn');
+          }
         } finally {
           setLoading(false);
         }
@@ -177,12 +260,26 @@ const Bill = () => {
 
   const showDetails = async (invoice) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/${invoice.id}`);
-      setSelectedInvoice(response.data);
+      const response = await axiosInstance.get(`/${invoice.uuid}`);
+      const detailedInvoice = {
+        ...response.data,
+        uuid: String(response.data.uuid),
+        date: response.data.date ? moment(response.data.date).format('YYYY-MM-DD') : null,
+      };
+      setSelectedInvoice(detailedInvoice);
       setIsDetailsModalVisible(true);
     } catch (error) {
-      console.error('Error fetching invoice details:', error);
-      message.error(error.response?.data?.message || 'Lỗi khi lấy chi tiết hóa đơn');
+      console.error('Lỗi khi lấy chi tiết hóa đơn:', error);
+      if (error.response) {
+        if (error.response.status === 404) {
+          message.error('Hóa đơn không tồn tại. Vui lòng làm mới trang!');
+        } else {
+          const errorMessage = error.response.data.errorMessage || error.response.data || 'Lỗi khi lấy chi tiết hóa đơn';
+          message.error(errorMessage);
+        }
+      } else {
+        message.error('Lỗi khi lấy chi tiết hóa đơn');
+      }
     }
   };
 
@@ -226,15 +323,36 @@ const Bill = () => {
   };
 
   const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Khách hàng', dataIndex: 'customer', key: 'customer' },
+    {
+      title: 'ID',
+      dataIndex: 'uuid',
+      key: 'uuid',
+      sorter: (a, b) => a.uuid.localeCompare(b.uuid),
+      sortDirections: ['ascend', 'descend'],
+    },
+    {
+      title: 'Khách hàng',
+      dataIndex: 'customer',
+      key: 'customer',
+      sorter: (a, b) => a.customer.localeCompare(b.customer),
+      sortDirections: ['ascend', 'descend'],
+    },
     {
       title: 'Số tiền (VNĐ)',
       dataIndex: 'amount',
       key: 'amount',
       render: (amount) => (amount ? amount.toLocaleString() : '0'),
+      sorter: (a, b) => a.amount - b.amount,
+      sortDirections: ['ascend', 'descend'],
     },
-    { title: 'Ngày', dataIndex: 'date', key: 'date' },
+    {
+      title: 'Ngày',
+      dataIndex: 'date',
+      key: 'date',
+      render: (date) => (date ? moment(date).format('DD/MM/YYYY') : 'N/A'),
+      sorter: (a, b) => new Date(a.date) - new Date(b.date),
+      sortDirections: ['ascend', 'descend'],
+    },
     {
       title: 'Loại',
       dataIndex: 'type',
@@ -244,6 +362,8 @@ const Bill = () => {
           {type}
         </span>
       ),
+      sorter: (a, b) => a.type.localeCompare(b.type),
+      sortDirections: ['ascend', 'descend'],
     },
     {
       title: 'Trạng thái',
@@ -252,12 +372,16 @@ const Bill = () => {
       render: (status, record) => (
         <Select
           value={status}
-          onChange={(value) => handleStatusChange(record.id, value)}
+          onChange={(newStatus) => handleStatusChange(record.uuid, newStatus)}
           className="w-32"
         >
-          {invoiceStatuses.filter(s => s !== 'Tất cả').map(status => (
-            <Option key={status} value={status}>{status}</Option>
-          ))}
+          {invoiceStatuses
+            .filter((s) => s.value !== 'Tất cả')
+            .map((s) => (
+              <Option key={s.value} value={s.value}>
+                {s.display}
+              </Option>
+            ))}
         </Select>
       ),
     },
@@ -265,26 +389,25 @@ const Bill = () => {
       title: 'Hành động',
       key: 'action',
       render: (_, record) => (
-        <div>
+        <Space>
           <Button
             icon={<EyeOutlined />}
             onClick={() => showDetails(record)}
-            className="mr-2"
             type="primary"
             ghost
           />
           <Button
             icon={<DeleteOutlined />}
             danger
-            onClick={() => handleDeleteInvoice(record.id)}
+            onClick={() => handleDeleteInvoice(record.uuid)}
           />
-        </div>
+        </Space>
       ),
     },
   ];
 
   const pastPaidColumns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
+    { title: 'ID', dataIndex: 'uuid', key: 'uuid' },
     { title: 'Khách hàng', dataIndex: 'customer', key: 'customer' },
     {
       title: 'Số tiền (VNĐ)',
@@ -292,7 +415,14 @@ const Bill = () => {
       key: 'amount',
       render: (amount) => (amount ? amount.toLocaleString() : '0'),
     },
-    { title: 'Ngày', dataIndex: 'date', key: 'date' },
+    {
+      title: 'Ngày',
+      dataIndex: 'date',
+      key: 'date',
+      render: (date) => (date ? moment(date).format('DD/MM/YYYY') : 'N/A'),
+      sorter: (a, b) => new Date(a.date) - new Date(b.date),
+      sortDirections: ['ascend', 'descend'],
+    },
     {
       title: 'Loại',
       dataIndex: 'type',
@@ -319,9 +449,24 @@ const Bill = () => {
     },
   ];
 
+  const statsColumns = [
+    {
+      title: 'Ngày',
+      dataIndex: 'date',
+      key: 'date',
+      render: (date) => (date ? moment(date).format('DD/MM/YYYY') : 'N/A'),
+    },
+    { title: 'Số lượng hóa đơn', dataIndex: 'count', key: 'count' },
+    {
+      title: 'Tổng số tiền (VNĐ)',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: (amount) => (amount ? amount.toLocaleString() : '0'),
+    },
+  ];
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {/* Bộ lọc chính */}
       <Card className="mb-6">
         <Row gutter={[16, 16]} align="middle">
           <Col xs={24} sm={12} md={8} lg={6}>
@@ -331,8 +476,10 @@ const Bill = () => {
               className="w-full"
               placeholder="Chọn trạng thái"
             >
-              {invoiceStatuses.map(status => (
-                <Option key={status} value={status}>{status}</Option>
+              {invoiceStatuses.map((status) => (
+                <Option key={status.value} value={status.value}>
+                  {status.display}
+                </Option>
               ))}
             </Select>
           </Col>
@@ -373,7 +520,6 @@ const Bill = () => {
         </Row>
       </Card>
 
-      {/* Modal tìm kiếm nâng cao */}
       <Modal
         title="Tìm kiếm hóa đơn nâng cao"
         open={isAdvancedSearchVisible}
@@ -395,8 +541,10 @@ const Bill = () => {
           </Form.Item>
           <Form.Item name="status" label="Trạng thái">
             <Select placeholder="Chọn trạng thái">
-              {invoiceStatuses.map(status => (
-                <Option key={status} value={status}>{status}</Option>
+              {invoiceStatuses.map((status) => (
+                <Option key={status.value} value={status.value}>
+                  {status.display}
+                </Option>
               ))}
             </Select>
           </Form.Item>
@@ -413,14 +561,15 @@ const Bill = () => {
                 <Button onClick={() => advancedSearchForm.resetFields()}>Đặt lại</Button>
               </Col>
               <Col>
-                <Button type="primary" htmlType="submit">Áp dụng</Button>
+                <Button type="primary" htmlType="submit">
+                  Áp dụng
+                </Button>
               </Col>
             </Row>
           </Form.Item>
         </Form>
       </Modal>
 
-      {/* Nút thêm hóa đơn */}
       <Button
         type="primary"
         icon={<PlusOutlined />}
@@ -430,26 +579,26 @@ const Bill = () => {
         Thêm hóa đơn
       </Button>
 
-      {/* Modal thêm hóa đơn */}
       <Modal
         title="Thêm hóa đơn mới"
         open={isAddModalVisible}
         onCancel={() => setIsAddModalVisible(false)}
         footer={null}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleAddInvoice}
-        >
-          <Form.Item name="customer" label="Khách hàng" rules={[{ required: true, message: 'Vui lòng nhập tên khách hàng' }]}>
+        <Form form={form} layout="vertical" onFinish={handleAddInvoice}>
+          <Form.Item
+            name="customer"
+            label="Khách hàng"
+            rules={[{ required: true, message: 'Vui lòng nhập tên khách hàng' }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="amount" label="Số tiền (VNĐ)" rules={[{ required: true, message: 'Vui lòng nhập số tiền' }]}>
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item name="date" label="Ngày" rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}>
-            <DatePicker className="w-full" format="YYYY-MM-DD" />
+          <Form.Item
+            name="amount"
+            label="Số tiền (VNĐ)"
+            rules={[{ required: true, message: 'Vui lòng nhập số tiền' }]}
+          >
+            <Input type="number" min={0} />
           </Form.Item>
           <Form.Item name="type" label="Loại" initialValue="Xuất">
             <Select>
@@ -465,18 +614,19 @@ const Bill = () => {
         </Form>
       </Modal>
 
-      {/* Bảng danh sách hóa đơn */}
       <Table
         columns={columns}
         dataSource={invoices}
-        rowKey="id"
+        rowKey="uuid"
+        pagination={{
+          pageSize: 6,
+          showSizeChanger: false,
+        }}
         loading={loading}
-        className="mb-6"
       />
 
-      {/* Modal chi tiết hóa đơn */}
       <Modal
-        title={`Chi tiết hóa đơn #${selectedInvoice?.id || ''}`}
+        title={`Chi tiết hóa đơn #${selectedInvoice?.uuid || ''}`}
         open={isDetailsModalVisible}
         onCancel={() => setIsDetailsModalVisible(false)}
         footer={[
@@ -487,35 +637,44 @@ const Bill = () => {
       >
         {selectedInvoice && (
           <div>
-            <p><strong>Khách hàng:</strong> {selectedInvoice.customer}</p>
-            <p><strong>Số tiền:</strong> {selectedInvoice.amount.toLocaleString()} VNĐ</p>
-            <p><strong>Ngày:</strong> {selectedInvoice.date}</p>
-            <p><strong>Loại:</strong> {selectedInvoice.type}</p>
-            <p><strong>Trạng thái:</strong> {selectedInvoice.status}</p>
+            <p>
+              <strong>Khách hàng:</strong> {selectedInvoice.customer}
+            </p>
+            <p>
+              <strong>Số tiền:</strong> {selectedInvoice.amount.toLocaleString()} VNĐ
+            </p>
+            <p>
+              <strong>Ngày:</strong> {selectedInvoice.date ? moment(selectedInvoice.date).format('DD/MM/YYYY') : 'N/A'}
+            </p>
+            <p>
+              <strong>Loại:</strong> {selectedInvoice.type}
+            </p>
+            <p>
+              <strong>Trạng thái:</strong> {selectedInvoice.status}
+            </p>
           </div>
         )}
       </Modal>
 
-      {/* Thống kê tổng quan */}
       <Row gutter={[16, 16]} className="mb-6">
         <Col xs={24} sm={12} md={6}>
           <Statistic
             title="Đã thanh toán"
-            value={invoices.filter(i => i.status === 'Đã thanh toán').length}
+            value={invoices.filter((i) => i.status === 'Đã thanh toán').length}
             className="bg-green-50 p-4 rounded"
           />
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Statistic
             title="Chưa thanh toán"
-            value={invoices.filter(i => i.status === 'Chưa thanh toán').length}
+            value={invoices.filter((i) => i.status === 'Chưa thanh toán').length}
             className="bg-yellow-50 p-4 rounded"
           />
         </Col>
         <Col xs={24} sm={12} md={6}>
           <Statistic
             title="Đã hủy"
-            value={invoices.filter(i => i.status === 'Đã hủy').length}
+            value={invoices.filter((i) => i.status === 'Đã hủy').length}
             className="bg-red-50 p-4 rounded"
           />
         </Col>
@@ -530,7 +689,6 @@ const Bill = () => {
         </Col>
       </Row>
 
-      {/* Thống kê hóa đơn đã thanh toán theo ngày */}
       <Collapse
         defaultActiveKey={['1']}
         items={[
@@ -538,28 +696,35 @@ const Bill = () => {
             key: '1',
             label: 'Thống kê hóa đơn đã thanh toán theo ngày',
             children: (
-              <Table
-                columns={[
-                  { title: 'Ngày', dataIndex: 'date', key: 'date' },
-                  { title: 'Số lượng hóa đơn', dataIndex: 'count', key: 'count' },
-                  {
-                    title: 'Tổng số tiền (VNĐ)',
-                    dataIndex: 'amount',
-                    key: 'amount',
-                    render: (amount) => (amount ? amount.toLocaleString() : '0'),
-                  },
-                ]}
-                dataSource={paidByDateStats}
-                rowKey="date"
-                pagination={false}
-              />
+              <>
+                <Row gutter={[16, 16]} align="middle" className="mb-4">
+                  <Col xs={24} sm={12} md={8} lg={6}>
+                    <RangePicker
+                      format="YYYY-MM-DD"
+                      placeholder={['Từ ngày', 'Đến ngày']}
+                      value={statsDateRange ? [moment(statsDateRange[0]), moment(statsDateRange[1])] : null}
+                      onChange={(dates) => setStatsDateRange(dates ? [dates[0], dates[1]] : null)}
+                    />
+                  </Col>
+                  <Col xs={24} sm={12} md={8} lg={6}>
+                    {statsDateRange && (
+                      <Button onClick={() => setStatsDateRange(null)}>Xóa bộ lọc</Button>
+                    )}
+                  </Col>
+                </Row>
+                <Table
+                  columns={statsColumns}
+                  dataSource={paidByDateStats}
+                  rowKey="date"
+                  pagination={false}
+                />
+              </>
             ),
           },
         ]}
         className="mb-6"
       />
 
-      {/* Hóa đơn đã thanh toán trước đây */}
       <Collapse
         defaultActiveKey={['1']}
         items={[
@@ -604,7 +769,9 @@ const Bill = () => {
                     layout="vertical"
                     onFinish={handlePastPaidSearch}
                     initialValues={{
-                      dateRange: pastPaidFilters.dateRange ? [moment(pastPaidFilters.dateRange[0]), moment(pastPaidFilters.dateRange[1])] : null,
+                      dateRange: pastPaidFilters.dateRange
+                        ? [moment(pastPaidFilters.dateRange[0]), moment(pastPaidFilters.dateRange[1])]
+                        : null,
                       searchTerm: pastPaidFilters.searchTerm,
                     }}
                   >
@@ -624,7 +791,9 @@ const Bill = () => {
                           <Button onClick={() => pastPaidSearchForm.resetFields()}>Đặt lại</Button>
                         </Col>
                         <Col>
-                          <Button type="primary" htmlType="submit">Áp dụng</Button>
+                          <Button type="primary" htmlType="submit">
+                            Áp dụng
+                          </Button>
                         </Col>
                       </Row>
                     </Form.Item>
@@ -634,7 +803,7 @@ const Bill = () => {
                 <Table
                   columns={pastPaidColumns}
                   dataSource={pastPaidInvoices}
-                  rowKey="id"
+                  rowKey="uuid"
                   loading={loading}
                   pagination={{ pageSize: 5 }}
                 />
