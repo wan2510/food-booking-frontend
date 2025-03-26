@@ -15,6 +15,7 @@ import Book from './feature/dashboard/Book';
 import Contact from './feature/dashboard/Contact';
 import CartPage from './feature/dashboard/Cart';
 import Orders from './feature/dashboard/Orders';
+import Order from './feature/dashboard/Order';
 import UserProfile from './feature/dashboard/Profile';
 import Checkout from './feature/dashboard/Checkout';
 
@@ -38,6 +39,7 @@ export const InitialRouter = () => {
                 <Route path="/orders" element={<Orders/>} />
                 <Route path="/profile" element={<UserProfile/>} />
                 <Route path="/checkout" element={<Checkout/>} />
+                <Route path="/order" element={<Order/>}/>
             </Route>
 
             {/* Admin */}

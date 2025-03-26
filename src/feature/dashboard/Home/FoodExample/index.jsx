@@ -15,11 +15,19 @@ const FoodExample = () => {
   const fetchRandomFoods = async () => {
     try {
       setLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        message.warning('Bạn cần đăng nhập để xem thực đơn');
+        navigate('/login');
+        return;
+      }
+
       const response = await fetch(`${BASE_URL}/api/food`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
         }
       });
 

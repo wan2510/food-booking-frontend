@@ -24,6 +24,7 @@ export const LoginForm = () => {
             if (response.ok) {
                 console.log("Đăng nhập thành công!", data);
 
+                // Lưu thông tin vào localStorage với key "accessToken"
                 localStorage.setItem("userUuid", data.user.uuid);
                 localStorage.setItem("accessToken", data.accessToken);
 
@@ -36,6 +37,18 @@ export const LoginForm = () => {
 
                 message.success("Đăng nhập thành công!");
                 form.resetFields();
+
+                // Override window.fetch để tự động thêm header Authorization cho mọi request
+                const originalFetch = window.fetch;
+                window.fetch = function(url, options = {}) {
+                    const token = localStorage.getItem("accessToken");
+                    options.headers = {
+                        ...options.headers,
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    };
+                    return originalFetch(url, options);
+                };
+
                 navigate("/");
             } else {
                 message.error(data.message || "Sai email hoặc mật khẩu!");
