@@ -18,7 +18,6 @@ import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
 import Book from './feature/dashboard/Book';
 import Contact from './feature/dashboard/Contact';
-import Order from "./feature/dashboard/Order";
 import Account from './feature/admin/Account';
 import RevenueReport from './feature/admin/Report/RevenueReport';
 import CartPage from './feature/dashboard/Cart';
