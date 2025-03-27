@@ -1,156 +1,170 @@
-import React, { useState, useEffect } from 'react';
-import AccountModals from './AccountModal/AccountModal';
+import React, { useState, useEffect, useCallback } from 'react';
+import { message, Modal } from 'antd';
+import dayjs from 'dayjs';
+import AccountModal from './AccountModal/AccountModal';
 import AccountTable from './AccountTable';
+import ActionButtons from './ActionButtons';
+import { Form } from 'antd';
+import {
+    getAccounts,
+    createAccount,
+    updateAccount,
+} from '../../../api/AccountApi';
 import './Account.css';
-import { Button, message, Input, Empty } from 'antd';
-import { getAccounts, createNewStaffAccount, updateAccount } from '../../../api/AccountApi';
-const { Search } = Input;
 
+// Component chính để quản lý tài khoản
 const Account = () => {
-  const [accounts, setAccounts] = useState([]);
-  const [formData, setFormData] = useState({
-    id: null,
-    fullName: '',
-    phone: '',
-    email: '',
-    password: '',
-    status: 'Kích hoạt',
-    role: 'Staff',
-    createdDate: '',
-    isLockedRole: true,
-  });
-  const [editId, setEditId] = useState(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+    const [accounts, setAccounts] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [createdAtFilter, setCreatedAtFilter] = useState(null);
+    const [statusFilter, setStatusFilter] = useState(null);
+    const [roleFilter, setRoleFilter] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingAccount, setEditingAccount] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [form] = Form.useForm();
 
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      const data = await getAccounts();
-      setAccounts(data);
+    // Hàm lấy data từ server
+    const loadAccounts = useCallback(async () => {
+        setLoading(true);
+        try {
+            const data = await getAccounts();
+            console.log('Data từ API:', data);
+            setAccounts(data || []);
+        } catch (error) {
+            console.error('Lỗi khi tải voucher:', error);
+            message.error('Không thể tải danh sách tài khoản!');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Gọi hàm loadAccounts khi component được tạo
+    useEffect(() => {
+        loadAccounts();
+    }, [loadAccounts]);
+
+    // So sánh 2 ngày có cùng ngày không
+    const isSameDay = (date1, date2) => {
+        if (!date1 || !date2) return false;
+        return dayjs(date1).isSame(dayjs(date2), 'day');
     };
-    fetchAccounts();
-  }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSelectChange = (name, value) => {
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async (values) => {
-    try {
-      if (editId) {
-        const updatedData = { status: values.status, role: values.role || formData.role };
-        await updateAccount(editId, updatedData);
-        const updatedAccounts = accounts.map(account =>
-          account.id === editId ? { ...account, ...updatedData } : account
+    // Lọc danh sách tài khoản theo tên, ngày tạo, vai trò và trạng thái ACTIVE
+    const filteredAccounts = (accounts || []).filter((account) => {
+        const matchesSearchText = account.fullName
+            ? account.fullName.toLowerCase().includes(searchText.toLowerCase())
+            : false;
+        const matchesStatus = statusFilter
+            ? account.status === statusFilter
+            : true;
+        const matchesRole = roleFilter ? account.role === roleFilter : true;
+        const matchesCreatedAt = createdAtFilter
+            ? isSameDay(account.createdAt, createdAtFilter)
+            : true;
+        return (
+            matchesSearchText &&
+            matchesCreatedAt &&
+            matchesRole &&
+            matchesStatus
         );
-        setAccounts(updatedAccounts);
-        setEditId(null);
-        setIsEditModalOpen(false);
-        message.success('Chỉnh sửa trạng thái tài khoản thành công!');
-      } else {
-        const newAccount = {
-          fullName: values.fullName,
-          phone: values.phone,
-          email: values.email,
-          password: values.password,
-          status: values.status,
-          role: values.role,
-          createdDate: new Date().toLocaleDateString('vi-VN'),
-          isLockedRole: true,
-        };
-        const createdAccount = await createNewStaffAccount(newAccount);
-        setAccounts([...accounts, createdAccount]);
-        setIsCreateModalOpen(false);
-        message.success('Tạo tài khoản thành công!');
-      }
-      setFormData({
-        id: null,
-        fullName: '',
-        phone: '',
-        email: '',
-        password: '',
-        status: 'Kích hoạt',
-        role: 'Staff',
-        createdDate: '',
-        isLockedRole: true,
-      });
-    } catch (error) {
-      message.error('Có lỗi xảy ra, vui lòng thử lại!');
-    }
-  };
-
-  const handleEdit = (account) => {
-    setEditId(account.id);
-    setFormData({
-      id: account.id,
-      fullName: account.fullName,
-      phone: account.phone,
-      email: account.email,
-      status: account.status,
-      role: account.role,
-      createdDate: account.createdDate,
-      isLockedRole: account.isLockedRole,
     });
-    setIsEditModalOpen(true);
-  };
 
-  const filteredAccounts = accounts.filter(account =>
-    account.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    // Mở modal để tạo hoặc chỉnh sửa tài khoản
+    const showModal = (account = null) => {
+        console.log('Mở modal với account:', account);
+        setEditingAccount(account);
+        setIsModalOpen(true);
+        if (account) {
+            form.setFieldsValue({
+                ...account,
+                createdAt: account.createdAt ? dayjs(account.createdAt) : null,
+            });
+        } else {
+            form.resetFields();
+            form.setFieldsValue({
+                status: 'ACTIVE',
+                role: 'ROLE_STAFF',
+            });
+        }
+    };
 
-  const onSearch = (value) => {
-    setSearchTerm(value);
-  };
+    // Đóng modal
+    const handleCancel = () => {
+        console.log('Đóng modal');
+        setIsModalOpen(false);
+        setEditingAccount(null);
+        form.resetFields();
+    };
 
-  return (
-    <div className="account-container">
-      <h1>Quản lý Tài khoản</h1>
-      <div className="action-buttons">
-        <Button type="primary" onClick={() => setIsCreateModalOpen(true)}>
-          Tạo tài khoản giành cho nhân viên
-        </Button>
-        <div className="search-container">
-          <Search
-            placeholder="Nhập tên tài khoản"
-            onSearch={onSearch}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: 200 }}
-            allowClear
-          />
+    // Lưu data (tạo mới hoặc cập nhật)
+    const handleSave = async () => {
+        try {
+            if (editingAccount) {
+                // Nếu đang chỉnh sửa
+                const values = await form.validateFields();
+                console.log('Data nhận:', values);
+                const cleanedValues = {
+                    uuid: values.uuid,
+                    email: editingAccount.email,
+                    fullName: values.fullName,
+                    phone: values.phone,
+                    status: values.status,
+                    role: values.role,
+                };
+                console.log('Data sau khi xử lý (update):', cleanedValues);
+                await updateAccount(cleanedValues);
+                message.success('Chỉnh sửa thành công!');
+            } else {
+                // Nếu tạo mới
+                const values = await form.validateFields();
+                console.log('Data nhận:', values);
+                const cleanedValues = {
+                    email: values.email,
+                    hashPassword: values.hashPassword,
+                    fullName: values.fullName,
+                    phone: values.phone,
+                    role: values.role,
+                    status: values.status,
+                };
+                console.log('Data sau khi xử lý (create):', cleanedValues);
+                await createAccount(cleanedValues);
+                message.success('Tạo mới thành công!');
+            }
+            await loadAccounts();
+            handleCancel();
+        } catch (error) {
+            console.error('Lỗi khi lưu data:', error);
+            message.error('Lưu dứ liệu thất bại!');
+        }
+    };
+
+    return (
+        <div className="account-container">
+            <h1 className="account-title">Quản Lý Tài Khoản</h1>
+            <ActionButtons
+                onAdd={() => showModal()}
+                searchText={searchText}
+                setSearchText={setSearchText}
+                setCreatedAtFilter={setCreatedAtFilter}
+                setRoleFilter={setRoleFilter}
+                setStatusFilter={setStatusFilter}
+            />
+            <AccountTable
+                accounts={filteredAccounts}
+                setAccounts={setAccounts}
+                onEdit={showModal}
+                loading={loading}
+            />
+            <AccountModal
+                visible={isModalOpen}
+                onClose={handleCancel}
+                onSave={handleSave}
+                form={form}
+                editingAccount={editingAccount}
+            />
         </div>
-      </div>
-      <AccountTable
-        accounts={filteredAccounts}
-        handleEdit={handleEdit}
-        handleDelete={null}
-      />
-      {filteredAccounts.length === 0 && (
-        <div className="account-empty">
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không có dữ liệu" />
-        </div>
-      )}
-      <AccountModals
-        formData={formData}
-        setFormData={setFormData}
-        handleInputChange={handleInputChange}
-        handleSelectChange={handleSelectChange}
-        handleSubmit={handleSubmit}
-        editId={editId}
-        setEditId={setEditId}
-        isCreateModalOpen={isCreateModalOpen}
-        setIsCreateModalOpen={setIsCreateModalOpen}
-        isEditModalOpen={isEditModalOpen}
-        setIsEditModalOpen={setIsEditModalOpen}
-      />
-    </div>
-  );
+    );
 };
 
 export default Account;

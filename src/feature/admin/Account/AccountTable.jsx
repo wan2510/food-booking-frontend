@@ -1,83 +1,187 @@
 import React from 'react';
-import { Table, Space, Button, Tag } from 'antd';
+import { Table, Space, Button, Select, message, Popconfirm } from 'antd';
+import dayjs from 'dayjs';
+import { updateAccount } from '../../../api/AccountApi';
 
-const AccountTable = ({ accounts, handleEdit, handleDelete }) => {
-  const columns = [
-    {
-      title: <strong>ID</strong>,
-      dataIndex: 'id',
-      key: 'id',
-      sorter: (a, b) => a.id - b.id,
-    },
-    {
-      title: <strong>Tên đầy đủ</strong>,
-      dataIndex: 'fullName',
-      key: 'fullName',
-      sorter: (a, b) => a.fullName.localeCompare(b.fullName),
-    },
-    {
-      title: <strong>Số điện thoại</strong>,
-      dataIndex: 'phone',
-      key: 'phone',
-      sorter: (a, b) => a.phone.localeCompare(b.phone),
-    },
-    {
-      title: <strong>Email</strong>,
-      dataIndex: 'email',
-      key: 'email',
-      sorter: (a, b) => a.email.localeCompare(b.email),
-    },
-    {
-      title: <strong>Vai trò</strong>,
-      dataIndex: 'role',
-      key: 'role',
-      sorter: (a, b) => a.role.localeCompare(b.role),
-    },
-    {
-      title: <strong>Ngày tạo</strong>,
-      dataIndex: 'createdDate',
-      key: 'createdDate',
-      sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
-    },
-    {
-      title: <strong>Trạng thái</strong>,
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        let color = "green"; // Mặc định là màu xanh cho "Kích hoạt"
-        if (status === "Vô hiệu hóa") color = "red"; // Màu đỏ cho "Khóa"
-        return <Tag color={color}>{status}</Tag>;
-      },
-      sorter: (a, b) => a.status.localeCompare(b.status),
-    },
-    {
-      title: <strong>Hành động</strong>,
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button type="primary" onClick={() => handleEdit(record)}>
-            Thay đổi quyền/trạng thái
-          </Button>
-          {handleDelete && (
-            <Button danger onClick={() => handleDelete(record.id)}>
-              Xóa
-            </Button>
-          )}
-        </Space>
-      ),
-    },
-  ];
+const { Option } = Select;
 
-  return (
-    <Table
-      className="account-table"
-      dataSource={accounts}
-      columns={columns}
-      rowKey="id"
-      bordered
-      pagination={{ pageSize: 5 }}
-    />
-  );
+// Component hiển thị bảng danh sách tài khoản
+const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
+    // Thay đổi trạng thái hoặc vai trò trực tiếp trên bảng
+    const handleFieldChange = async (record, field, value) => {
+        if (record[field] === value) {
+            message.info('Dữ liệu không thay đổi so với bản gốc!');
+            return;
+        }
+        const formatDateTime = (date) => {
+            if (!date) return null;
+            return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
+        };
+        const updatedData = {
+            uuid: record.uuid,
+            fullName: record.fullName,
+            email: record.email,
+            hashPassword: record.hashPassword,
+            phone: record.phone,
+            role: field === 'role' ? value : record.role,
+            status: field === 'status' ? value : record.status,
+            createdAt: formatDateTime(record.createdAt),
+            updatedAt: formatDateTime(record.updatedAt),
+        };
+
+        try {
+            await updateAccount(updatedData);
+            message.success(
+                `Cập nhật ${field === 'status' ? 'trạng thái' : 'loại'} thành công!`,
+            );
+            onUpdate();
+        } catch (error) {
+            message.error(
+                `Cập nhật ${field === 'status' ? 'trạng thái' : 'loại'} thất bại!`,
+            );
+            console.error('Lỗi khi cập nhật:', error);
+        }
+    };
+
+    // Xóa mềm tài khoản (đổi trạng thái thành INACTIVE)
+    const handleSoftDelete = async (record, field, value) => {
+        if (record[field] === value) {
+            message.info('Dữ liệu không thay đổi so với bản gốc!');
+            return;
+        }
+
+        const updatedData = {
+            uuid: record.uuid,
+            fullName: record.fullName,
+            hashPassword: record.hashPassword,
+            email: record.email,
+            phone: record.phone,
+            role: record.role,
+            status: 'DELETED',
+            createdAt: formatDateTime(record.createdAt),
+            updatedAt: formatDateTime(record.updatedAt),
+        };
+
+        try {
+            await updateAccount(updatedData);
+            message.success(
+                `Cập nhật ${field === 'status' ? 'trạng thái' : 'loại'} thành công!`,
+            );
+            onUpdate();
+        } catch (error) {
+            message.error(
+                `Cập nhật ${field === 'status' ? 'trạng thái' : 'loại'} thất bại!`,
+            );
+            console.error('Lỗi khi cập nhật:', error);
+        }
+    };
+
+    // Cấu hình các cột của bảng
+    const columns = [
+        {
+            title: <strong>Email</strong>,
+            dataIndex: 'email',
+            key: 'email',
+            sorter: (a, b) => a.email.localeCompare(b.email),
+        },
+        {
+            title: <strong>Tên đầy đủ</strong>,
+            dataIndex: 'fullName',
+            key: 'fullName',
+            sorter: (a, b) => a.fullName.localeCompare(b.fullName),
+        },
+        {
+            title: <strong>Số điện thoại</strong>,
+            dataIndex: 'phone',
+            key: 'phone',
+            sorter: (a, b) => a.phone.localeCompare(b.phone),
+        },
+        {
+            title: <strong>Ngày Tạo</strong>,
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            render: (text) => {
+                let displayCreateAt;
+                displayCreateAt = text
+                    ? dayjs(text, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY')
+                    : 'N/A';
+                return displayCreateAt;
+            },
+            sorter: (a, b) =>
+                dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+        },
+        {
+            title: <strong>Vai trò</strong>,
+            dataIndex: 'role',
+            key: 'role',
+            render: (role, record) => (
+                <Select
+                    value={role}
+                    style={{ width: 150 }}
+                    onChange={(value) =>
+                        handleFieldChange(record, 'role', value)
+                    }
+                >
+                    <Option value="ROLE_USER">Người dùng</Option>
+                    <Option value="ROLE_ADMIN">Quản trị viên</Option>
+                    <Option value="ROLE_STAFF">Nhân viên</Option>
+                    <Option value="ROLE_NEW_USER">Người dùng mới</Option>
+                </Select>
+            ),
+            sorter: (a, b) => a.role.localeCompare(b.role),
+        },
+        {
+            title: <strong>Trạng thái</strong>,
+            dataIndex: 'status',
+            key: 'status',
+            render: (status, record) => (
+                <Select
+                    value={status}
+                    style={{ width: 150 }}
+                    onChange={(value) =>
+                        handleFieldChange(record, 'status', value)
+                    }
+                >
+                    <Option value="ACTIVE">Kích hoạt</Option>
+                    <Option value="INACTIVE">Vô hiệu hóa</Option>
+                </Select>
+            ),
+            sorter: (a, b) => a.status.localeCompare(b.status),
+        },
+        {
+            title: <strong>Thao Tác</strong>,
+            key: 'action',
+            render: (_, record) => (
+                <Space>
+                    <Button
+                        className="edit-button"
+                        onClick={() => onEdit(record)}
+                    >
+                        Sửa
+                    </Button>
+                    <Popconfirm
+                        title="Bạn có chắc muốn xóa tài khoản này không?"
+                        onConfirm={() => handleSoftDelete(record)}
+                        okText="Có"
+                        cancelText="Không"
+                    >
+                        <Button className="delete-button">Xóa</Button>
+                    </Popconfirm>
+                </Space>
+            ),
+        },
+    ];
+
+    return (
+        <Table
+            dataSource={accounts}
+            columns={columns}
+            rowKey="uuid"
+            bordered
+            pagination={{ pageSize: 7 }}
+            loading={loading}
+        />
+    );
 };
 
 export default AccountTable;

@@ -2,15 +2,30 @@ import { message } from 'antd';
 
 const API_URL = 'http://localhost:8080/api/voucher';
 
+// Hàm lấy accessToken từ localStorage (hoặc bạn có thể lấy từ nguồn khác như Redux)
+const getAccessToken = () => {
+    const token = localStorage.getItem('accessToken'); // Giả định token được lưu trong localStorage
+    return token ? `Bearer ${token}` : null; // Thêm tiền tố "Bearer" nếu token tồn tại
+};
+
 export const getVouchers = async () => {
     try {
+        const token = getAccessToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            credentials: 'include',
+        };
+
+        // Thêm Authorization header nếu token tồn tại
+        if (token) {
+            headers['Authorization'] = token;
+        }
+
         const response = await fetch(`${API_URL}/getListVoucher`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                credentials: 'include',
-            },
+            headers,
         });
+
         if (!response.ok) {
             throw new Error('Lỗi tải dữ liệu!');
         }
@@ -25,14 +40,23 @@ export const getVouchers = async () => {
 
 export const createVoucher = async (voucherData) => {
     try {
+        const token = getAccessToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            credentials: 'include',
+        };
+
+        // Thêm Authorization header nếu token tồn tại
+        if (token) {
+            headers['Authorization'] = token;
+        }
+
         const response = await fetch(`${API_URL}/addNewVoucher`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                credentials: 'include',
-            },
+            headers,
             body: JSON.stringify(voucherData),
         });
+
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(
@@ -52,14 +76,23 @@ export const createVoucher = async (voucherData) => {
 
 export const updateVoucher = async (voucherData) => {
     try {
+        const token = getAccessToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            credentials: 'include',
+        };
+
+        // Thêm Authorization header nếu token tồn tại
+        if (token) {
+            headers['Authorization'] = token;
+        }
+
         const response = await fetch(`${API_URL}/updateVoucher`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                credentials: 'include',
-            },
+            headers,
             body: JSON.stringify(voucherData),
         });
+
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(
