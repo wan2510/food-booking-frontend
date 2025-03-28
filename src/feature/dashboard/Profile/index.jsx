@@ -126,7 +126,7 @@ const UserProfile = () => {
       console.error("Error uploading avatar:", error);
       message.error("Có lỗi xảy ra khi cập nhật ảnh đại diện. Vui lòng thử lại!");
     }
-  };
+  };  
 
   const handleCart = () => {
     navigate("/cart");
@@ -175,7 +175,7 @@ const UserProfile = () => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:8080/api/user/change-password", {
+      const response = await fetch("http://localhost:8080/api/auth/change-password", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

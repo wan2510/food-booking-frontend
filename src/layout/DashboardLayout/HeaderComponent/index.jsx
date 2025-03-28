@@ -6,10 +6,8 @@ import {
   LogoutOutlined, 
   LoginOutlined,
   BellOutlined,
-  SearchOutlined,
   MenuOutlined
 } from "@ant-design/icons";
-import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./header.css";
 
@@ -20,9 +18,15 @@ const HeaderComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const accessToken = localStorage.getItem("accessToken");
-  const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+
+  // Lấy thông tin user từ localStorage để lấy avatarUrl
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -61,6 +65,10 @@ const HeaderComponent = () => {
       setSearchResults([]);
     }
   };
+
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const notificationMenu = {
     items: [
@@ -129,8 +137,9 @@ const HeaderComponent = () => {
             <Dropdown menu={userMenu} trigger={["hover"]}>
               <Avatar
                 size="large"
-                src={accessToken ? "/path-to-user-avatar.jpg" : null}
-                icon={!accessToken && <UserOutlined />}
+                // Dùng avatarUrl từ user nếu có, nếu không sẽ hiển thị icon UserOutlined
+                src={user?.avatarUrl ? user.avatarUrl : null}
+                icon={!user?.avatarUrl && <UserOutlined />}
                 className="user-avatar hover-effect"
               />
             </Dropdown>

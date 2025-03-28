@@ -9,7 +9,7 @@ const getToken = () => {
     }
 };
 
-// Hàm lấy danh sách đặt bàn từ localStorage
+// Hàm lấy danh sách đặt bàn từ localStorage (dùng cho cache nếu cần)
 export const getBookings = () => {
     try {
         const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
@@ -23,44 +23,42 @@ export const getBookings = () => {
 // Hàm thêm đặt bàn mới
 export const addBooking = async (booking) => {
     try {
-        // Lưu vào localStorage trước
-        const bookings = getBookings();
+        // Tạo payload chỉ với các trường cần thiết
         const newBooking = {
-            ...booking,
-            id: Date.now(),
-            createdAt: new Date().toISOString(),
-            status: 'pending' // pending, confirmed, cancelled
+            name: booking.name,
+            phone: booking.phone,
+            guests: booking.guests,
+            date: booking.date,
+            time: booking.time,
+            note: booking.note,
+            tableType: booking.tableType,
+            occasion: booking.occasion
         };
-        bookings.unshift(newBooking);
-        localStorage.setItem('bookings', JSON.stringify(bookings));
 
-        // Gửi lên server nếu có token
+        // Gửi request POST đến server
         const token = getToken();
-        if (token) {
-            const response = await fetch('http://localhost:8080/api/bookings', {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(newBooking)
-            });
+        const response = await fetch('http://localhost:8080/api/booking', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            },
+            body: JSON.stringify(newBooking)
+        });
 
-            if (!response.ok) {
-                throw new Error('Failed to save booking to server');
-            }
-
-            const savedBooking = await response.json();
-            // Cập nhật lại ID từ server trong localStorage
-            const updatedBookings = bookings.map(b => 
-                b.id === newBooking.id ? { ...b, id: savedBooking.id } : b
-            );
-            localStorage.setItem('bookings', JSON.stringify(updatedBookings));
-            return savedBooking;
+        if (!response.ok) {
+            throw new Error('Failed to save booking to server');
         }
 
-        return newBooking;
+        const savedBooking = await response.json();
+
+        // Lưu lại thông tin đặt bàn mới vào localStorage (nếu cần sử dụng cho Quick Booking)
+        const bookings = getBookings();
+        bookings.unshift(savedBooking);
+        localStorage.setItem('bookings', JSON.stringify(bookings));
+
+        return savedBooking;
     } catch (error) {
         console.error('Error adding booking:', error);
         throw error;
@@ -72,7 +70,7 @@ export const updateBookingStatus = async (bookingId, status) => {
     try {
         // Cập nhật trong localStorage
         const bookings = getBookings();
-        const updatedBookings = bookings.map(booking => 
+        const updatedBookings = bookings.map(booking =>
             booking.id === bookingId ? { ...booking, status } : booking
         );
         localStorage.setItem('bookings', JSON.stringify(updatedBookings));
@@ -80,7 +78,7 @@ export const updateBookingStatus = async (bookingId, status) => {
         // Cập nhật lên server nếu có token
         const token = getToken();
         if (token) {
-            const response = await fetch(`http://localhost:8080/api/bookings/${bookingId}/status`, {
+            const response = await fetch(`http://localhost:8080/api/booking/${bookingId}/status`, {
                 method: 'PUT',
                 credentials: 'include',
                 headers: {
@@ -111,7 +109,7 @@ export const deleteBooking = async (bookingId) => {
         // Xóa trên server nếu có token
         const token = getToken();
         if (token) {
-            const response = await fetch(`http://localhost:8080/api/bookings/${bookingId}`, {
+            const response = await fetch(`http://localhost:8080/api/booking/${bookingId}`, {
                 method: 'DELETE',
                 credentials: 'include',
                 headers: {

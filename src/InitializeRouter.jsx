@@ -23,7 +23,6 @@ import Account from './feature/admin/Account';
 import RevenueReport from './feature/admin/Report/RevenueReport';
 import CartPage from './feature/dashboard/Cart';
 import Orders from './feature/dashboard/Orders';
-import Order from './feature/dashboard/Order';
 import UserProfile from './feature/dashboard/Profile';
 import Checkout from './feature/dashboard/Checkout';
 
@@ -45,12 +44,10 @@ export const InitialRouter = () => {
                 <Route path="/book" element={<Book/>} />
                 <Route path="/order" element={<Order/>} />
                 <Route path="/contact" element={<Contact/>} />
-                <Route path="/contact" element={<Contact/>} />
                 <Route path="/cart" element={<CartPage/>} />
                 <Route path="/orders" element={<Orders/>} />
                 <Route path="/profile" element={<UserProfile/>} />
                 <Route path="/checkout" element={<Checkout/>} />
-                <Route path="/order" element={<Order/>}/>
             </Route>
 
             {/* Admin */}
