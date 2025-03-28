@@ -4,7 +4,7 @@ import './logo.css';
 export const Logo = () => {
     return (
         <Link to={'/admin'} className="admin-header-logo">
-            FTBooking
+            Nomster
         </Link>
     );
 };

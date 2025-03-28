@@ -1,119 +1,138 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Select, Button } from 'antd';
+import { Form, Input, Select } from 'antd';
+import dayjs from 'dayjs';
 
 const { Option } = Select;
 
-const AccountForm = ({ formData, handleInputChange, handleSelectChange, handleSubmit, editId, isModalOpen, onClose, validateOnMount }) => {
-  const [form] = Form.useForm();
-  const isRoleLocked = formData.isLockedRole;
+const AccountForm = ({ form, editingAccount }) => {
+    useEffect(() => {
+        if (editingAccount) {
+            form.setFieldsValue({
+                uuid: editingAccount.uuid,
+                email: editingAccount.email,
+                hashPassword: editingAccount.hashPassword,
+                fullName: editingAccount.fullName,
+                phone: editingAccount.phone,
+                status: editingAccount.status,
+                role: editingAccount.role,
+            });
+        } else {
+            form.resetFields();
+            form.setFieldsValue({
+                status: 'ACTIVE',
+                role: 'ROLE_STAFF',
+            });
+        }
+    }, [editingAccount, form]);
 
-  useEffect(() => {
-    form.resetFields();
-    if (editId) {
-      form.setFieldsValue({
-        status: formData.status,
-        role: formData.role,
-      });
-    } else {
-      form.setFieldsValue({
-        fullName: formData.fullName,
-        phone: formData.phone,
-        email: formData.email,
-        password: formData.password,
-        status: formData.status,
-        role: formData.role,
-      });
-    }
-  }, [form, editId, formData, isModalOpen]);
-
-  const onFinish = (values) => {
-    handleSubmit({
-      ...(editId ? { status: values.status, role: values.role || formData.role } : values),
-    });
-    if (!editId) {
-      form.resetFields(); // Reset form khi tạo mới
-    }
-  };
-
-  return (
-    <Form
-      form={form}
-      layout="vertical"
-      initialValues={{
-        fullName: formData.fullName,
-        phone: formData.phone,
-        email: formData.email,
-        password: formData.password,
-        status: formData.status,
-        role: formData.role,
-      }}
-      onFinish={onFinish}
-      validateTrigger={['onSubmit']} // Chỉ validate khi submit
-    >
-      {!editId && (
-        <>
-          <Form.Item
-            name="fullName"
-            rules={[{ required: true, message: 'Vui lòng nhập tên đầy đủ!' }]}
-          >
-            <Input placeholder="Tên đầy đủ" />
-          </Form.Item>
-
-          <Form.Item
-            name="phone"
-            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
-          >
-            <Input placeholder="Số điện thoại" />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: 'Vui lòng nhập email!' }, { type: 'email', message: 'Email không hợp lệ!' }]}
-          >
-            <Input placeholder="Email" />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }, { min: 6, message: 'Mật khẩu phải ít nhất 6 ký tự!' }]}
-          >
-            <Input.Password placeholder="Mật khẩu" />
-          </Form.Item>
-        </>
-      )}
-
-      <Form.Item
-        name="status"
-        rules={[{ required: true, message: 'Vui lòng chọn trạng thái!' }]}
-      >
-        <Select onChange={(value) => handleSelectChange('status', value)}>
-          <Option value="Kích hoạt">Kích hoạt</Option>
-          <Option value="Vô hiệu hóa">Vô hiệu hóa</Option>
-        </Select>
-      </Form.Item>
-
-      <Form.Item name="role">
-        {isRoleLocked ? (
-          <Input value={formData.role} disabled style={{ backgroundColor: '#f0f0f0', cursor: 'not-allowed' }} />
-        ) : (
-          <Select onChange={(value) => handleSelectChange('role', value)}>
-            <Option value="Người mới">Người mới</Option>
-            <Option value="VIP">VIP</Option>
-            <Option value="Người dùng">Người dùng</Option>
-          </Select>
-        )}
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          {editId ? 'Cập nhật' : 'Tạo tài khoản'}
-        </Button>
-        <Button style={{ marginLeft: 8 }} onClick={onClose}>
-          Hủy
-        </Button>
-      </Form.Item>
-    </Form>
-  );
+    return (
+        <Form layout="vertical" form={form}>
+            <Form.Item name="uuid" hidden>
+                <Input hidden />
+            </Form.Item>
+            <Form.Item name="role" hidden>
+                <Input hidden />
+            </Form.Item>
+            <Form.Item name="status" hidden>
+                <Input hidden />
+            </Form.Item>
+            {editingAccount && (
+                <Form.Item name="hashPassword" hidden>
+                    <Input hidden />
+                </Form.Item>
+            )}
+            {!editingAccount && (
+                <>
+                    <Form.Item
+                        name="email"
+                        label="Email"
+                        rules={[
+                            { required: true, message: 'Vui lòng nhập email!' },
+                            { type: 'email', message: 'Email không hợp lệ!' },
+                        ]}
+                    >
+                        <Input placeholder="Nhập email" />
+                    </Form.Item>
+                    <Form.Item
+                        name="hashPassword"
+                        label="Mật khẩu"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập mật khẩu!',
+                            },
+                            {
+                                min: 6,
+                                message: 'Mật khẩu phải ít nhất 6 ký tự!',
+                            },
+                        ]}
+                    >
+                        <Input.Password placeholder="Nhập mật khẩu" />
+                    </Form.Item>
+                </>
+            )}
+            <Form.Item
+                name="fullName"
+                label="Tên đầy đủ"
+                rules={[
+                    { required: true, message: 'Vui lòng nhập tên đầy đủ!' },
+                ]}
+            >
+                <Input placeholder="Nhập tên đầy đủ" />
+            </Form.Item>
+            <Form.Item
+                name="phone"
+                label="Số điện thoại"
+                rules={[
+                    { required: true, message: 'Vui lòng nhập số điện thoại!' },
+                    {
+                        pattern: /^[0-9]{10}$/,
+                        message: 'Số điện thoại phải là 10 chữ số!',
+                    },
+                ]}
+            >
+                <Input placeholder="Nhập số điện thoại" />
+            </Form.Item>
+            {editingAccount && (
+                <>
+                    <Form.Item
+                        name="status"
+                        label="Trạng thái"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng chọn trạng thái!',
+                            },
+                        ]}
+                    >
+                        <Select placeholder="Chọn trạng thái">
+                            <Option value="ACTIVE">Kích hoạt</Option>
+                            <Option value="INACTIVE">Vô hiệu hóa</Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name="role"
+                        label="Vai trò"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng inaugurated chọn vai trò!',
+                            },
+                        ]}
+                    >
+                        <Select placeholder="Chọn vai trò">
+                            <Option value="ROLE_NEW_USER">
+                                Người dùng mới
+                            </Option>
+                            <Option value="ROLE_USER">Người dùng</Option>
+                            <Option value="ROLE_STAFF">Nhân viên</Option>
+                            <Option value="ROLE_ADMIN">Quản trị viên</Option>
+                        </Select>
+                    </Form.Item>
+                </>
+            )}
+        </Form>
+    );
 };
 
 export default AccountForm;

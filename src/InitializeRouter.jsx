@@ -10,7 +10,7 @@ import FoodCategory from './feature/admin/FoodCategory';
 import TableManagement from './feature/admin/Table';
 import Voucher from './feature/admin/Voucher';
 import Bill from './feature/admin/Bill/Bill';
-import NotificationPage from './feature/admin/Notification/NotificationPage';
+import NotificationPage from './layout/AdminLayout/Header/Notification';
 
 
 
@@ -18,13 +18,14 @@ import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
 import Book from './feature/dashboard/Book';
 import Contact from './feature/dashboard/Contact';
-import Order from "./feature/dashboard/Order";
 import Account from './feature/admin/Account';
 import RevenueReport from './feature/admin/Report/RevenueReport';
 import CartPage from './feature/dashboard/Cart';
 import Orders from './feature/dashboard/Orders';
 import UserProfile from './feature/dashboard/Profile';
 import Checkout from './feature/dashboard/Checkout';
+import Attendance from './feature/admin/Attendance/AttendancePage';
+import Shift from './feature/admin/Shift/ShiftPage';
 
 
 export const InitialRouter = () => {
@@ -56,13 +57,12 @@ export const InitialRouter = () => {
                 <Route path="food-category" element={<FoodCategory />} />
                 <Route path="table" element={<TableManagement />} />
                 <Route path="voucher" element={<Voucher />} />
-
                 <Route path="Bill" element={<Bill />} />
-                <Route path='Notification' element={<NotificationPage />} />
-
+                <Route path='Notification' element={<NotificationPage/>} />
                 <Route path="revenue" element={<RevenueReport/>} />
                 <Route path="account" element={<Account/>} />
-
+                <Route path="Attendance" element={<Attendance/>} />
+                <Route path="Shift" element={<Shift/>} />
             </Route>
 
             {/* 404 */}

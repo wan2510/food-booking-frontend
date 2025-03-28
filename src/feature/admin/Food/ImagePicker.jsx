@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal } from "antd";
 
-// Danh sách ảnh từ thư mục public
+
 const images = [
   "/images/food1.jpg",
   "/images/food2.jpg",
@@ -17,8 +17,8 @@ const images = [
 
 const ImagePicker = ({ visible, onClose, onSelect }) => {
   const handleImageSelect = (image) => {
-    onSelect(image); // Gọi hàm onSelect để truyền đường dẫn ảnh
-    onClose(); // Đóng modal sau khi chọn ảnh
+    onSelect(image); 
+    onClose(); 
   };
 
   return (
@@ -32,7 +32,7 @@ const ImagePicker = ({ visible, onClose, onSelect }) => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)", // Sử dụng grid để hiển thị 5 cột
+          gridTemplateColumns: "repeat(5, 1fr)", 
           gap: 10,
           padding: 10,
         }}
@@ -43,7 +43,7 @@ const ImagePicker = ({ visible, onClose, onSelect }) => {
             src={image}
             alt={`food-${index}`}
             style={{
-              width: "100%", // Chiếm toàn bộ chiều rộng của ô grid
+              width: "100%", 
               height: 180,
               objectFit: "cover",
               cursor: "pointer",
@@ -54,9 +54,9 @@ const ImagePicker = ({ visible, onClose, onSelect }) => {
             onClick={() => handleImageSelect(image)}
             onError={(e) => {
               console.log(`Không tải được ảnh: ${image}`);
-              e.target.src = "/images/default-food.jpg"; // Ảnh mặc định nếu lỗi
+              e.target.src = "/images/default-food.jpg"; 
             }}
-            onMouseEnter={(e) => (e.target.style.border = "2px solid #1890ff")} // Hover effect
+            onMouseEnter={(e) => (e.target.style.border = "2px solid #1890ff")} 
             onMouseLeave={(e) => (e.target.style.border = "2px solid transparent")}
           />
         ))}

@@ -1,14 +1,61 @@
 /* Voucher.css */
-
-/* Các style hiện có */
 .voucher-container {
   padding: 20px;
+  border: 2px solid #722ed1; /* Viền tím giống trong hình */
+  border-radius: 8px; /* Bo góc */
+  background-color: #fff; /* Nền trắng */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+  margin: 0 auto; /* Căn giữa container */
+}
+/* Container chính */
+.voucher-container {
+  padding: 20px;
+  background-color: #fff; /* Nền trắng giống trong ảnh */
 }
 
+/* Tiêu đề */
 .voucher-title {
   font-size: 24px;
   font-weight: bold;
+  color: #000; /* Màu đen */
   margin-bottom: 20px;
+}
+
+/* Style cho ActionButtons */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Khoảng cách nhỏ hơn, giống trong ảnh */
+  margin-bottom: 16px;
+}
+
+.action-buttons .ant-btn-primary {
+  background-color: #1890ff; /* Màu xanh dương của Ant Design */
+  border-color: #1890ff;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.action-buttons .ant-btn-primary:hover {
+  background-color: #40a9ff; /* Sáng hơn khi hover */
+  border-color: #40a9ff;
+}
+
+.action-buttons .ant-select,
+.action-buttons .ant-picker,
+.action-buttons .ant-input-search {
+  width: 150px !important; /* Kích thước đồng đều cho các bộ lọc */
+}
+
+.action-buttons .ant-input-search {
+  width: 200px !important; /* Ô tìm kiếm hơi rộng hơn */
+}
+
+/* Style cho bảng */
+.ant-table-thead > tr > th {
+  font-weight: bold; /* Tiêu đề cột in đậm */
+  background-color: #f5f5f5; /* Nền xám nhạt cho tiêu đề cột */
+  color: #000;
 }
 
 /* Hiệu ứng cho nút Sửa (màu xanh dương của Ant Design) */

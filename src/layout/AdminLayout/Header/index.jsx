@@ -11,11 +11,18 @@ const userInfo = {
 
 export const Header = () => {
     return (
-        <Layout.Header className="admin-header">
+        <Layout.Header
+            className="admin-header"
+            style={{
+                background: "#fff", // Nền trắng
+                padding: '0 16px', // Padding để nội dung không sát viền
+                borderBottom: "none", // Bỏ viền dưới mặc định của Ant Design
+            }}
+        >
             <Flex
                 style={{
                     height: 75,
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2) !important',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Giữ boxShadow
                 }}
                 justify="space-between"
                 align="center"
@@ -29,4 +36,5 @@ export const Header = () => {
         </Layout.Header>
     );
 };
+
 export default Header;

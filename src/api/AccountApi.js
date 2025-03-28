@@ -2,104 +2,130 @@ import { message } from 'antd';
 
 const API_URL = 'http://localhost:8080/api/user';
 
+// Lấy token từ localStorage để gửi lên server
+const getAccessToken = () => {
+    const token = localStorage.getItem('accessToken');
+    return token ? `Bearer ${token}` : null;
+};
+
+// Lấy danh sách tài khoản từ server
 export const getAccounts = async () => {
     try {
-        const response = await fetch(`${API_URL}/getListAccount`, {
+        const token = getAccessToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            credentials: 'include',
+        };
+        if (token) {
+            headers['Authorization'] = token;
+        }
+
+        const response = await fetch(`${API_URL}/getListUser`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                credentials: 'include',
-            },
+            headers,
         });
+
         if (!response.ok) {
-            throw new Error('Failed to fetch data!');
+            throw new Error('Lỗi tải dữ liệu!');
         }
         const data = await response.json();
-        return data.filter(account => !account.deletedAt); // Chỉ lấy các tài khoản chưa bị xóa mềm
+        if (!Array.isArray(data)) {
+            throw new Error('Dữ liệu không đúng định dạng!');
+        }
+        console.log('[API] Dữ liệu tài khoản nhận được:', data);
+        return data;
     } catch (error) {
-        console.error('Error fetching accounts:', error);
-        message.error(`Unable to fetch data: ${error.message}`);
+        console.error('Lỗi khi lấy danh sách tài khoản:', error);
+        message.error(`Không thể lấy dữ liệu: ${error.message}`);
         throw error;
     }
 };
 
-export const createNewStaffAccount = async (userData) => {
+// Tạo tài khoản mới
+export const createAccount = async (userData) => {
     try {
-        const response = await fetch(`${API_URL}/createNewStaffAccount`, {
+        console.log('[API] Dữ liệu gửi để tạo tài khoản:', userData);
+        const token = getAccessToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            credentials: 'include',
+        };
+        if (token) {
+            headers['Authorization'] = token;
+        }
+
+        const response = await fetch(`${API_URL}/addNewUser`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                credentials: 'include',
-            },
+            headers,
             body: JSON.stringify(userData),
         });
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(
-                `Unable to create account for user: ${response.status} - ${errorText}`,
-            );
+
+        if (response.status !== 200 && response.status !== 201) {
+            const errorData = await response.json();
+            let errorMessage = errorData.message || 'Lỗi không xác định';
+            if (response.status === 400) {
+                if (errorMessage.includes('email')) {
+                    errorMessage = 'Email đã tồn tại!';
+                } else if (errorMessage.includes('phone')) {
+                    errorMessage = 'Số điện thoại đã tồn tại!';
+                } else if (errorMessage.includes('role')) {
+                    errorMessage = 'Vai trò không hợp lệ!';
+                }
+            }
+            throw new Error(`Không thể tạo tài khoản: ${errorMessage}`);
         }
+
         const data = await response.json();
-        console.log('New account created:', data);
-        message.success('Account created successfully!');
+        if (!data || typeof data !== 'object') {
+            throw new Error('Dữ liệu trả về không hợp lệ!');
+        }
+        console.log('[API] Tài khoản mới tạo:', data);
+        message.success('Tạo tài khoản thành công!');
         return data;
     } catch (error) {
-        console.error('Error creating account:', error);
-        message.error(`Unable to create account: ${error.message}`);
+        console.error('Lỗi khi tạo tài khoản:', error);
+        message.error(`Không thể tạo tài khoản: ${error.message}`);
         throw error;
     }
 };
 
-export const updateAccount = async (id, userData) => {
+// Cập nhật tài khoản
+export const updateAccount = async (userData) => {
     try {
-        const response = await fetch(`${API_URL}/updateAccount/${id}`, {
+        console.log('[API] Dữ liệu gửi để cập nhật tài khoản:', userData);
+        const token = getAccessToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            credentials: 'include',
+        };
+        if (token) {
+            headers['Authorization'] = token;
+        }
+
+        const response = await fetch(`${API_URL}/updateUser`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                credentials: 'include',
-            },
+            headers,
             body: JSON.stringify(userData),
         });
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(
-                `Unable to update account: ${response.status} - ${errorText}`,
-            );
-        }
-        const data = await response.json();
-        console.log('Account updated:', data);
-        message.success('Account updated successfully!');
-        return data;
-    } catch (error) {
-        console.error('Error updating account:', error);
-        message.error('Failed to update account!');
-        throw error;
-    }
-};
 
-export const softDeleteAccount = async (id) => {
-    try {
-        const response = await fetch(`${API_URL}/updateAccount/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                credentials: 'include',
-            },
-            body: JSON.stringify({ deletedAt: new Date().toISOString() }),
-        });
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(
-                `Unable to soft delete account: ${response.status} - ${errorText}`,
-            );
+            throw new Error(`Không thể cập nhật tài khoản: ${response.status} - ${errorText}`);
         }
         const data = await response.json();
-        console.log('Account soft deleted:', data);
-        message.success('Account soft deleted successfully!');
+        if (!data || typeof data !== 'object') {
+            throw new Error('Dữ liệu trả về không hợp lệ!');
+        }
+        console.log('[API] Tài khoản sau khi cập nhật:', data);
+        if (userData.status === 'DELETED' && userData.status !== data.status) {
+            message.success('Xóa tài khoản thành công!');
+        } else {
+            message.success('Cập nhật tài khoản thành công!');
+        }
         return data;
     } catch (error) {
-        console.error('Error soft deleting account:', error);
-        message.error('Failed to soft delete account!');
+        console.error('Lỗi khi cập nhật tài khoản:', error);
+        message.error('Cập nhật tài khoản thất bại!');
         throw error;
     }
 };
