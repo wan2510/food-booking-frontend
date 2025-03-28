@@ -35,7 +35,11 @@ const Order = ({ user }) => {
   const [vouchers, setVouchers] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = subscribe((newState) => setState(newState));
+    const unsubscribe = subscribe((newState) => {
+      console.log("State updated:", newState);
+      console.log("isPaymentModalOpen:", newState.isPaymentModalOpen);
+      setState(newState);
+    });
 
     const fetchInitialData = async () => {
       try {
@@ -74,8 +78,10 @@ const Order = ({ user }) => {
   const handleCreateBill = async () => {
     const validation = await validateBeforeCreate();
     if (validation.success) {
+      console.log("Opening payment modal");
       setState({ ...state, isPaymentModalOpen: true });
     } else {
+      console.log("Validation failed:", validation.message);
       message.error(validation.message || "Không thể tạo hóa đơn!");
     }
   };
@@ -94,7 +100,7 @@ const Order = ({ user }) => {
         `Thanh toán thành công! Tiền trả lại: ${(state.cashReceived - finalPrice).toLocaleString("vi-VN")} VND`
       );
       if (order.note) {
-        console.log("Ghi chú từ nhân viên:", order.note); // Log the note (or save it to a database)
+        console.log("Ghi chú từ nhân viên:", order.note);
       }
     } else {
       message.success("Thanh toán qua chuyển khoản thành công!");
@@ -132,7 +138,7 @@ const Order = ({ user }) => {
                 vouchers={vouchers}
                 tables={tables}
                 onCreateBill={handleCreateBill}
-                userRole={user?.role} // Pass userRole to ModalBill
+                userRole={user?.role}
               />
             </Card>
           </Col>

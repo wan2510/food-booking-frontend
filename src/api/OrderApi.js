@@ -20,46 +20,13 @@ const mockTables = [
     { id: 5, tableNumber: "5", capacity: 4, bookedGuests: 0, status: "AVAILABLE", type: "VIP" },
 ];
 
-const mockVouchers = [
-    {
-        id: "1",
-        code: 'WELCOME10',
-        name: 'Chào mừng người mới',
-        discount: 10,
-        max_discount_value: 50000,
-        min_order_value: 200000,
-        status: 'ACTIVE',
-        type: 'NEW_USER',
-    },
-    {
-        id: "2",
-        code: 'VIP20',
-        name: 'Ưu đãi khách VIP',
-        discount: 20,
-        max_discount_value: 100000,
-        min_order_value: 500000,
-        status: 'ACTIVE',
-        type: 'VIP',
-    },
-    {
-        id: "3",
-        code: 'SUMMER15',
-        name: 'Giảm giá mùa hè',
-        discount: 15,
-        max_discount_value: 75000,
-        min_order_value: 300000,
-        status: 'INACTIVE',
-        type: 'GENERAL',
-    },
-];
-
 let orderState = {
     bill: [],
     selectedTable: null,
     selectedVoucher: null,
     paymentMethod: 'Tiền mặt',
     cashReceived: 0,
-    isPaymentModalOpen: false,
+    isPaymentModalOpen: true,
 };
 
 const subscribers = new Set();
@@ -72,9 +39,10 @@ export const subscribe = (listener) => {
 
 export const setState = (newState) => {
     orderState = { ...orderState, ...newState };
+    console.log("New orderState:", orderState); // Thêm log để kiểm tra
     subscribers.forEach((listener) => listener(orderState));
-};
-
+  };
+  
 export const getState = () => {
     return { ...orderState };
 };
@@ -232,25 +200,61 @@ export const getVouchers = async () => {
 // Thêm món vào hóa đơn
 export const addToBill = async (item) => {
     try {
-        if (!item || !item.id || !item.name || !item.price) {
-            message.error('Dữ liệu món ăn không hợp lệ!');
-            return { success: false };
-        }
-        const existingItem = orderState.bill.find((i) => i.id === item.id);
-        const newBill = existingItem
-            ? orderState.bill.map((i) =>
-                  i.id === item.id
-                      ? { ...i, quantity: Math.min(i.quantity + 1, 50) }
-                      : i
-              )
-            : [...orderState.bill, { ...item, quantity: 1 }];
-        setState({ bill: newBill });
-        return { success: true, bill: newBill };
+      if (!item || !item.id || !item.name || !item.price) {
+        message.error('Dữ liệu món ăn không hợp lệ!');
+        return { success: false };
+      }
+      const existingItem = orderState.bill.find((i) => i.id === item.id);
+      const newBill = existingItem
+        ? orderState.bill.map((i) =>
+            i.id === item.id
+              ? { ...i, quantity: Math.min(i.quantity + 1, 50) }
+              : i
+          )
+        : [...orderState.bill, { ...item, quantity: 1 }];
+      setState({ bill: newBill }); // Chỉ cập nhật bill
+      return { success: true, bill: newBill };
     } catch (error) {
-        console.error('Error adding to bill:', error);
-        return { success: false, error };
+      console.error('Error adding to bill:', error);
+      return { success: false, error };
     }
-};
+  };
+  
+  // Chọn bàn
+  export const setSelectedTable = async (tableNumber) => {
+    try {
+      const table = mockTables.find((t) => t.tableNumber === tableNumber);
+      if (table) {
+        setState({ selectedTable: table.tableNumber }); // Chỉ cập nhật selectedTable
+        return { success: true, selectedTable: table.tableNumber };
+      } else {
+        message.error(`Không tìm thấy bàn số ${tableNumber}!`);
+        return { success: false };
+      }
+    } catch (error) {
+      console.error('Error setting table:', error);
+      return { success: false, error };
+    }
+  };
+  
+  // Chọn voucher
+  export const setSelectedVoucher = async (voucher) => {
+    try {
+      const totalPrice = getTotalPrice();
+      if (voucher && totalPrice < voucher.min_order_value) {
+        message.warning(
+          `Đơn hàng phải từ ${voucher.min_order_value.toLocaleString()} VND để áp dụng voucher này!`
+        );
+        setState({ selectedVoucher: null }); // Chỉ cập nhật selectedVoucher
+        return { success: false, selectedVoucher: null };
+      }
+      setState({ selectedVoucher: voucher || null }); // Chỉ cập nhật selectedVoucher
+      return { success: true, selectedVoucher: voucher || null };
+    } catch (error) {
+      console.error('Error setting voucher:', error);
+      return { success: false, error };
+    }
+  };
 
 // Cập nhật số lượng hoặc xóa món
 export const updateItem = async (id, quantity) => {
@@ -277,22 +281,7 @@ export const updateItem = async (id, quantity) => {
     }
 };
 
-// Chọn bàn
-export const setSelectedTable = async (tableNumber) => {
-    try {
-        const table = mockTables.find((t) => t.tableNumber === tableNumber);
-        if (table) {
-            setState({ selectedTable: table.tableNumber });
-            return { success: true, selectedTable: table.tableNumber };
-        } else {
-            message.error(`Không tìm thấy bàn số ${tableNumber}!`);
-            return { success: false };
-        }
-    } catch (error) {
-        console.error('Error setting table:', error);
-        return { success: false, error };
-    }
-};
+
 
 // Chọn phương thức thanh toán
 export const setPaymentMethod = async (method) => {
@@ -352,25 +341,6 @@ export const getDiscount = () => {
 // Tính giá cuối cùng
 export const getFinalPrice = () => {
     return getTotalPrice() - getDiscount();
-};
-
-// Chọn voucher
-export const setSelectedVoucher = async (voucher) => {
-    try {
-        const totalPrice = getTotalPrice();
-        if (voucher && totalPrice < voucher.min_order_value) {
-            message.warning(
-                `Đơn hàng phải từ ${voucher.min_order_value.toLocaleString()} VND để áp dụng voucher này!`
-            );
-            setState({ selectedVoucher: null });
-            return { success: false, selectedVoucher: null };
-        }
-        setState({ selectedVoucher: voucher || null });
-        return { success: true, selectedVoucher: voucher || null };
-    } catch (error) {
-        console.error('Error setting voucher:', error);
-        return { success: false, error };
-    }
 };
 
 // Kiểm tra trước khi tạo hóa đơn
