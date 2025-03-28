@@ -2,9 +2,9 @@ import React from "react";
 import { Card, Checkbox, Row, Col } from "antd";
 
 const HandleFilterFood = ({ foodCategories, selectedCategories, setSelectedCategories }) => {
-  const handleCategoryChange = (categoryId, checked) => {
+  const handleCategoryChange = (categoryName, checked) => {
     setSelectedCategories((prev) =>
-      checked ? [...prev, categoryId] : prev.filter((id) => id !== categoryId)
+      checked ? [...prev, categoryName] : prev.filter((name) => name !== categoryName)
     );
   };
 
@@ -24,8 +24,8 @@ const HandleFilterFood = ({ foodCategories, selectedCategories, setSelectedCateg
           foodCategories.map((category) => (
             <Col span={24} key={category.id}>
               <Checkbox
-                checked={selectedCategories.includes(category.id)}
-                onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
+                checked={selectedCategories.includes(category.name)} // Sử dụng category.name
+                onChange={(e) => handleCategoryChange(category.name, e.target.checked)} // Sử dụng category.name
                 style={{ fontSize: 14 }}
               >
                 {category.name}

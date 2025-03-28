@@ -6,6 +6,7 @@ const { Option } = Select;
 
 const AccountForm = ({ form, editingAccount }) => {
     useEffect(() => {
+        console.log('Account đang chỉnh sửa:', editingAccount);
         if (editingAccount) {
             form.setFieldsValue({
                 uuid: editingAccount.uuid,
@@ -27,6 +28,7 @@ const AccountForm = ({ form, editingAccount }) => {
 
     return (
         <Form layout="vertical" form={form}>
+            {/* Các trường ẩn */}
             <Form.Item name="uuid" hidden>
                 <Input hidden />
             </Form.Item>
@@ -41,6 +43,8 @@ const AccountForm = ({ form, editingAccount }) => {
                     <Input hidden />
                 </Form.Item>
             )}
+
+            {/* Các trường hiển thị */}
             {!editingAccount && (
                 <>
                     <Form.Item
@@ -64,6 +68,12 @@ const AccountForm = ({ form, editingAccount }) => {
                             {
                                 min: 6,
                                 message: 'Mật khẩu phải ít nhất 6 ký tự!',
+                            },
+                            {
+                                pattern:
+                                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                                message:
+                                    'Mật khẩu phải chứa ít nhất một chữ cái in hoa, một chữ cái thường, một số và một ký tự đặc biệt!',
                             },
                         ]}
                     >

@@ -59,26 +59,7 @@ export const createAccount = async (userData) => {
             headers,
             body: JSON.stringify(userData),
         });
-
-        if (response.status !== 200 && response.status !== 201) {
-            const errorData = await response.json();
-            let errorMessage = errorData.message || 'Lỗi không xác định';
-            if (response.status === 400) {
-                if (errorMessage.includes('email')) {
-                    errorMessage = 'Email đã tồn tại!';
-                } else if (errorMessage.includes('phone')) {
-                    errorMessage = 'Số điện thoại đã tồn tại!';
-                } else if (errorMessage.includes('role')) {
-                    errorMessage = 'Vai trò không hợp lệ!';
-                }
-            }
-            throw new Error(`Không thể tạo tài khoản: ${errorMessage}`);
-        }
-
         const data = await response.json();
-        if (!data || typeof data !== 'object') {
-            throw new Error('Dữ liệu trả về không hợp lệ!');
-        }
         console.log('[API] Tài khoản mới tạo:', data);
         message.success('Tạo tài khoản thành công!');
         return data;
@@ -92,7 +73,7 @@ export const createAccount = async (userData) => {
 // Cập nhật tài khoản
 export const updateAccount = async (userData) => {
     try {
-        console.log('[API] Dữ liệu gửi để cập nhật tài khoản:', userData);
+        console.log('[API 1] Dữ liệu gửi để cập nhật tài khoản:', userData);
         const token = getAccessToken();
         const headers = {
             'Content-Type': 'application/json',
@@ -107,25 +88,17 @@ export const updateAccount = async (userData) => {
             headers,
             body: JSON.stringify(userData),
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Không thể cập nhật tài khoản: ${response.status} - ${errorText}`);
-        }
+        
         const data = await response.json();
-        if (!data || typeof data !== 'object') {
-            throw new Error('Dữ liệu trả về không hợp lệ!');
-        }
-        console.log('[API] Tài khoản sau khi cập nhật:', data);
-        if (userData.status === 'DELETED' && userData.status !== data.status) {
-            message.success('Xóa tài khoản thành công!');
+        if (userData.status !== 'DELETED') {
+            console.log('Cập nhật tài khoản thành công!:', data);
         } else {
-            message.success('Cập nhật tài khoản thành công!');
+            console.log('Xóa tài khoản thành công!:', data);
         }
         return data;
     } catch (error) {
         console.error('Lỗi khi cập nhật tài khoản:', error);
-        message.error('Cập nhật tài khoản thất bại!');
+        message.error(`Cập nhật tài khoản: ${error.message}`);
         throw error;
     }
 };
