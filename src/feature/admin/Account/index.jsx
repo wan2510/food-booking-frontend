@@ -100,42 +100,40 @@ const Account = () => {
     // Lưu data (tạo mới hoặc cập nhật)
     const handleSave = async () => {
         try {
+            const values = await form.validateFields();
+            let cleanedValues;
             if (editingAccount) {
-                // Nếu đang chỉnh sửa
-                const values = await form.validateFields();
-                console.log('Data nhận:', values);
-                const cleanedValues = {
-                    uuid: values.uuid,
+                cleanedValues = {
+                    uuid: editingAccount.uuid,
                     email: editingAccount.email,
+                    hashPassword: values.hashPassword,
                     fullName: values.fullName,
                     phone: values.phone,
                     status: values.status,
                     role: values.role,
                 };
-                console.log('Data sau khi xử lý (update):', cleanedValues);
                 await updateAccount(cleanedValues);
                 message.success('Chỉnh sửa thành công!');
             } else {
-                // Nếu tạo mới
-                const values = await form.validateFields();
-                console.log('Data nhận:', values);
-                const cleanedValues = {
+                cleanedValues = {
                     email: values.email,
                     hashPassword: values.hashPassword,
                     fullName: values.fullName,
                     phone: values.phone,
-                    role: values.role,
-                    status: values.status,
+                    role: values.role || 'ROLE_STAFF',
+                    status: values.status || 'ACTIVE',
                 };
-                console.log('Data sau khi xử lý (create):', cleanedValues);
-                await createAccount(cleanedValues);
-                message.success('Tạo mới thành công!');
+                const result = await createAccount(cleanedValues);
+                if (result.success || result.uuid) {
+                    message.success('Tạo mới thành công!');
+                }
             }
-            await loadAccounts();
-            handleCancel();
         } catch (error) {
-            console.error('Lỗi khi lưu data:', error);
-            message.error('Lưu dứ liệu thất bại!');
+            console.error('Lỗi khi lưu:', error);
+            message.error(`Lưu dữ liệu thất bại: ${error.message}`);
+        } finally {
+            await loadAccounts(); // Gọi loadAccounts trong mọi trường hợp
+            handleCancel();
         }
     };
 

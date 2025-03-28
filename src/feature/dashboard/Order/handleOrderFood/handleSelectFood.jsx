@@ -16,12 +16,12 @@ const HandleSelectFood = ({ filteredMenu, addToBill }) => {
             <Card
               hoverable
               onClick={() => addToBill(item)}
+              className="food-card" // Thêm class để áp dụng style
               cover={
                 !imageError[item.id] ? (
                   <img
                     alt={item.name}
                     src={item.image || ""}
-                    style={{ width: "100%", height: "auto", display: "block" }}
                     onError={() => handleImageError(item.id)}
                   />
                 ) : (
@@ -31,6 +31,10 @@ const HandleSelectFood = ({ filteredMenu, addToBill }) => {
                       padding: "20px",
                       color: "#999",
                       backgroundColor: "#f5f5f5",
+                      height: "200px", // Đảm bảo chiều cao đồng đều với hình ảnh
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     Không thể tải ảnh
