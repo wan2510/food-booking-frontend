@@ -1,33 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { List, Button, InputNumber, Typography, Space, Card, Popconfirm } from "antd";
 import HandleSelectTable from "./HandleSelectTable";
-import HandleSelectVoucher from "./handleSelectVoucher";
+import HandleSelectVoucher from "./HandleSelectVoucher";
 import { getState, subscribe, getTotalPrice, getDiscount, getFinalPrice, updateItem, setSelectedTable, setSelectedVoucher } from "../../../../api/OrderApi";
 
 const { Title, Text } = Typography;
 
-const ModalBill = ({ vouchers, tables }) => {
-  // Lấy state từ OrderApi và đồng bộ với giao diện
+const ModalBill = ({ vouchers, tables, onCreateBill, userRole }) => {
   const [orderState, setOrderState] = useState(getState());
 
-  // Đăng ký subscribe để nhận cập nhật từ OrderApi
   useEffect(() => {
     const unsubscribe = subscribe((newState) => {
-      console.log("Received new state in ModalBill:", newState); // Debug log
+      console.log("Received new state in ModalBill:", newState);
       setOrderState(newState);
     });
-    return () => unsubscribe(); // Hủy subscribe khi component unmount
+    return () => unsubscribe();
   }, []);
 
-  // Lấy các giá trị từ state
   const { bill, selectedTable, selectedVoucher } = orderState;
 
-  // Tính toán tổng tiền, giảm giá, và tiền phải chi
   const totalPrice = getTotalPrice();
   const discount = getDiscount();
   const finalPrice = getFinalPrice();
 
-  // Debug log để kiểm tra
   console.log("ModalBill - Order State:", orderState);
   console.log("ModalBill - Total Price:", totalPrice);
   console.log("ModalBill - Discount:", discount);
@@ -42,17 +37,14 @@ const ModalBill = ({ vouchers, tables }) => {
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
         border: "1px solid #e8e8e8",
       }}
-      variant="outlined" // Đã sửa từ bordered
     >
       <Space direction="vertical" style={{ width: "100%" }}>
-        {/* Chọn bàn */}
         <HandleSelectTable
           tables={tables}
           selectedTable={selectedTable}
           setSelectedTable={setSelectedTable}
         />
 
-        {/* Danh sách món ăn */}
         <List
           dataSource={bill}
           locale={{ emptyText: <Text italic style={{ color: "#999" }}>Chưa có món nào trong hóa đơn.</Text> }}
@@ -112,14 +104,12 @@ const ModalBill = ({ vouchers, tables }) => {
           )}
         />
 
-        {/* Chọn voucher */}
         <HandleSelectVoucher
           vouchers={vouchers}
           selectedVoucher={selectedVoucher}
-          setSelectedVoucher={setSelectedVoucher}
+          setSelectedVoucher={(voucher) => setSelectedVoucher(voucher, userRole)}
         />
 
-        {/* Hiển thị tổng tiền, giảm giá, và tiền phải trả */}
         <div style={{ marginTop: 16, padding: "10px", background: "#fafafa", borderRadius: "6px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
             <Text strong style={{ color: "#333" }}>Tổng bill:</Text>
@@ -138,6 +128,15 @@ const ModalBill = ({ vouchers, tables }) => {
             <Title level={4} style={{ color: "#ff6600", margin: 0 }}>{finalPrice.toLocaleString()} VND</Title>
           </div>
         </div>
+
+        <Button
+          type="primary"
+          onClick={onCreateBill}
+          style={{ width: "100%", marginTop: 16 }}
+          disabled={bill.length === 0 || !selectedTable}
+        >
+          Tạo hóa đơn
+        </Button>
       </Space>
     </Card>
   );

@@ -7,16 +7,19 @@ const { Option } = Select;
 
 // Component hiển thị bảng danh sách tài khoản
 const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
+    // Định dạng ngày giờ
+    const formatDateTime = (date) => {
+        if (!date) return null;
+        return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
+    };
+
     // Thay đổi trạng thái hoặc vai trò trực tiếp trên bảng
     const handleFieldChange = async (record, field, value) => {
         if (record[field] === value) {
             message.info('Dữ liệu không thay đổi so với bản gốc!');
             return;
         }
-        const formatDateTime = (date) => {
-            if (!date) return null;
-            return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
-        };
+
         const updatedData = {
             uuid: record.uuid,
             fullName: record.fullName,
@@ -32,29 +35,29 @@ const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
         try {
             await updateAccount(updatedData);
             message.success(
-                `Cập nhật ${field === 'status' ? 'trạng thái' : 'loại'} thành công!`,
+                `Cập nhật ${field === 'status' ? 'trạng thái' : 'vai trò'} thành công!`,
             );
-            onUpdate();
+            onUpdate(); // Cập nhật bảng sau khi thành công
         } catch (error) {
             message.error(
-                `Cập nhật ${field === 'status' ? 'trạng thái' : 'loại'} thất bại!`,
+                `Cập nhật ${field === 'status' ? 'trạng thái' : 'vai trò'} thất bại: ${error.message}`,
             );
             console.error('Lỗi khi cập nhật:', error);
         }
     };
 
-    // Xóa mềm tài khoản (đổi trạng thái thành INACTIVE)
-    const handleSoftDelete = async (record, field, value) => {
-        if (record[field] === value) {
-            message.info('Dữ liệu không thay đổi so với bản gốc!');
+    // Xóa mềm tài khoản (đặt status thành DELETED)
+    const handleSoftDelete = async (record) => {
+        if (record.status === 'DELETED') {
+            message.info('Tài khoản đã bị xóa mềm trước đó!');
             return;
         }
 
         const updatedData = {
             uuid: record.uuid,
             fullName: record.fullName,
-            hashPassword: record.hashPassword,
             email: record.email,
+            hashPassword: record.hashPassword,
             phone: record.phone,
             role: record.role,
             status: 'DELETED',
@@ -64,15 +67,11 @@ const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
 
         try {
             await updateAccount(updatedData);
-            message.success(
-                `Cập nhật ${field === 'status' ? 'trạng thái' : 'loại'} thành công!`,
-            );
-            onUpdate();
+            message.success('Xóa mềm tài khoản thành công!');
+            onUpdate(); // Cập nhật bảng sau khi thành công
         } catch (error) {
-            message.error(
-                `Cập nhật ${field === 'status' ? 'trạng thái' : 'loại'} thất bại!`,
-            );
-            console.error('Lỗi khi cập nhật:', error);
+            message.error(`Xóa mềm tài khoản thất bại: ${error.message}`);
+            console.error('Lỗi khi xóa mềm:', error);
         }
     };
 

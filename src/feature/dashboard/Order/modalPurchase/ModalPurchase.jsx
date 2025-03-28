@@ -18,6 +18,8 @@ const ModalPurchase = ({
   cashReceived,
   setCashReceived,
 }) => {
+  const [note, setNote] = useState(""); // Add note state for cash payments
+
   const totalPrice = getTotalPrice();
   const discount = getDiscount();
   const finalPrice = getFinalPrice();
@@ -31,6 +33,7 @@ const ModalPurchase = ({
     discount,
     finalTotal: finalPrice,
     created_at: new Date().toISOString(),
+    note: paymentMethod === "Tiền mặt" ? note : "", // Include note in order if cash payment
   };
 
   const handleCashChange = (e) => {
@@ -43,13 +46,14 @@ const ModalPurchase = ({
   useEffect(() => {
     if (visible) {
       setCashReceived(0);
+      setNote(""); // Reset note when modal opens
     }
   }, [visible, setCashReceived]);
 
   return (
     <Modal
       title="Thanh toán Hóa đơn"
-      open={visible} // Thay 'visible' bằng 'open'
+      open={visible}
       onCancel={onCancel}
       footer={null}
       width={800}
@@ -90,6 +94,13 @@ const ModalPurchase = ({
                   )}
                 </>
               )}
+              <Input
+                placeholder="Ghi chú (nếu có)"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                style={{ marginTop: 16, width: "100%" }}
+                allowClear
+              />
             </>
           ) : (
             <HandleQRPayment order={order} />
@@ -100,7 +111,11 @@ const ModalPurchase = ({
         <Button onClick={onCancel} style={{ marginRight: 8 }}>
           Hủy
         </Button>
-        <Button type="primary" onClick={onConfirm} disabled={finalPrice > cashReceived && paymentMethod === "Tiền mặt"}>
+        <Button
+          type="primary"
+          onClick={() => onConfirm(order)} // Pass the order object with note
+          disabled={finalPrice > cashReceived && paymentMethod === "Tiền mặt"}
+        >
           Xác nhận
         </Button>
       </div>

@@ -3,7 +3,25 @@ import { Row, Col, Layout, Typography, Card, Button, message } from "antd";
 import HandleOrderFood from "./handleOrderFood/HandleOrderFood";
 import ModalPurchase from "./modalPurchase/ModalPurchase";
 import ModalBill from "./modalBill/ModalBill";
-import { getState, subscribe, getMenuItems, getFoodCategories, getTables, getVouchers, addToBill, updateItem, setSelectedTable, setSelectedVoucher, setPaymentMethod, setCashReceived, validateBeforeCreate, getTotalPrice, getDiscount, getFinalPrice, setState } from "@/api/OrderApi";
+import {
+  getState,
+  subscribe,
+  getMenuItems,
+  getFoodCategories,
+  getTables,
+  getVouchers,
+  addToBill,
+  updateItem,
+  setSelectedTable,
+  setSelectedVoucher,
+  setPaymentMethod,
+  setCashReceived,
+  validateBeforeCreate,
+  getTotalPrice,
+  getDiscount,
+  getFinalPrice,
+  setState,
+} from "../../../api/OrderApi";
 import "./Order.css";
 
 const { Content } = Layout;
@@ -57,11 +75,12 @@ const Order = ({ user }) => {
     const validation = await validateBeforeCreate();
     if (validation.success) {
       setState({ ...state, isPaymentModalOpen: true });
-      // Không hiển thị thông báo ở đây
+    } else {
+      message.error(validation.message || "Không thể tạo hóa đơn!");
     }
   };
 
-  const handleConfirmPayment = async () => {
+  const handleConfirmPayment = async (order) => {
     const totalPrice = getTotalPrice();
     const discount = getDiscount();
     const finalPrice = getFinalPrice();
@@ -74,15 +93,15 @@ const Order = ({ user }) => {
       message.success(
         `Thanh toán thành công! Tiền trả lại: ${(state.cashReceived - finalPrice).toLocaleString("vi-VN")} VND`
       );
+      if (order.note) {
+        console.log("Ghi chú từ nhân viên:", order.note); // Log the note (or save it to a database)
+      }
     } else {
       message.success("Thanh toán qua chuyển khoản thành công!");
     }
 
-    // Tạo hóa đơn và reset
     await clearOrder();
-    setState({ ...state, isPaymentModalOpen: false, cashReceived: 0 }); // Reset cashReceived
-
-    // Hiển thị thông báo "Hóa đơn đã được tạo thành công" sau khi xác nhận thanh toán
+    setState({ ...state, isPaymentModalOpen: false, cashReceived: 0 });
     message.success("Hóa đơn đã được tạo thành công!");
   };
 
@@ -110,17 +129,11 @@ const Order = ({ user }) => {
             <Card className="bill-container" style={{ margin: "2vw 2vw 0vw 1.25vw" }}>
               <Title level={2}>Hóa đơn</Title>
               <ModalBill
-                bill={state.bill}
-                updateItem={updateItem}
                 vouchers={vouchers}
                 tables={tables}
-                selectedTable={state.selectedTable}
-                setSelectedTable={setSelectedTable}
-                selectedVoucher={state.selectedVoucher}
-                setSelectedVoucher={setSelectedVoucher}
-                onCreateBill={handleCreateBill} // Truyền handleCreateBill vào ModalBill
+                onCreateBill={handleCreateBill}
+                userRole={user?.role} // Pass userRole to ModalBill
               />
-              {/* Bỏ nút "Tạo hóa đơn" ở đây vì đã có trong ModalBill */}
             </Card>
           </Col>
         </Row>

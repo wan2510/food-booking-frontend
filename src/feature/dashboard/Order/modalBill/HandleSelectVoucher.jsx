@@ -1,13 +1,12 @@
 import React from "react";
 import { Select } from "antd";
-import { setSelectedVoucher } from "../../../../api/OrderApi";
 
 const { Option } = Select;
 
 const HandleSelectVoucher = ({ vouchers, selectedVoucher, setSelectedVoucher }) => {
   const handleChange = (voucherId) => {
     const selected = vouchers.find((v) => v.id === voucherId) || null;
-    console.log("Selected voucher in HandleSelectVoucher:", selected); // Debug log
+    console.log("Selected voucher in HandleSelectVoucher:", selected);
     setSelectedVoucher(selected); // Gọi hàm từ OrderApi với đối tượng voucher
   };
 
