@@ -13,7 +13,7 @@ import Bill from './feature/admin/Bill/Bill';
 import NotificationPage from './layout/AdminLayout/Header/Notification';
 
 
-
+import Order from './feature/admin/Order';
 import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
 import Book from './feature/dashboard/Book';
@@ -43,7 +43,6 @@ export const InitialRouter = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/foodlist" element={<FoodList />} />
                 <Route path="/book" element={<Book/>} />
-                <Route path="/order" element={<Order/>} />
                 <Route path="/contact" element={<Contact/>} />
                 <Route path="/cart" element={<CartPage/>} />
                 <Route path="/orders" element={<Orders/>} />
@@ -63,6 +62,7 @@ export const InitialRouter = () => {
                 <Route path="account" element={<Account/>} />
                 <Route path="Attendance" element={<Attendance/>} />
                 <Route path="Shift" element={<Shift/>} />
+                <Route path="" element={<Order/>} />
             </Route>
 
             {/* 404 */}

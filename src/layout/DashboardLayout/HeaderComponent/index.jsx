@@ -92,7 +92,6 @@ const HeaderComponent = () => {
     { key: "/", label: <Link to="/">Trang chủ</Link> },
     { key: "/foodlist", label: <Link to="/foodlist">Món ăn</Link> },
     { key: "/book", label: <Link to="/book">Đặt bàn ngay</Link> },
-    { key: "/order", label: <Link to="/order">Gọi món tại quầy</Link> },
     { key: "/contact", label: <Link to="/contact">Liên hệ</Link> },
   ];
 
