@@ -29,9 +29,6 @@ export const getAccounts = async () => {
             throw new Error('Lỗi tải dữ liệu!');
         }
         const data = await response.json();
-        if (!Array.isArray(data)) {
-            throw new Error('Dữ liệu không đúng định dạng!');
-        }
         console.log('[API] Dữ liệu tài khoản nhận được:', data);
         return data;
     } catch (error) {
@@ -64,8 +61,6 @@ export const createAccount = async (userData) => {
         message.success('Tạo tài khoản thành công!');
         return data;
     } catch (error) {
-        console.error('Lỗi khi tạo tài khoản:', error);
-        message.error(`Không thể tạo tài khoản: ${error.message}`);
         throw error;
     }
 };
@@ -97,8 +92,6 @@ export const updateAccount = async (userData) => {
         }
         return data;
     } catch (error) {
-        console.error('Lỗi khi cập nhật tài khoản:', error);
-        message.error(`Cập nhật tài khoản: ${error.message}`);
         throw error;
     }
 };

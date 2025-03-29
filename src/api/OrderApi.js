@@ -26,7 +26,7 @@ let orderState = {
     selectedVoucher: null,
     paymentMethod: 'Tiền mặt',
     cashReceived: 0,
-    isPaymentModalOpen: true,
+    isPaymentModalOpen: false,
 };
 
 const subscribers = new Set();
@@ -39,7 +39,7 @@ export const subscribe = (listener) => {
 
 export const setState = (newState) => {
     orderState = { ...orderState, ...newState };
-    console.log("New orderState:", orderState); // Thêm log để kiểm tra
+    console.log("New orderState:", orderState); 
     subscribers.forEach((listener) => listener(orderState));
   };
   
@@ -53,7 +53,7 @@ export const getTables = async () => {
         const token = getAccessToken();
         const headersWithToken = {
             'Content-Type': 'application/json',
-            credentials: 'include',
+            Accept: 'application/json',
             ...(token ? { Authorization: token } : {}),
         };
         const response = await fetch(`${API_URL}/table_restaurant`, {
@@ -280,8 +280,6 @@ export const updateItem = async (id, quantity) => {
         return { success: false, error };
     }
 };
-
-
 
 // Chọn phương thức thanh toán
 export const setPaymentMethod = async (method) => {

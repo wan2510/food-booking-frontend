@@ -10,16 +10,17 @@ export const User = ({ userInfo }) => {
     }, [userInfo]);
 
     return (
-        <Dropdown
-            className="admin-header-user-menu"
-            rootClassName="admin-header-user-menu-submenu"
-            menu={{ items: userMenu }}
-            trigger={'click'}
-        >
-            <Flex justify="center" align="center" gap={20}>
-                <Avatar icon={<UserOutlined />} />
-                <DownOutlined />
-            </Flex>
-        </Dropdown>
+        // <Dropdown
+        //     className="admin-header-user-menu"
+        //     rootClassName="admin-header-user-menu-submenu"
+        //     menu={{ items: userMenu }}
+        //     trigger={'click'}
+        // >
+        //     <Flex justify="center" align="center" gap={20}>
+        //         <Avatar icon={<UserOutlined />} />
+        //         <DownOutlined />
+        //     </Flex>
+        // </Dropdown>
+        <div></div>
     );
 };

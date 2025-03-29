@@ -56,19 +56,12 @@ const ModalPurchase = ({
       open={visible}
       onCancel={onCancel}
       footer={null}
-      width={800}
+      width={1000}
       destroyOnClose={true}
     >
       <Row gutter={16}>
-        <Col span={16}>
-          <ModalBillReadOnly
-            bill={bill}
-            selectedTable={selectedTable}
-            selectedVoucher={selectedVoucher}
-            vouchers={vouchers}
-          />
-        </Col>
-        <Col span={8} style={{ textAlign: "center" }}>
+       
+        <Col span={14} style={{ textAlign: "center"}}>
           <HandleSelectMethod value={paymentMethod} onChange={setPaymentMethod} />
           {paymentMethod === "Tiền mặt" ? (
             <>
@@ -105,6 +98,14 @@ const ModalPurchase = ({
           ) : (
             <HandleQRPayment order={order} />
           )}
+        </Col> 
+        <Col span={10}>
+          <ModalBillReadOnly
+            bill={bill}
+            selectedTable={selectedTable}
+            selectedVoucher={selectedVoucher}
+            vouchers={vouchers}
+          />
         </Col>
       </Row>
       <div style={{ marginTop: 24, textAlign: "right" }}>

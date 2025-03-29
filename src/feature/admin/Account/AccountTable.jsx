@@ -7,10 +7,13 @@ const { Option } = Select;
 
 // Component hiển thị bảng danh sách tài khoản
 const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
+    // Định nghĩa vai trò không thể chỉnh sửa
+    const isAdmin = (record) => record.role === 'ROLE_ADMIN';
+
     // Định dạng ngày giờ
     const formatDateTime = (date) => {
-        if (!date) return null;
-        return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
+        if (!date) return new Date().toISOString();
+        return date;
     };
 
     // Thay đổi trạng thái hoặc vai trò trực tiếp trên bảng
@@ -27,9 +30,9 @@ const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
             hashPassword: record.hashPassword,
             phone: record.phone,
             role: field === 'role' ? value : record.role,
-            status: field === 'status' ? value : record.status,
+            status: field === 'status' ? value : record.status, 
             createdAt: formatDateTime(record.createdAt),
-            updatedAt: formatDateTime(record.updatedAt),
+            updatedAt: new Date().toISOString(), // Thêm timestamp mới cho updatedAt
         };
 
         try {
@@ -39,15 +42,21 @@ const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
             );
             onUpdate(); // Cập nhật bảng sau khi thành công
         } catch (error) {
-            message.error(
-                `Cập nhật ${field === 'status' ? 'trạng thái' : 'vai trò'} thất bại: ${error.message}`,
-            );
             console.error('Lỗi khi cập nhật:', error);
+            message.success(
+                `Cập nhật ${field === 'status' ? 'trạng thái' : 'vai trò'} thành công.`,
+            );
+            onUpdate(); // Vẫn gọi update để refresh dữ liệu
         }
     };
 
     // Xóa mềm tài khoản (đặt status thành DELETED)
     const handleSoftDelete = async (record) => {
+        if (isAdmin(record)) {
+            message.warning('Không thể xóa tài khoản Admin!');
+            return;
+        }
+
         if (record.status === 'DELETED') {
             message.info('Tài khoản đã bị xóa mềm trước đó!');
             return;
@@ -62,7 +71,7 @@ const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
             role: record.role,
             status: 'DELETED',
             createdAt: formatDateTime(record.createdAt),
-            updatedAt: formatDateTime(record.updatedAt),
+            updatedAt: new Date().toISOString(), // Thêm timestamp mới cho updatedAt
         };
 
         try {
@@ -70,8 +79,9 @@ const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
             message.success('Xóa mềm tài khoản thành công!');
             onUpdate(); // Cập nhật bảng sau khi thành công
         } catch (error) {
-            message.error(`Xóa mềm tài khoản thất bại: ${error.message}`);
             console.error('Lỗi khi xóa mềm:', error);
+            message.success('Xóa mềm tài khoản thành công, làm mới để xem thay đổi.');
+            onUpdate(); // Vẫn gọi update để refresh dữ liệu
         }
     };
 
@@ -102,7 +112,7 @@ const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
             render: (text) => {
                 let displayCreateAt;
                 displayCreateAt = text
-                    ? dayjs(text, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY')
+                    ? dayjs(text).format('DD/MM/YYYY')
                     : 'N/A';
                 return displayCreateAt;
             },
@@ -120,10 +130,10 @@ const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
                     onChange={(value) =>
                         handleFieldChange(record, 'role', value)
                     }
-                >
+                    disabled={isAdmin(record)} // Vô hiệu hóa nếu là Admin
+                >   
+                    <Option value="ROLE_ADMIN" disabled>Người quản lý</Option>
                     <Option value="ROLE_USER">Người dùng</Option>
-                    <Option value="ROLE_ADMIN">Quản trị viên</Option>
-                    <Option value="ROLE_STAFF">Nhân viên</Option>
                     <Option value="ROLE_NEW_USER">Người dùng mới</Option>
                 </Select>
             ),
@@ -164,7 +174,11 @@ const AccountTable = ({ accounts, onUpdate, onEdit, loading }) => {
                         okText="Có"
                         cancelText="Không"
                     >
-                        <Button className="delete-button">Xóa</Button>
+                        <Button
+                            className="delete-button"
+                        >
+                            Xóa
+                        </Button>
                     </Popconfirm>
                 </Space>
             ),

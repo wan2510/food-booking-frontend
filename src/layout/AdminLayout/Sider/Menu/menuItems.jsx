@@ -1,6 +1,6 @@
 import { AppstoreOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import React from "react";
+import React from 'react';
 
 export const menuItems = [
     {
@@ -9,20 +9,20 @@ export const menuItems = [
         icon: <AppstoreOutlined />,
         children: [
             {
-                key: '/admin/food',
-                label: <Link to="/admin/food"> Quản lí sản phẩm</Link>,
-            },
-            {
-                key: '/admin/food-category',
-                label: <Link to="/admin/food-category">Danh mục sản phẩm</Link>,
+                key: '/admin/order',
+                label: <Link to="/admin/order">Gọi món</Link>,
             },
             {
                 key: '/admin/table',
-                label: <Link to="/admin/table">Quản lí bàn</Link>,
+                label: <Link to="/admin/table">Quản lý bàn</Link>,
             },
             {
                 key: '/admin/voucher',
-                label: <Link to="/admin/voucher">Quản lí Voucher</Link>,
+                label: <Link to="/admin/voucher">Quản lý mã giảm giá</Link>,
+            },
+            {
+                key: '/admin/account',
+                label: <Link to="/admin/account">Quản lý tài khoản</Link>,
             },
             {
                 key: 'bill',
@@ -33,8 +33,12 @@ export const menuItems = [
                 label: <Link to="/admin/revenue">Doanh thu</Link>,
             },
             {
-                key: '/admin/account',
-                label: <Link to="/admin/account">Account</Link>,
+                key: '/admin/food',
+                label: <Link to="/admin/food"> Quản lý sản phẩm</Link>,
+            },
+            {
+                key: '/admin/food-category',
+                label: <Link to="/admin/food-category">Danh mục sản phẩm</Link>,
             },
         ],
     },

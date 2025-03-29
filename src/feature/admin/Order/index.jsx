@@ -28,7 +28,7 @@ const { Content } = Layout;
 const { Title } = Typography;
 
 const Order = ({ user }) => {
-  const [state, setState] = useState(getState());
+  const [state, setLocalState] = useState(getState());
   const [menuItems, setMenuItems] = useState([]);
   const [foodCategories, setFoodCategories] = useState([]);
   const [tables, setTables] = useState([]);
@@ -36,9 +36,8 @@ const Order = ({ user }) => {
 
   useEffect(() => {
     const unsubscribe = subscribe((newState) => {
-      console.log("State updated:", newState);
-      console.log("isPaymentModalOpen:", newState.isPaymentModalOpen);
-      setState(newState);
+      console.log("State updated in Order:", newState);
+      setLocalState(newState);
     });
 
     const fetchInitialData = async () => {
@@ -69,7 +68,7 @@ const Order = ({ user }) => {
       bill: [],
       selectedTable: null,
       selectedVoucher: null,
-      paymentMethod: "Tiền mặt",
+      paymentMethod: "Tiền mặt", // Đặt lại về mặc định
       cashReceived: 0,
       isPaymentModalOpen: false,
     });
@@ -79,10 +78,10 @@ const Order = ({ user }) => {
     const validation = await validateBeforeCreate();
     if (validation.success) {
       console.log("Opening payment modal");
-      setState({ ...state, isPaymentModalOpen: true });
+      setState({ isPaymentModalOpen: true });
     } else {
-      console.log("Validation failed:", validation.message);
-      message.error(validation.message || "Không thể tạo hóa đơn!");
+      console.log("Validation failed");
+      message.error("Không thể tạo hóa đơn!");
     }
   };
 
@@ -91,24 +90,27 @@ const Order = ({ user }) => {
     const discount = getDiscount();
     const finalPrice = getFinalPrice();
 
+    let paymentMessage = "";
+
     if (state.paymentMethod === "Tiền mặt") {
       if (state.cashReceived < finalPrice) {
         message.error("Số tiền khách đưa không đủ để thanh toán!");
         return;
       }
-      message.success(
-        `Thanh toán thành công! Tiền trả lại: ${(state.cashReceived - finalPrice).toLocaleString("vi-VN")} VND`
-      );
+      const change = state.cashReceived - finalPrice;
+      paymentMessage = `Hóa đơn đã được tạo thành công!\nPhương thức: Tiền mặt\nSố tiền: ${finalPrice.toLocaleString("vi-VN")} VND\nTiền khách đưa: ${state.cashReceived.toLocaleString("vi-VN")} VND\nTiền thừa: ${change.toLocaleString("vi-VN")} VND`;
       if (order.note) {
-        console.log("Ghi chú từ nhân viên:", order.note);
+        paymentMessage += `\nGhi chú: ${order.note}`;
       }
     } else {
-      message.success("Thanh toán qua chuyển khoản thành công!");
+      paymentMessage = `Hóa đơn đã được tạo thành công!\nPhương thức: Chuyển khoản\nSố tiền: ${finalPrice.toLocaleString("vi-VN")} VND`;
     }
 
+    // Hiển thị thông báo chi tiết
+    message.success(paymentMessage);
+
+    // Làm mới toàn bộ phần hóa đơn
     await clearOrder();
-    setState({ ...state, isPaymentModalOpen: false, cashReceived: 0 });
-    message.success("Hóa đơn đã được tạo thành công!");
   };
 
   const handleCancelPayment = () => {

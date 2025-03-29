@@ -13,11 +13,11 @@
   background-color: #fff; /* Nền trắng giống trong ảnh */
 }
 
-/* Tiêu đề */
 .voucher-title {
+  text-align: center; /* Căn giữa tiêu đề */
   font-size: 24px;
-  font-weight: bold;
-  color: #000; /* Màu đen */
+  font-weight: 600;
+  color: #333;
   margin-bottom: 20px;
 }
 

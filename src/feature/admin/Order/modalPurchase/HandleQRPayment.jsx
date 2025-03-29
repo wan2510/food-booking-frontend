@@ -1,22 +1,27 @@
 import React from "react";
-import { QRCodeSVG } from "react-qr-code";
 import { Typography } from "antd";
+
+const qrImageUrl = "/public/images/QRNDM.jpg";
 
 const { Title, Text } = Typography;
 
 const QRPayment = ({ order }) => {
-  const qrCodeData = JSON.stringify({
-    orderId: order?.id || Date.now(),
-    total: order?.finalTotal || 0,
-    paymentUrl: `https://payment.example.com/pay?orderId=${order?.id || Date.now()}&amount=${order?.finalTotal || 0}`,
-  });
+  const finalTotal = order?.finalTotal || 0;
+  const orderId = order?.id || Date.now();
 
   return (
-    <div>
+    <div style={{ textAlign: "center" }}>
       <Title level={5}>Quét mã QR để thanh toán</Title>
-      <QRCodeSVG value={qrCodeData} size={150} />
-      <Text style={{ display: "block", marginTop: 16 }}>
-        Số tiền: {order?.finalTotal?.toLocaleString("vi-VN") || "0"} VND
+      <img
+        src={qrImageUrl}
+        alt="QR Code Thanh Toán"
+        style={{ width: 350, height: 350, marginBottom: 16 }} // Tăng kích thước lên 350x350px
+      />
+      <Text style={{ display: "block" }}>
+        Số tiền: {finalTotal.toLocaleString("vi-VN")} VND
+      </Text>
+      <Text style={{ display: "block" }}>
+        Mã đơn: {orderId}
       </Text>
     </div>
   );
