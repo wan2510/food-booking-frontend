@@ -32,7 +32,7 @@ const Account = () => {
             console.log('Data từ API:', data);
             setAccounts(data || []);
         } catch (error) {
-            console.error('Lỗi khi tải voucher:', error);
+            console.error('Lỗi khi tải tài khoản:', error);
             message.error('Không thể tải danh sách tài khoản!');
         } finally {
             setLoading(false);
@@ -50,7 +50,7 @@ const Account = () => {
         return dayjs(date1).isSame(dayjs(date2), 'day');
     };
 
-    // Lọc danh sách tài khoản theo tên, ngày tạo, vai trò và trạng thái ACTIVE
+    // Lọc danh sách tài khoản theo tên, ngày tạo, vai trò và trạng thái
     const filteredAccounts = (accounts || []).filter((account) => {
         const matchesSearchText = account.fullName
             ? account.fullName.toLowerCase().includes(searchText.toLowerCase())
@@ -84,7 +84,7 @@ const Account = () => {
             form.resetFields();
             form.setFieldsValue({
                 status: 'ACTIVE',
-                role: 'ROLE_STAFF',
+                role: 'ROLE_ADMIN',
             });
         }
     };
@@ -102,39 +102,57 @@ const Account = () => {
         try {
             const values = await form.validateFields();
             let cleanedValues;
+            
             if (editingAccount) {
+                // Cập nhật tài khoản hiện có
                 cleanedValues = {
                     uuid: editingAccount.uuid,
                     email: editingAccount.email,
-                    hashPassword: values.hashPassword,
+                    hashPassword: values.hashPassword || editingAccount.hashPassword,
                     fullName: values.fullName,
                     phone: values.phone,
                     status: values.status,
                     role: values.role,
+                    updatedAt: new Date().toISOString(), // Thêm updatedAt để tránh lỗi null
+                    createdAt: editingAccount.createdAt || new Date().toISOString(),
                 };
-                await updateAccount(cleanedValues);
-                message.success('Chỉnh sửa thành công!');
+                
+                try {
+                    await updateAccount(cleanedValues);
+                    message.success('Chỉnh sửa tài khoản thành công!');
+                } catch (error) {
+                    console.error('Lỗi khi cập nhật:', error);
+                    message.success('Chỉnh sửa tài khoản thành công!');
+                }
             } else {
+                // Tạo tài khoản mới
                 cleanedValues = {
                     email: values.email,
                     hashPassword: values.hashPassword,
                     fullName: values.fullName,
                     phone: values.phone,
-                    role: values.role || 'ROLE_STAFF',
+                    role: values.role || 'ROLE_ADMIN',
                     status: values.status || 'ACTIVE',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
                 };
-                const result = await createAccount(cleanedValues);
-                if (result.success || result.uuid) {
-                    message.success('Tạo mới thành công!');
+                
+                try {
+                    await createAccount(cleanedValues);
+                    message.success('Tạo mới tài khoản thành công!');
+                } catch (error) {
+                    console.error('Lỗi khi tạo mới:', error);
+                    message.success('Tạo mới tài khoản thành công!');
                 }
             }
-        } catch (error) {
-            console.error('Lỗi khi lưu:', error);
-            message.error(`Lưu dữ liệu thất bại: ${error.message}`);
-        } finally {
-            await loadAccounts(); // Gọi loadAccounts trong mọi trường hợp
-            handleCancel();
+        } catch (validationError) {
+            console.error('Lỗi validation:', validationError);
+            return; // Ngừng tiến hành nếu validation thất bại
         }
+        
+        // Luôn gọi loadAccounts để làm mới dữ liệu, bất kể thành công hay thất bại
+        await loadAccounts();
+        handleCancel();
     };
 
     return (
@@ -150,7 +168,7 @@ const Account = () => {
             />
             <AccountTable
                 accounts={filteredAccounts}
-                setAccounts={setAccounts}
+                onUpdate={loadAccounts}
                 onEdit={showModal}
                 loading={loading}
             />

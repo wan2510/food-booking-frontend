@@ -5,6 +5,9 @@ import dayjs from 'dayjs';
 const { Option } = Select;
 
 const AccountForm = ({ form, editingAccount }) => {
+    // Hàm kiểm tra vai trò Admin
+    const isAdmin = (record) => record && record.role === 'ROLE_ADMIN';
+
     useEffect(() => {
         console.log('Account đang chỉnh sửa:', editingAccount);
         if (editingAccount) {
@@ -21,7 +24,7 @@ const AccountForm = ({ form, editingAccount }) => {
             form.resetFields();
             form.setFieldsValue({
                 status: 'ACTIVE',
-                role: 'ROLE_STAFF',
+                role: 'ROLE_ADMIN',
             });
         }
     }, [editingAccount, form]);
@@ -30,12 +33,6 @@ const AccountForm = ({ form, editingAccount }) => {
         <Form layout="vertical" form={form}>
             {/* Các trường ẩn */}
             <Form.Item name="uuid" hidden>
-                <Input hidden />
-            </Form.Item>
-            <Form.Item name="role" hidden>
-                <Input hidden />
-            </Form.Item>
-            <Form.Item name="status" hidden>
                 <Input hidden />
             </Form.Item>
             {editingAccount && (
@@ -126,17 +123,16 @@ const AccountForm = ({ form, editingAccount }) => {
                         rules={[
                             {
                                 required: true,
-                                message: 'Vui lòng inaugurated chọn vai trò!',
+                                message: 'Vui lòng chọn vai trò!',
                             },
                         ]}
                     >
-                        <Select placeholder="Chọn vai trò">
-                            <Option value="ROLE_NEW_USER">
-                                Người dùng mới
-                            </Option>
+                        <Select
+                            placeholder="Chọn vai trò"
+                            disabled={isAdmin(editingAccount)} // Vô hiệu hóa nếu là Admin
+                        >
+                            <Option value="ROLE_NEW_USER">Người dùng mới</Option>
                             <Option value="ROLE_USER">Người dùng</Option>
-                            <Option value="ROLE_STAFF">Nhân viên</Option>
-                            <Option value="ROLE_ADMIN">Quản trị viên</Option>
                         </Select>
                     </Form.Item>
                 </>

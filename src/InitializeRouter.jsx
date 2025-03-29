@@ -27,6 +27,7 @@ import Checkout from './feature/dashboard/Checkout';
 import Attendance from './feature/admin/Attendance/AttendancePage';
 import Shift from './feature/admin/Shift/ShiftPage';
 
+import OrderLayout from './layout/OrderLayout';
 
 export const InitialRouter = () => {
     return (
@@ -62,9 +63,12 @@ export const InitialRouter = () => {
                 <Route path="account" element={<Account/>} />
                 <Route path="Attendance" element={<Attendance/>} />
                 <Route path="Shift" element={<Shift/>} />
-                <Route path="" element={<Order/>} />
             </Route>
-
+  
+            {/* Order */}
+            <Route path="/admin" element={<OrderLayout />}>
+                <Route path="order" element={<Order/>} />
+            </Route>
             {/* 404 */}
             <Route path="*" element={<PageNotFound />} />
         </Routes>
