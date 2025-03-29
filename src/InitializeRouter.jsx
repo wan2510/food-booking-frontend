@@ -17,6 +17,7 @@ import NotificationPage from './layout/AdminLayout/Header/Notification';
 import Register from './feature/register';
 import ForgotPassword from './feature/forgotpassword';
 import Book from './feature/dashboard/Book';
+import Order from './feature/dashboard/Order';
 import Contact from './feature/dashboard/Contact';
 import Account from './feature/admin/Account';
 import RevenueReport from './feature/admin/Report/RevenueReport';
